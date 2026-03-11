@@ -12,16 +12,19 @@ import { useAuth } from "@/app/context/AuthContext";
 import { logout } from "@/lib/logout";
 import { clearCart } from "@/app/Redux/slices/CartSlice";
 import CommissionsPanel from "@/app/components/CommissionsPanel";
+import LanguageSwitcher from "@/app/components/LanguageSwitcher";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 const Navbar = () => {
   const { loading, CartItems } = useSelector((state: any) => state.Cart);
   const dispatch = useDispatch();
-  
+  const { t } = useTranslation();
+
   const { user, isAuthenticated, isAdmin, isLoading } = useAuth();
-  
+
   const router = useRouter();
   const pathname = usePathname();
-  
+
   const isInAdminArea = pathname?.startsWith('/admin');
 
   const [isClient, setIsClient] = useState(false);
@@ -62,11 +65,11 @@ const Navbar = () => {
         {/* Logo - Right Side */}
         <Link href="/" className="flex items-center gap-3 group order-3 md:order-1">
           <div className="relative transition-transform duration-500 group-hover:scale-105">
-            <Image 
-              src="/logo-removebg-preview.png" 
-              width={140} 
-              height={140} 
-              alt="علامة العطور الفاخرة" 
+            <Image
+              src="/logo-removebg-preview.png"
+              width={140}
+              height={140}
+              alt={t.nav.logoAlt}
               className="drop-shadow-lg"
               priority
             />
@@ -76,29 +79,29 @@ const Navbar = () => {
         {/* Desktop Menu - Center */}
         <ul className="hidden md:flex items-center gap-12 text-gray-700 font-light tracking-wide order-2">
           <li>
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="relative text-base hover:text-gray-900 transition-all duration-300 group py-1"
             >
-              الرئيسية
+              {t.nav.home}
               <span className="absolute bottom-0 right-0 w-0 h-[1.5px] bg-gradient-to-l from-amber-400 to-amber-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
           </li>
           <li>
-            <Link 
-              href="/categories/femme" 
+            <Link
+              href="/categories/femme"
               className="relative text-base hover:text-gray-900 transition-all duration-300 group py-1"
             >
-              عطور نسائية
+              {t.nav.womenPerfumes}
               <span className="absolute bottom-0 right-0 w-0 h-[1.5px] bg-gradient-to-l from-amber-400 to-amber-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
           </li>
           <li>
-            <Link 
-              href="/categories/homme" 
+            <Link
+              href="/categories/homme"
               className="relative text-base hover:text-gray-900 transition-all duration-300 group py-1"
             >
-              عطور رجالية
+              {t.nav.menPerfumes}
               <span className="absolute bottom-0 right-0 w-0 h-[1.5px] bg-gradient-to-l from-amber-400 to-amber-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
           </li>
@@ -123,13 +126,13 @@ const Navbar = () => {
                 href="/SignIn"
                 className="text-sm font-light text-gray-700 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 px-7 py-2.5 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md"
               >
-                تسجيل الدخول
+                {t.nav.signIn}
               </Link>
               <Link
                 href="/Register"
                 className="text-sm font-light text-gray-600 hover:text-gray-900 transition-colors duration-200"
               >
-                إنشاء حساب
+                {t.nav.register}
               </Link>
             </>
           ) : (
@@ -140,21 +143,21 @@ const Navbar = () => {
                     href="/"
                     className="text-sm font-light text-gray-600 hover:text-gray-900 transition-colors duration-200"
                   >
-                    العودة للمتجر
+                    {t.nav.backToStore}
                   </Link>
-                  
+
                   <div className="relative" ref={dropdownRef}>
                     <button
                       onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                       className="relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200"
-                      aria-label="حسابي"
+                      aria-label={t.nav.myAccount}
                     >
-                      <HiOutlineUser 
-                        size="24px" 
-                        className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200" 
+                      <HiOutlineUser
+                        size="24px"
+                        className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200"
                       />
                     </button>
-                    
+
                     {userDropdownOpen && (
                       <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50">
                         <div className="py-1">
@@ -163,14 +166,14 @@ const Navbar = () => {
                             onClick={() => setUserDropdownOpen(false)}
                             className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                           >
-                            حسابي
+                            {t.nav.myAccount}
                           </Link>
                           <button
                             onClick={() => { setUserDropdownOpen(false); handleLogout(); }}
                             className="w-full text-right px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200 flex items-center gap-2"
                           >
                             <TbLogout className="w-4 h-4" />
-                            <span>تسجيل الخروج</span>
+                            <span>{t.nav.logout}</span>
                           </button>
                         </div>
                       </div>
@@ -183,14 +186,14 @@ const Navbar = () => {
                     <button
                       onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                       className="relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200"
-                      aria-label="حسابي"
+                      aria-label={t.nav.myAccount}
                     >
-                      <HiOutlineUser 
-                        size="24px" 
-                        className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200" 
+                      <HiOutlineUser
+                        size="24px"
+                        className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200"
                       />
                     </button>
-                    
+
                     {userDropdownOpen && (
                       <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50">
                         <div className="py-1">
@@ -200,7 +203,7 @@ const Navbar = () => {
                               onClick={() => setUserDropdownOpen(false)}
                               className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                             >
-                              لوحة الإدارة
+                              {t.nav.adminPanel}
                             </Link>
                           )}
                           <Link
@@ -208,14 +211,14 @@ const Navbar = () => {
                             onClick={() => setUserDropdownOpen(false)}
                             className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                           >
-                            حسابي
+                            {t.nav.myAccount}
                           </Link>
                           <button
                             onClick={() => { setUserDropdownOpen(false); handleLogout(); }}
                             className="w-full text-right px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200 flex items-center gap-2"
                           >
                             <TbLogout className="w-4 h-4" />
-                            <span>تسجيل الخروج</span>
+                            <span>{t.nav.logout}</span>
                           </button>
                         </div>
                       </div>
@@ -233,28 +236,32 @@ const Navbar = () => {
 
           <div className="w-px h-6 bg-gray-200"></div>
 
+          <LanguageSwitcher />
+
+          <div className="w-px h-6 bg-gray-200"></div>
+
           {isAuthenticated && (
-            <Link 
-              href="/my-orders" 
+            <Link
+              href="/my-orders"
               className="relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200"
-              aria-label="طلباتي"
-              title="طلباتي"
+              aria-label={t.nav.myOrders}
+              title={t.nav.myOrders}
             >
-              <HiOutlineClipboardDocumentList 
-                size="24px" 
-                className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200" 
+              <HiOutlineClipboardDocumentList
+                size="24px"
+                className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200"
               />
             </Link>
           )}
 
-          <Link 
-            href="/Cart" 
+          <Link
+            href="/Cart"
             className="relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200"
-            aria-label="عربة التسوق"
+            aria-label={t.nav.cart}
           >
-            <CiShoppingCart 
-              size="26px" 
-              className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200" 
+            <CiShoppingCart
+              size="26px"
+              className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200"
             />
             {isClient && CartItems.length > 0 && (
               <span className="absolute top-0 right-0 bg-gradient-to-br from-amber-500 to-amber-600 text-white text-[10px] font-semibold rounded-full w-5 h-5 flex items-center justify-center shadow-lg animate-in zoom-in-50 duration-200">
@@ -266,28 +273,28 @@ const Navbar = () => {
 
         {/* Mobile Orders Icon */}
         {isAuthenticated && (
-          <Link 
-            href="/my-orders" 
+          <Link
+            href="/my-orders"
             className="md:hidden relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200 order-2"
-            aria-label="طلباتي"
+            aria-label={t.nav.myOrders}
           >
-            <HiOutlineClipboardDocumentList 
-              size="22px" 
-              className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200" 
+            <HiOutlineClipboardDocumentList
+              size="22px"
+              className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200"
             />
           </Link>
         )}
 
         {/* Mobile Profile Icon */}
         {isAuthenticated && (
-          <Link 
-            href="/account" 
+          <Link
+            href="/account"
             className="md:hidden relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200 order-2"
-            aria-label="حسابي"
+            aria-label={t.nav.myAccount}
           >
-            <HiOutlineUser 
-              size="22px" 
-              className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200" 
+            <HiOutlineUser
+              size="22px"
+              className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200"
             />
           </Link>
         )}
@@ -300,14 +307,14 @@ const Navbar = () => {
         )}
 
         {/* Mobile Cart Icon */}
-        <Link 
-          href="/Cart" 
+        <Link
+          href="/Cart"
           className="md:hidden relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200 order-2"
-          aria-label="عربة التسوق"
+          aria-label={t.nav.cart}
         >
-          <CiShoppingCart 
-            size="24px" 
-            className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200" 
+          <CiShoppingCart
+            size="24px"
+            className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200"
           />
           {isClient && CartItems.length > 0 && (
             <span className="absolute top-0 right-0 bg-gradient-to-br from-amber-500 to-amber-600 text-white text-[9px] font-semibold rounded-full w-4 h-4 flex items-center justify-center shadow-lg">
@@ -320,53 +327,60 @@ const Navbar = () => {
         <div className={`md:hidden fixed top-[72px] left-0 w-full bg-white/98 backdrop-blur-lg border-t border-gray-100 shadow-xl transition-all duration-300 ${open ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
           <ul className="flex flex-col p-6 gap-1 text-gray-700 font-light">
             <li>
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 onClick={() => setOpen(false)}
                 className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
               >
-                الرئيسية
+                {t.nav.home}
               </Link>
             </li>
             <li>
-              <Link 
-                href="/categories/femme" 
+              <Link
+                href="/categories/femme"
                 onClick={() => setOpen(false)}
                 className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
               >
-                عطور نسائية
+                {t.nav.womenPerfumes}
               </Link>
             </li>
             <li>
-              <Link 
-                href="/categories/homme" 
+              <Link
+                href="/categories/homme"
                 onClick={() => setOpen(false)}
                 className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
               >
-                عطور رجالية
+                {t.nav.menPerfumes}
               </Link>
             </li>
-            
+
             <div className="h-px bg-gray-200 my-3"></div>
-            
+
+            {/* Language switcher in mobile menu */}
+            <li className="px-5 py-2">
+              <LanguageSwitcher />
+            </li>
+
+            <div className="h-px bg-gray-200 my-2"></div>
+
             {!isAuthenticated ? (
               <>
                 <li>
-                  <Link 
-                    href="/SignIn" 
+                  <Link
+                    href="/SignIn"
                     onClick={() => setOpen(false)}
                     className="block py-3.5 px-5 bg-white text-gray-700 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 rounded-xl transition-all duration-200 text-sm text-center font-medium shadow-sm hover:shadow-md"
                   >
-                    تسجيل الدخول
+                    {t.nav.signIn}
                   </Link>
                 </li>
                 <li>
-                  <Link 
-                    href="/Register" 
+                  <Link
+                    href="/Register"
                     onClick={() => setOpen(false)}
                     className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
                   >
-                    إنشاء حساب
+                    {t.nav.register}
                   </Link>
                 </li>
               </>
@@ -375,19 +389,19 @@ const Navbar = () => {
                 {isInAdminArea ? (
                   <>
                     <li>
-                      <Link 
-                        href="/" 
+                      <Link
+                        href="/"
                         onClick={() => setOpen(false)}
                         className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
                       >
-                        العودة للمتجر
+                        {t.nav.backToStore}
                       </Link>
                     </li>
                     <li className="flex justify-center">
-                      <button 
-                        className="p-3 hover:bg-red-50 text-red-600 rounded-xl transition-colors duration-200" 
+                      <button
+                        className="p-3 hover:bg-red-50 text-red-600 rounded-xl transition-colors duration-200"
                         onClick={() => { setOpen(false); handleLogout(); }}
-                        aria-label="تسجيل الخروج"
+                        aria-label={t.nav.logout}
                       >
                         <TbLogout className="w-6 h-6" />
                       </button>
@@ -397,20 +411,20 @@ const Navbar = () => {
                   <>
                     {isAdmin && (
                       <li>
-                        <Link 
-                          href="/admin" 
+                        <Link
+                          href="/admin"
                           onClick={() => setOpen(false)}
                           className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
                         >
-                          لوحة الإدارة
+                          {t.nav.adminPanel}
                         </Link>
                       </li>
                     )}
                     <li className="flex justify-center">
-                      <button 
-                        className="p-3 hover:bg-red-50 text-red-600 rounded-xl transition-colors duration-200" 
+                      <button
+                        className="p-3 hover:bg-red-50 text-red-600 rounded-xl transition-colors duration-200"
                         onClick={() => { setOpen(false); handleLogout(); }}
-                        aria-label="تسجيل الخروج"
+                        aria-label={t.nav.logout}
                       >
                         <TbLogout className="w-6 h-6" />
                       </button>

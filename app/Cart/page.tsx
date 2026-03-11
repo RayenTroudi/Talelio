@@ -8,8 +8,10 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 const page = () => {
+  const { t } = useTranslation();
   const [isClient, setIsClient] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -35,7 +37,7 @@ const page = () => {
               <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto" />
             </div>
             <h1 className="text-4xl md:text-5xl font-light text-gray-900 tracking-tight">
-              عربة التسوق
+              {t.cart.pageTitle}
             </h1>
           </div>
 
@@ -44,7 +46,7 @@ const page = () => {
               <div className="flex items-center justify-center min-h-[60vh]">
                 <div className="text-center space-y-4">
                   <div className="w-12 h-12 border-2 border-amber-300 border-t-amber-600 rounded-full animate-spin mx-auto"></div>
-                  <p className="text-gray-500 font-light">جاري التحميل...</p>
+                  <p className="text-gray-500 font-light">{t.cart.loading}</p>
                 </div>
               </div>
             ) : CartItems.length === 0 ? (
@@ -70,22 +72,22 @@ const page = () => {
                   </div>
 
                   <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4 tracking-tight">
-                    عربة التسوق فارغة
+                    {t.cart.empty}
                   </h2>
                   <p className="text-gray-600 font-light leading-relaxed mb-10 text-base">
-                    أضف عطراً لبدء تجربتك العطرية
+                    {t.cart.emptyDesc}
                   </p>
 
                   <Link
                     href="/"
                     className="group inline-flex items-center justify-center px-10 py-5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-2xl font-light tracking-wide transition-all duration-500 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
                   >
-                    <span>اكتشف عطورنا</span>
+                    <span>{t.cart.discoverBtn}</span>
                   </Link>
 
                   <div className="mt-8 pt-6 border-t border-stone-200/50">
                     <p className="text-xs text-stone-500 font-light">
-                      توصيل مجاني • دفع آمن
+                      {t.productDetail.freeDelivery} • {t.placeOrder.secure}
                     </p>
                   </div>
                 </div>
@@ -99,10 +101,10 @@ const page = () => {
                       <table className="min-w-full">
                         <thead className="bg-gradient-to-r from-amber-50/50 via-white to-amber-50/30 border-b border-amber-200/50">
                           <tr>
-                            <th className="p-6 text-right text-stone-900 font-light tracking-wider">المنتج</th>
-                            <th className="p-6 text-right text-stone-900 font-light tracking-wider">الكمية</th>
-                            <th className="p-6 text-right text-stone-900 font-light tracking-wider">السعر</th>
-                            <th className="p-6 text-center text-stone-900 font-light tracking-wider">الإجراء</th>
+                            <th className="p-6 text-right text-stone-900 font-light tracking-wider">{t.admin.perfumes.product}</th>
+                            <th className="p-6 text-right text-stone-900 font-light tracking-wider">{t.cart.qty}</th>
+                            <th className="p-6 text-right text-stone-900 font-light tracking-wider">{t.admin.perfumes.price}</th>
+                            <th className="p-6 text-center text-stone-900 font-light tracking-wider">{t.admin.perfumes.actions}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -115,13 +117,13 @@ const page = () => {
                                     width={60}
                                     height={60}
                                     className="rounded-xl"
-                                    alt="صورة المنتج"
+                                    alt={item.Name || item.name || t.admin.perfumes.product}
                                   />
                                   <span className="font-light text-stone-800">{item.Name}</span>
                                 </div>
                               </td>
                               <td className="p-6 text-right">
-                                <div className="text-stone-700 font-light">الكمية: {item.qty}</div>
+                                <div className="text-stone-700 font-light">{t.cart.qty}: {item.qty}</div>
                               </td>
                               <td className="p-6 text-right">
                                 <span className="text-amber-600 font-light text-lg">{itemsPrice} TND</span>
@@ -131,7 +133,7 @@ const page = () => {
                                   className="px-6 py-2.5 text-sm font-light text-stone-600 hover:text-amber-600 border border-stone-200 hover:border-amber-600 rounded-xl transition-all duration-300"
                                   onClick={() => RemoveFromCartHandler(item.id)}
                                 >
-                                  حذف
+                                  {t.cart.remove}
                                 </button>
                               </td>
                             </tr>
@@ -145,8 +147,8 @@ const page = () => {
                 <div className="mt-8 p-8 bg-gradient-to-br from-amber-50/50 via-white to-amber-50/30 rounded-3xl border border-amber-200/50 shadow-xl">
                   {/***********SubTotal Items**********************/}
                   <div className="text-right text-stone-900 font-light text-xl mb-6">
-                    <span className="text-stone-600">المجموع الفرعي</span>
-                    <span className="mx-3">({CartItems.reduce((a: any, c: any) => a + c.qty, 0)} منتج)</span>
+                    <span className="text-stone-600">{t.cart.subtotal}</span>
+                    <span className="mx-3">({CartItems.reduce((a: any, c: any) => a + c.qty, 0)} {t.cart.product})</span>
                     <span className="text-amber-600 font-normal text-2xl">{itemsPrice} TND</span>
                   </div>
 
@@ -156,14 +158,14 @@ const page = () => {
                       className="w-full max-w-md bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-12 py-5 cursor-pointer rounded-2xl font-light text-lg tracking-wide shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
                       onClick={() => router.push("/Shipping")}
                     >
-                      متابعة الطلب
+                      {t.cart.proceedBtn}
                     </button>
                   </div>
                 </div>
               </>
             )
           ) : (
-            <span>جاري التحميل...</span>
+            <span>{t.cart.loading}</span>
           )}
         </div>
       </div>

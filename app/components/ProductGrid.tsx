@@ -6,6 +6,7 @@ import { ProductGridSkeleton } from "@/app/components/skeletons/ProductCardSkele
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import PaginationSection from "./Pagination";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 /**
  * Appwrite Product Interface
@@ -43,13 +44,14 @@ interface ProductGridProps {
  * - Appwrite image integration
  * - Loading and error states
  */
-export function ProductGrid({ 
-  initialProducts = [], 
-  searchQuery = "" 
+export function ProductGrid({
+  initialProducts = [],
+  searchQuery = ""
 }: ProductGridProps) {
   const [products, setProducts] = useState<AppwriteProduct[]>(initialProducts);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
   
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -112,7 +114,7 @@ export function ProductGrid({
         <div className="flex justify-center items-center min-h-[400px]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-amber-500 mx-auto"></div>
-            <p className="mt-6 text-stone-600 font-light tracking-wide">جاري تحميل العطور...</p>
+            <p className="mt-6 text-stone-600 font-light tracking-wide">{t.productGrid.loading}</p>
           </div>
         </div>
       </div>
@@ -129,7 +131,7 @@ export function ProductGrid({
             onClick={() => window.location.reload()} 
             className="px-8 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl hover:from-red-600 hover:to-red-700 transition-all duration-300 font-light shadow-lg"
           >
-            حاول مرة أخرى
+            {t.productGrid.retry}
           </button>
         </div>
       </div>
@@ -142,7 +144,7 @@ export function ProductGrid({
       <div className="mb-12 max-w-2xl mx-auto">
         <InputGroup className="bg-white shadow-xl shadow-amber-200/20 rounded-2xl overflow-hidden border border-amber-200/30">
           <InputGroupInput
-            placeholder="ابحث عن العطور حسب الاسم، العلامة التجارية، أو الفئة..."
+            placeholder={t.productGrid.searchPlaceholder}
             onChange={(e) => handleSearch(e.target.value)}
             defaultValue={searchParams.get("query")?.toString()}
             className="border-0 focus:ring-2 focus:ring-amber-500 font-light py-5 px-6 text-right placeholder:text-stone-400"
@@ -154,7 +156,7 @@ export function ProductGrid({
       {searchQuery && (
         <div className="mb-8 text-center">
           <p className="text-stone-600 font-light tracking-wide">
-            تم العثور على {filteredProducts.length} منتج{filteredProducts.length !== 1 ? '' : ''} لـ <span className="font-normal text-amber-600">"{searchQuery}"</span>
+            {t.productGrid.resultsFor} {filteredProducts.length} {t.productGrid.resultsCount} <span className="font-normal text-amber-600">"{searchQuery}"</span>
           </p>
         </div>
       )}
@@ -179,10 +181,10 @@ export function ProductGrid({
               </svg>
             </div>
             <p className="text-stone-900 text-2xl font-light mb-3 tracking-wide">
-              {searchQuery ? "لم نجد أي عطور" : "لا توجد عطور متاحة"}
+              {searchQuery ? t.productGrid.noResults : t.productGrid.noProducts}
             </p>
             <p className="text-stone-500 font-light tracking-wide">
-              {searchQuery ? "حاول تعديل مصطلحات البحث" : "تحقق لاحقاً من الوافدين الجدد"}
+              {searchQuery ? t.productGrid.modifySearch : t.productGrid.checkLater}
             </p>
           </div>
         </div>

@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { DeleteConfirmDialog } from "@/app/components/admin/DeleteConfirmDialog";
 import { ProductThumbnail } from "@/app/components/product/ProductImage";
 import { ImageErrorBoundary } from "@/app/components/product/ImageErrorBoundary";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 interface Perfume {
   $id: string;
@@ -38,6 +39,7 @@ export default function PerfumesPage() {
   }>({ isOpen: false, perfume: null, isLoading: false });
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   // Auto-dismiss success message after 5 seconds
   useEffect(() => {
@@ -53,7 +55,7 @@ export default function PerfumesPage() {
       setLoading(true);
       const response = await fetch('/api/perfumes');
       const result = await response.json();
-      
+
       if (result.success) {
         setPerfumes(result.data || []);
         setError(null);
@@ -89,20 +91,20 @@ export default function PerfumesPage() {
   // Image state, image URLs, and image fetch errors NEVER affect this logic
   const confirmDelete = async () => {
     if (!deleteDialog.perfume) return;
-    
+
     const perfumeToDelete = deleteDialog.perfume;
     const perfumeId = perfumeToDelete.$id; // Store ID separately - never depends on image state
-    
-    setDeleteDialog(prev => ({ 
-      isOpen: prev?.isOpen ?? true, 
-      perfume: prev?.perfume ?? perfumeToDelete, 
-      isLoading: true 
+
+    setDeleteDialog(prev => ({
+      isOpen: prev?.isOpen ?? true,
+      perfume: prev?.perfume ?? perfumeToDelete,
+      isLoading: true
     }));
-    
+
     try {
       console.log(`🗑️ Deleting perfume: ${perfumeToDelete.name} (ID: ${perfumeId})`);
       console.log(`📝 Delete uses ONLY document ID - images are NOT required`);
-      
+
       // CRITICAL: DELETE API call depends ONLY on perfumeId
       // Does NOT depend on: image URLs, image state, image fetch success
       const response = await fetch(`/api/perfumes/${perfumeId}`, {
@@ -111,20 +113,20 @@ export default function PerfumesPage() {
           'Content-Type': 'application/json',
         },
       });
-      
+
       const result = await response.json();
-      
+
       if (result.success) {
         console.log('✅ Perfume deleted successfully');
-        
+
         // Remove from local state using ID only
         setPerfumes(prev => prev.filter(p => p.$id !== perfumeId));
-        
+
         // Close dialog
         setDeleteDialog({ isOpen: false, perfume: null, isLoading: false });
-        
+
         // Show success message
-        setSuccessMessage(`Successfully deleted "${perfumeToDelete.name}"`);
+        setSuccessMessage(`${t.admin.perfumes.successDeleted} "${perfumeToDelete.name}" ${t.admin.perfumes.successfully}`);
         setError(null);
       } else {
         console.error('❌ Delete failed:', result.error);
@@ -158,7 +160,7 @@ export default function PerfumesPage() {
   const outOfStockPerfumes = totalPerfumes - inStockPerfumes;
 
   const getStatusBadge = (isInStock: boolean) => {
-    return isInStock 
+    return isInStock
       ? "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
       : "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800";
   };
@@ -168,7 +170,7 @@ export default function PerfumesPage() {
       <div className="flex justify-center items-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-gray-600">جاري تحميل العطور...</p>
+          <p className="mt-4 text-gray-600">{t.admin.perfumes.loading}</p>
         </div>
       </div>
     );
@@ -178,22 +180,22 @@ export default function PerfumesPage() {
     <div className="space-y-6" dir="rtl">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">المنتجات</h1>
-          <p className="text-gray-600 mt-1">إدارة مخزون العطور الخاص بك</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t.admin.perfumes.title}</h1>
+          <p className="text-gray-600 mt-1">{t.admin.perfumes.subtitle}</p>
         </div>
         <div className="flex gap-3">
           <Button onClick={() => fetchPerfumes()} variant="outline">
             <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            تحديث
+            {t.admin.perfumes.refresh}
           </Button>
           <Button asChild>
             <Link href="/admin/perfumes/add">
               <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
-              إضافة عطر جديد
+              {t.admin.perfumes.addNew}
             </Link>
           </Button>
         </div>
@@ -249,12 +251,12 @@ export default function PerfumesPage() {
               </svg>
             </div>
             <div className="mr-4">
-              <p className="text-sm font-medium text-gray-500">إجمالي المنتجات</p>
+              <p className="text-sm font-medium text-gray-500">{t.admin.perfumes.totalProducts}</p>
               <p className="text-2xl font-bold text-gray-900">{totalPerfumes}</p>
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-6">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg">
@@ -263,12 +265,12 @@ export default function PerfumesPage() {
               </svg>
             </div>
             <div className="mr-4">
-              <p className="text-sm font-medium text-gray-500">متوفر</p>
+              <p className="text-sm font-medium text-gray-500">{t.admin.perfumes.inStock}</p>
               <p className="text-2xl font-bold text-gray-900">{inStockPerfumes}</p>
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-6">
           <div className="flex items-center">
             <div className="p-2 bg-red-100 rounded-lg">
@@ -277,7 +279,7 @@ export default function PerfumesPage() {
               </svg>
             </div>
             <div className="mr-4">
-              <p className="text-sm font-medium text-gray-500">غير متوفر</p>
+              <p className="text-sm font-medium text-gray-500">{t.admin.perfumes.outOfStock}</p>
               <p className="text-2xl font-bold text-gray-900">{outOfStockPerfumes}</p>
             </div>
           </div>
@@ -288,7 +290,7 @@ export default function PerfumesPage() {
       <div className="flex justify-between items-center">
         <div className="flex-1 max-w-md">
           <Input
-            placeholder="بحث عن العطور..."
+            placeholder={t.admin.perfumes.searchPlaceholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full text-right"
@@ -300,14 +302,14 @@ export default function PerfumesPage() {
             size="sm"
             onClick={() => setViewMode("table")}
           >
-            جدول
+            {t.admin.perfumes.table}
           </Button>
           <Button
             variant={viewMode === "grid" ? "default" : "outline"}
             size="sm"
             onClick={() => setViewMode("grid")}
           >
-            شبكة
+            {t.admin.perfumes.grid}
           </Button>
         </div>
       </div>
@@ -320,13 +322,13 @@ export default function PerfumesPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m-2 0h2m0-8h16" />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">لا توجد عطور</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">{t.admin.perfumes.noProducts}</h3>
           <p className="text-gray-500 mb-4">
-            {searchTerm ? "حاول تعديل مصطلحات البحث" : "ابدأ بإضافة أول عطر"}
+            {searchTerm ? t.admin.perfumes.modifySearch : t.admin.perfumes.noProductsDesc}
           </p>
           {!searchTerm && (
             <Button asChild>
-              <Link href="/admin/perfumes/add">إضافة عطر جديد</Link>
+              <Link href="/admin/perfumes/add">{t.admin.perfumes.addFirst}</Link>
             </Button>
           )}
         </Card>
@@ -338,12 +340,12 @@ export default function PerfumesPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-200">
-                      <th className="text-right py-4 px-6 font-medium text-gray-900">المنتج</th>
-                      <th className="text-right py-4 px-6 font-medium text-gray-900">العلامة التجارية</th>
-                      <th className="text-right py-4 px-6 font-medium text-gray-900">السعر</th>
-                      <th className="text-right py-4 px-6 font-medium text-gray-900">الفئة</th>
-                      <th className="text-right py-4 px-6 font-medium text-gray-900">الحالة</th>
-                      <th className="text-right py-4 px-6 font-medium text-gray-900">الإجراءات</th>
+                      <th className="text-right py-4 px-6 font-medium text-gray-900">{t.admin.perfumes.product}</th>
+                      <th className="text-right py-4 px-6 font-medium text-gray-900">{t.admin.perfumes.brand}</th>
+                      <th className="text-right py-4 px-6 font-medium text-gray-900">{t.admin.perfumes.price}</th>
+                      <th className="text-right py-4 px-6 font-medium text-gray-900">{t.admin.perfumes.category}</th>
+                      <th className="text-right py-4 px-6 font-medium text-gray-900">{t.admin.perfumes.status}</th>
+                      <th className="text-right py-4 px-6 font-medium text-gray-900">{t.admin.perfumes.actions}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -364,7 +366,7 @@ export default function PerfumesPage() {
                             <div>
                               <p className="font-medium text-gray-900">{perfume.name}</p>
                               <p className="text-sm text-gray-500">
-                                الأحجام: {perfume.sizes.join(', ')}
+                                {t.admin.perfumes.sizes}: {perfume.sizes.join(', ')}
                               </p>
                             </div>
                           </div>
@@ -374,7 +376,7 @@ export default function PerfumesPage() {
                         <td className="py-4 px-6 text-gray-900">{perfume.category}</td>
                         <td className="py-4 px-6">
                           <span className={getStatusBadge(perfume.isInStock)}>
-                            {perfume.isInStock ? "متوفر" : "غير متوفر"}
+                            {perfume.isInStock ? t.admin.perfumes.available : t.admin.perfumes.unavailable}
                           </span>
                         </td>
                         <td className="py-4 px-6">
@@ -384,14 +386,14 @@ export default function PerfumesPage() {
                               size="sm"
                               onClick={() => handleEdit(perfume.$id)}
                             >
-                              تعديل
+                              {t.admin.perfumes.edit}
                             </Button>
                             <Button
                               variant="destructive"
                               size="sm"
                               onClick={() => handleDelete(perfume)}
                             >
-                              حذف
+                              {t.admin.perfumes.delete}
                             </Button>
                           </div>
                         </td>
@@ -416,16 +418,16 @@ export default function PerfumesPage() {
                     </ImageErrorBoundary>
                     <div className="absolute top-2 left-2">
                       <span className={getStatusBadge(perfume.isInStock === 'true')}>
-                        {perfume.isInStock === 'true' ? "متوفر" : "غير متوفر"}
+                        {perfume.isInStock === 'true' ? t.admin.perfumes.available : t.admin.perfumes.unavailable}
                       </span>
                     </div>
                   </div>
                   <div className="p-4">
                     <h3 className="font-medium text-gray-900 mb-1">{perfume.name}</h3>
                     <p className="text-sm text-gray-500 mb-2">{perfume.brand}</p>
-                    <p className="text-lg font-bold text-gray-900 mb-2">{perfume.price} دينار</p>
+                    <p className="text-lg font-bold text-gray-900 mb-2">{perfume.price} {t.productDetail.currency}</p>
                     <p className="text-sm text-gray-500 mb-4">
-                      الأحجام: {perfume.sizes.join(', ')}
+                      {t.admin.perfumes.sizes}: {perfume.sizes.join(', ')}
                     </p>
                     <div className="flex gap-2">
                       <Button
@@ -434,7 +436,7 @@ export default function PerfumesPage() {
                         onClick={() => handleEdit(perfume.$id)}
                         className="flex-1"
                       >
-                        تعديل
+                        {t.admin.perfumes.edit}
                       </Button>
                       <Button
                         variant="destructive"
@@ -442,7 +444,7 @@ export default function PerfumesPage() {
                         onClick={() => handleDelete(perfume)}
                         className="flex-1"
                       >
-                        حذف
+                        {t.admin.perfumes.delete}
                       </Button>
                     </div>
                   </div>

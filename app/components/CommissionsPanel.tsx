@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 interface EarningRecord {
   $id: string;
@@ -23,6 +24,7 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!userId) return;
@@ -84,8 +86,8 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
         className={`relative group p-2 rounded-xl transition-all duration-200 ${
           hasEarnings ? "hover:bg-amber-50" : "hover:bg-gray-50"
         }`}
-        aria-label="عمولاتي"
-        title="عمولاتي"
+        aria-label={t.commissions.myCommissions}
+        title={t.commissions.myCommissions}
       >
         <span
           className={`text-[15px] font-bold tracking-tight leading-none select-none ${
@@ -116,7 +118,7 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
           <div className="bg-gradient-to-l from-amber-50 to-white px-5 py-4 border-b border-stone-100">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-semibold text-gray-900 text-sm">عمولات الإحالة</p>
+                <p className="font-semibold text-gray-900 text-sm">{t.commissions.referralCommissions}</p>
                 {data && (
                   <p className="text-xs text-stone-400 mt-0.5 font-mono tracking-widest">
                     {data.promoCode}
@@ -143,10 +145,10 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
                     }`}
                   />
                   {data.isPaid
-                    ? "تم الدفع"
+                    ? t.commissions.paid
                     : data.total > 0
-                    ? "في انتظار الدفع"
-                    : "لا توجد عمولات بعد"}
+                    ? t.commissions.waitingPayment
+                    : t.commissions.noCommissions}
                 </span>
               )}
             </div>
@@ -158,7 +160,7 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
                   {data.total.toFixed(2)}
                 </span>
                 <span className="text-sm text-stone-400 mb-0.5">TND</span>
-                <span className="text-xs text-stone-400 mb-0.5 mr-1">إجمالي العمولات</span>
+                <span className="text-xs text-stone-400 mb-0.5 mr-1">{t.commissions.totalCommissions}</span>
               </div>
             )}
           </div>
@@ -173,8 +175,8 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
           ) : !hasEarnings ? (
             <div className="px-5 py-8 text-center text-stone-400 text-sm">
               <p className="text-2xl mb-2">💰</p>
-              <p>لم يستخدم أحد رمزك بعد</p>
-              <p className="text-xs mt-1 text-stone-300">شارك رمزك وابدأ في الكسب!</p>
+              <p>{t.commissions.noCodeUsed}</p>
+              <p className="text-xs mt-1 text-stone-300">{t.commissions.shareCode}</p>
             </div>
           ) : (
             <div className="max-h-64 overflow-y-auto divide-y divide-stone-100">
@@ -203,7 +205,7 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
           {/* Footer */}
           {hasEarnings && data && (
             <div className="px-5 py-3 bg-stone-50 border-t border-stone-100 flex items-center justify-between">
-              <span className="text-xs text-stone-400">{data.records.length} عملية شراء</span>
+              <span className="text-xs text-stone-400">{data.records.length} {t.commissions.purchases}</span>
               <span className="text-xs font-semibold text-green-700">{data.total.toFixed(2)} TND</span>
             </div>
           )}

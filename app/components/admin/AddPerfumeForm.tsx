@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 interface Note {
   name: string;
@@ -34,6 +35,7 @@ interface AddPerfumeFormProps {
 }
 
 export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialData, isEditMode = false }: AddPerfumeFormProps) {
+  const { t } = useTranslation();
   const {
     register,
     control,
@@ -73,7 +75,7 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
 
   const availableSizes = [30, 50, 100];
   const categories = ["Femme", "Homme", "Unisex", "Coffret", "Pac Misk"];
-  
+
   const watchedSizes = watch("sizes");
 
   const handleSizeToggle = (size: number) => {
@@ -105,7 +107,7 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">نوتات {title}</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{t.admin.addPerfume.notesSectionTitle} {title}</h3>
           <p className="text-sm text-gray-600">{description}</p>
         </div>
         <Button
@@ -114,7 +116,7 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
           variant="outline"
           size="sm"
         >
-          إضافة نوتة
+          {t.admin.addPerfume.addNote}
         </Button>
       </div>
 
@@ -123,9 +125,9 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
           <div key={field.id} className="flex gap-4 items-start p-4 bg-gray-50 rounded-lg">
             <div className="flex-1">
               <Input
-                placeholder="اسم النوتة (مثال: برغموت)"
-                {...register(`${fieldName}Notes.${index}.name`, { 
-                  required: `اسم نوتة ${title} مطلوب` 
+                placeholder={t.admin.addPerfume.notePlaceholder}
+                {...register(`${fieldName}Notes.${index}.name`, {
+                required: `${t.admin.addPerfume.notesSectionTitle} ${title} ${t.admin.addPerfume.noteRequired}`
                 })}
                 className="mb-2 text-right"
               />
@@ -143,7 +145,7 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
                 size="sm"
                 className="text-red-600 hover:text-red-700"
               >
-                حذف
+                {t.common.delete}
               </Button>
             )}
           </div>
@@ -156,56 +158,56 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
     <Card className="max-w-4xl mx-auto" dir="rtl">
       <div className="p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          {isEditMode ? "تعديل العطر" : "إضافة عطر جديد"}
+          {isEditMode ? t.admin.addPerfume.editTitle : t.admin.addPerfume.formTitle}
         </h2>
-        
+
         <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-8">
           {/* Basic Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium text-gray-900">
-                اسم المنتج *
+                {t.admin.addPerfume.productName}
               </label>
               <input
                 type="text"
                 id="name"
-                {...register("name", { required: "اسم المنتج مطلوب" })}
+                {...register("name", { required: t.admin.addPerfume.errors.nameRequired })}
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right ${
                   errors.name ? "border-red-500" : "border-gray-300"
                 }`}
-                placeholder="أدخل اسم المنتج"
+                placeholder={t.admin.addPerfume.namePlaceholder}
               />
               {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
             </div>
 
             <div className="space-y-2">
               <label htmlFor="brand" className="text-sm font-medium text-gray-900">
-                العلامة التجارية *
+                {t.admin.addPerfume.brandLabel}
               </label>
               <input
                 type="text"
                 id="brand"
-                {...register("brand", { required: "العلامة التجارية مطلوبة" })}
+                {...register("brand", { required: t.admin.addPerfume.errors.brandRequired })}
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right ${
                   errors.brand ? "border-red-500" : "border-gray-300"
                 }`}
-                placeholder="أدخل اسم العلامة التجارية"
+                placeholder={t.admin.addPerfume.brandPlaceholder}
               />
               {errors.brand && <p className="text-red-500 text-sm">{errors.brand.message}</p>}
             </div>
 
             <div className="space-y-2">
               <label htmlFor="price" className="text-sm font-medium text-gray-900">
-                السعر (دينار) *
+                {t.admin.addPerfume.priceLabel}
               </label>
               <input
                 type="number"
                 id="price"
                 min="0"
                 step="0.01"
-                {...register("price", { 
-                  required: "السعر مطلوب",
-                  min: { value: 0.01, message: "السعر يجب أن يكون أكبر من 0" }
+                {...register("price", {
+                  required: t.admin.addPerfume.errors.priceRequired,
+                  min: { value: 0.01, message: t.admin.addPerfume.errors.priceMin }
                 })}
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right ${
                   errors.price ? "border-red-500" : "border-gray-300"
@@ -217,16 +219,16 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
 
             <div className="space-y-2">
               <label htmlFor="category" className="text-sm font-medium text-gray-900">
-                الفئة *
+                {t.admin.addPerfume.categoryLabel}
               </label>
               <select
                 id="category"
-                {...register("category", { required: "الفئة مطلوبة" })}
+                {...register("category", { required: t.admin.addPerfume.errors.categoryRequired })}
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right ${
                   errors.category ? "border-red-500" : "border-gray-300"
                 }`}
               >
-                <option value="">اختر الفئة</option>
+                <option value="">{t.admin.addPerfume.selectCategory}</option>
                 {categories.map((category) => (
                   <option key={category} value={category}>
                     {category}
@@ -240,21 +242,21 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
           {/* Description */}
           <div className="space-y-2">
             <label htmlFor="description" className="text-sm font-medium text-gray-900">
-              الوصف
+              {t.admin.addPerfume.descriptionLabel}
             </label>
             <textarea
               id="description"
               rows={4}
               {...register("description")}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
-              placeholder="أدخل وصف المنتج..."
+              placeholder={t.admin.addPerfume.descriptionPlaceholder}
             />
           </div>
 
           {/* Available Sizes */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-900">
-              الأحجام المتاحة (مل) *
+              {t.admin.addPerfume.sizesLabel}
             </label>
             <div className="flex flex-wrap gap-2">
               {availableSizes.map((size) => (
@@ -268,7 +270,7 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
                       : "bg-white text-gray-700 border-gray-300 hover:border-blue-500"
                   }`}
                 >
-                  {size}مل
+                  {size}{t.admin.addPerfume.sizeSuffix}
                 </button>
               ))}
             </div>
@@ -278,7 +280,7 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
           {/* Product Images */}
           <div className="space-y-2">
             <label htmlFor="productImages" className="text-sm font-medium text-gray-900">
-              صور المنتج
+              {t.admin.addPerfume.imagesLabel}
             </label>
             <input
               type="file"
@@ -291,7 +293,7 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
               }`}
             />
             <p className="text-sm text-gray-500">
-              اختر صورة أو أكثر للمنتج. إذا لم يتم رفع صور، سيتم عرض صورة افتراضية.
+              {t.admin.addPerfume.imagesHint}
             </p>
             {errors.productImages && <p className="text-red-500 text-sm">{errors.productImages.message}</p>}
           </div>
@@ -299,52 +301,52 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
           {/* Fragrance Notes */}
           {/* Fragrance Notes */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900">نوتات العطر</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{t.admin.addPerfume.fragranceNotes}</h3>
 
             {renderNoteSection(
-              "العلوية",
+              t.admin.addPerfume.topNotes,
               "top",
               topNotesFields,
               appendTopNote,
               removeTopNote,
               register,
               errors,
-              "الانطباع الأول، خفيفة ومنعشة (0-15 دقيقة)"
+              t.admin.addPerfume.topNotesDesc
             )}
 
             {renderNoteSection(
-              "الوسطى",
-              "middle", 
+              t.admin.addPerfume.middleNotes,
+              "middle",
               middleNotesFields,
               appendMiddleNote,
               removeMiddleNote,
               register,
               errors,
-              "قلب العطر، زهرية وغنية (15 دقيقة - 3 ساعات)"
+              t.admin.addPerfume.middleNotesDesc
             )}
 
             {renderNoteSection(
-              "القاعدة",
+              t.admin.addPerfume.baseNotes,
               "base",
               baseNotesFields,
               appendBaseNote,
               removeBaseNote,
               register,
               errors,
-              "الأساس، دافئة ودائمة (3-8+ ساعات)"
+              t.admin.addPerfume.baseNotesDesc
             )}
           </div>
 
           {/* Submit Button */}
           <div className="flex justify-end gap-4 pt-6">
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isLoading}
               className="px-8"
             >
-              {isLoading 
-                ? (isEditMode ? 'جاري تحديث المنتج...' : 'جاري إنشاء المنتج...')
-                : (isEditMode ? 'تحديث المنتج' : 'إنشاء المنتج')
+              {isLoading
+                ? (isEditMode ? t.admin.addPerfume.updatingBtn : t.admin.addPerfume.creatingBtn)
+                : (isEditMode ? t.admin.addPerfume.updateBtn : t.admin.addPerfume.createBtn)
               }
             </Button>
           </div>

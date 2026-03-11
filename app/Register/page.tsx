@@ -3,8 +3,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { signIn } from 'next-auth/react';
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 const Register = () => {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,38 +15,38 @@ const Register = () => {
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter()
-  
+
   const HandleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-    
+
     // Form validation
     if (!name || !email || !password || !confirmPassword) {
-      setError("جميع الحقول مطلوبة");
+      setError(t.register.errors.required);
       return;
     }
-    
+
     if (name.length < 2) {
-      setError("يجب أن يكون الاسم حرفين على الأقل");
+      setError(t.register.errors.shortName);
       return;
     }
-    
+
     if (!/\S+@\S+\.\S+/.test(email)) {
-      setError("يرجى إدخال بريد إلكتروني صحيح");
+      setError(t.register.errors.invalidEmail);
       return;
     }
-    
+
     if (password.length < 6) {
-      setError("يجب أن تكون كلمة المرور 6 أحرف على الأقل");
+      setError(t.register.errors.shortPassword);
       return;
     }
-    
+
     if (password !== confirmPassword) {
-      setError("كلمتا المرور غير متطابقتين");
+      setError(t.register.errors.passwordMismatch);
       return;
     }
-    
+
     setIsLoading(true);
 
     try {
@@ -55,17 +57,17 @@ const Register = () => {
         },
         body: JSON.stringify({ email }),
       });
-      
+
       if (!ExistUserresponse.ok) {
         throw new Error('Failed to check user existence');
       }
-      
+
       const { user } = await ExistUserresponse.json();
       if (user) {
-        setError("يوجد حساب مسجل بهذا البريد الإلكتروني. يرجى استخدام بريد إلكتروني مختلف.");
+        setError(t.register.errors.emailExists);
         return;
       }
-      
+
       const response = await fetch("api/Register", {
         method: "POST",
         headers: {
@@ -77,19 +79,19 @@ const Register = () => {
           password,
         }),
       });
-      
+
       const result = await response.json();
-      
+
       if (response.ok) {
-        setSuccess("تم التسجيل بنجاح! جاري تسجيل الدخول...");
-        
+        setSuccess(t.register.successMsg);
+
         // Auto sign in the user
         const signInResponse = await signIn("credentials", {
           email,
           password,
           redirect: false
         });
-        
+
         if (signInResponse?.ok) {
           // Clear form
           const form = e.target as HTMLFormElement;
@@ -98,7 +100,7 @@ const Register = () => {
           setEmail("");
           setPassword("");
           setConfirmPassword("");
-          
+
           // Redirect to homepage
           setTimeout(() => {
             router.push("/")
@@ -112,14 +114,14 @@ const Register = () => {
       } else {
         // Handle specific error types
         if (response.status === 409) {
-          setError("يوجد حساب مسجل بهذا البريد الإلكتروني. يرجى تسجيل الدخول أو استخدام بريد إلكتروني مختلف.");
+          setError(t.register.errors.emailExistsLogin);
         } else {
-          setError(result.message || "فشل التسجيل. يرجى المحاولة مرة أخرى.");
+          setError(result.message || t.register.errors.generic);
         }
       }
     } catch (error: any) {
       console.log("Error During Registration:", error);
-      setError("حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.");
+      setError(t.register.errors.unexpected);
     } finally {
       setIsLoading(false);
     }
@@ -133,14 +135,14 @@ const Register = () => {
           <div className="w-2 h-2 rounded-full bg-amber-500"></div>
           <div className="h-px w-16 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
         </div>
-        
-        <h1 className="text-4xl font-light mb-12 text-center text-gray-900 tracking-tight">إنشاء حساب جديد</h1>
-        
+
+        <h1 className="text-4xl font-light mb-12 text-center text-gray-900 tracking-tight">{t.register.title}</h1>
+
         <form className="flex flex-col gap-6" onSubmit={HandleSubmit}>
           <div>
             <input
               type="text"
-              placeholder="الاسم الكامل"
+              placeholder={t.register.fullName}
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={isLoading}
@@ -148,11 +150,11 @@ const Register = () => {
               minLength={2}
             />
           </div>
-          
+
           <div>
             <input
               type="email"
-              placeholder="البريد الإلكتروني"
+              placeholder={t.register.email}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
@@ -160,11 +162,11 @@ const Register = () => {
               dir="ltr"
             />
           </div>
-          
+
           <div>
             <input
               type="password"
-              placeholder="كلمة المرور (6 أحرف على الأقل)"
+              placeholder={t.register.password}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
@@ -172,11 +174,11 @@ const Register = () => {
               minLength={6}
             />
           </div>
-          
+
           <div>
             <input
               type="password"
-              placeholder="تأكيد كلمة المرور"
+              placeholder={t.register.confirmPassword}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={isLoading}
@@ -184,40 +186,40 @@ const Register = () => {
               minLength={6}
             />
           </div>
-          
-          <button 
+
+          <button
             type="submit"
             disabled={isLoading}
             className={`w-full text-white font-light text-lg px-6 py-4 rounded-2xl transition-all duration-300 shadow-lg mt-2 ${
-              isLoading 
-                ? 'bg-gray-400 cursor-not-allowed' 
+              isLoading
+                ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 cursor-pointer hover:shadow-xl hover:scale-[1.02]'
             }`}
           >
-            {isLoading ? 'جاري إنشاء الحساب...' : 'إنشاء حساب'}
+            {isLoading ? t.register.creating : t.register.createBtn}
           </button>
-          
+
           {error && (
             <div className='bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-2xl text-right font-light'>
               <span className="block">{error}</span>
               {error.includes("يوجد حساب") && (
                 <div className="mt-3">
                   <Link href="/SignIn" className="text-red-800 underline hover:text-red-900 font-normal">
-                    ← الانتقال لصفحة تسجيل الدخول
+                    {t.register.goToSignIn}
                   </Link>
                 </div>
               )}
             </div>
           )}
-          
+
           {success && (
             <div className='bg-green-50 border border-green-200 text-green-700 px-5 py-4 rounded-2xl text-right font-light'>
               <span className="block">{success}</span>
             </div>
           )}
-          
+
           <Link href="/SignIn" className="text-sm mt-4 text-center text-gray-600 hover:text-gray-900 font-light transition-colors">
-            لديك حساب بالفعل؟ <span className="underline text-amber-600 hover:text-amber-700">سجل الدخول</span>
+            {t.register.hasAccount} <span className="underline text-amber-600 hover:text-amber-700">{t.register.signInLink}</span>
           </Link>
         </form>
       </div>

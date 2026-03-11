@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 interface PromoRequest {
   $id: string;
@@ -36,6 +37,7 @@ export default function PromoRequestsPage() {
   const [payProcessing, setPayProcessing] = useState<string | null>(null);
   const [earnings, setEarnings] = useState<Record<string, EarningsData>>({});
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchRequests();
@@ -89,10 +91,10 @@ export default function PromoRequestsPage() {
           prev.map((r) => (r.$id === id ? { ...r, ...data.request } : r))
         );
       } else {
-        alert(data.error || "فشلت العملية");
+        alert(data.error || t.common.error);
       }
     } catch {
-      alert("حدث خطأ");
+      alert(t.common.error);
     } finally {
       setProcessing(null);
     }
@@ -116,27 +118,27 @@ export default function PromoRequestsPage() {
           prev.map((r) => (r.$id === req.$id ? { ...r, isPaid: !req.isPaid } : r))
         );
       } else {
-        alert(data.error || "فشل تحديث حالة الدفع");
+        alert(data.error || t.common.error);
       }
     } catch {
-      alert("حدث خطأ");
+      alert(t.common.error);
     } finally {
       setPayProcessing(null);
     }
   };
 
   const statusLabel: Record<string, { label: string; cls: string }> = {
-    PENDING: { label: "قيد الانتظار", cls: "bg-yellow-100 text-yellow-800" },
-    APPROVED: { label: "موافق عليه", cls: "bg-green-100 text-green-800" },
-    DENIED: { label: "مرفوض", cls: "bg-red-100 text-red-700" },
+    PENDING: { label: t.admin.promoRequests.pending, cls: "bg-yellow-100 text-yellow-800" },
+    APPROVED: { label: t.admin.promoRequests.approved, cls: "bg-green-100 text-green-800" },
+    DENIED: { label: t.admin.promoRequests.denied, cls: "bg-red-100 text-red-700" },
   };
 
   return (
     <div className="space-y-6" dir="rtl">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-1">طلبات رمز الإحالة</h1>
-        <p className="text-gray-500 text-sm">مراجعة الطلبات والموافقة عليها أو رفضها</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-1">{t.admin.promoRequests.title}</h1>
+        <p className="text-gray-500 text-sm">{t.admin.promoRequests.subtitle}</p>
       </div>
 
       {/* Filter Tabs */}
@@ -151,7 +153,7 @@ export default function PromoRequestsPage() {
                 : "bg-white border border-stone-200 text-stone-600 hover:bg-stone-50"
             }`}
           >
-            {f === "all" ? "الكل" : (statusLabel[f]?.label || f)}
+            {f === "all" ? t.admin.promoRequests.all : (statusLabel[f]?.label || f)}
           </button>
         ))}
       </div>
@@ -162,7 +164,16 @@ export default function PromoRequestsPage() {
           <table className="w-full text-sm">
             <thead className="bg-stone-50 border-b border-stone-200">
               <tr>
-                {["المستخدم", "الحالة", "الرمز", "العمولات", "حالة الدفع", "تاريخ الطلب", "المبلغ المستحق", "الإجراءات"].map((h) => (
+                {[
+                  t.admin.promoRequests.user,
+                  t.admin.promoRequests.status,
+                  t.admin.promoRequests.promoCode,
+                  t.admin.promoRequests.totalEarnings,
+                  t.admin.promoRequests.paymentStatus,
+                  t.admin.promoRequests.date,
+                  t.admin.promoRequests.amountDue,
+                  t.admin.promoRequests.actions,
+                ].map((h) => (
                   <th key={h} className="px-5 py-3 text-right font-medium text-stone-500">{h}</th>
                 ))}
               </tr>
@@ -182,21 +193,21 @@ export default function PromoRequestsPage() {
         </div>
       ) : requests.length === 0 ? (
         <div className="rounded-xl border border-stone-200 bg-white p-16 text-center text-gray-400">
-          لا توجد طلبات
+          {t.admin.promoRequests.noRequests}
         </div>
       ) : (
         <div className="rounded-xl border border-stone-200 overflow-hidden shadow-sm">
           <table className="w-full text-sm">
             <thead className="bg-stone-50 border-b border-stone-200">
               <tr>
-                <th className="px-5 py-3 text-right font-medium text-stone-500">المستخدم</th>
-                <th className="px-5 py-3 text-right font-medium text-stone-500">الحالة</th>
-                <th className="px-5 py-3 text-right font-medium text-stone-500">رمز الإحالة</th>
-                <th className="px-5 py-3 text-right font-medium text-stone-500">إجمالي العمولات</th>
-                <th className="px-5 py-3 text-right font-medium text-stone-500">حالة الدفع</th>
-                <th className="px-5 py-3 text-right font-medium text-stone-500">تاريخ الطلب</th>
-                <th className="px-5 py-3 text-right font-medium text-stone-500">المبلغ المستحق</th>
-                <th className="px-5 py-3 text-right font-medium text-stone-500">الإجراءات</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">{t.admin.promoRequests.user}</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">{t.admin.promoRequests.status}</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">{t.admin.promoRequests.promoCode}</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">{t.admin.promoRequests.totalEarnings}</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">{t.admin.promoRequests.paymentStatus}</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">{t.admin.promoRequests.date}</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">{t.admin.promoRequests.amountDue}</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">{t.admin.promoRequests.actions}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100 bg-white">
@@ -251,12 +262,12 @@ export default function PromoRequestsPage() {
                                 onClick={() => toggleExpanded(req.userId)}
                                 className="text-amber-500 hover:text-amber-600 transition-colors text-xs underline underline-offset-2"
                               >
-                                {isOpen ? "إخفاء" : `${ed!.records.length} مشتريات`}
+                                {isOpen ? t.admin.promoRequests.hide : `${ed!.records.length} ${t.admin.promoRequests.purchases}`}
                               </button>
                             )}
                           </div>
                         ) : (
-                          <span className="text-xs text-stone-400">10% على كل طلب</span>
+                          <span className="text-xs text-stone-400">{t.admin.promoRequests.commissions}</span>
                         )}
                       </td>
 
@@ -278,8 +289,8 @@ export default function PromoRequestsPage() {
                             {payProcessing === req.$id
                               ? "..."
                               : req.isPaid
-                              ? "تم الدفع"
-                              : "لم يُدفع بعد"}
+                              ? t.admin.promoRequests.paid
+                              : t.admin.promoRequests.notPaid}
                           </button>
                         ) : (
                           <span className="text-stone-300 text-xs">—</span>
@@ -303,7 +314,7 @@ export default function PromoRequestsPage() {
                           ) : req.isPaid ? (
                             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
                               <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                              تم الدفع
+                              {t.admin.promoRequests.paid}
                             </span>
                           ) : ed.total !== null && ed.total > 0 ? (
                             <span className="font-bold text-amber-700 text-sm">
@@ -326,14 +337,14 @@ export default function PromoRequestsPage() {
                               disabled={processing === req.$id + "approve" || processing === req.$id + "deny"}
                               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-green-500 text-white hover:bg-green-600 transition-colors disabled:opacity-50"
                             >
-                              {processing === req.$id + "approve" ? "..." : "قبول"}
+                              {processing === req.$id + "approve" ? "..." : t.admin.promoRequests.approve}
                             </button>
                             <button
                               onClick={() => handleAction(req.$id, "deny")}
                               disabled={processing === req.$id + "approve" || processing === req.$id + "deny"}
                               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50"
                             >
-                              {processing === req.$id + "deny" ? "..." : "رفض"}
+                              {processing === req.$id + "deny" ? "..." : t.admin.promoRequests.deny}
                             </button>
                           </div>
                         ) : (
@@ -348,16 +359,16 @@ export default function PromoRequestsPage() {
                         <td colSpan={8} className="px-0 py-0 bg-amber-50/40">
                           <div className="px-8 py-4 border-t border-amber-100">
                             <p className="text-xs font-semibold text-amber-700 mb-3 tracking-wide uppercase">
-                              تفاصيل المشتريات
+                              {t.admin.promoRequests.purchaseDetails}
                             </p>
                             <table className="w-full text-sm rounded-lg overflow-hidden">
                               <thead>
                                 <tr className="bg-white border border-stone-100 rounded-lg">
                                   <th className="px-4 py-2 text-right text-xs font-medium text-stone-500 rounded-tr-lg">#</th>
-                                  <th className="px-4 py-2 text-right text-xs font-medium text-stone-500">المشتري</th>
-                                  <th className="px-4 py-2 text-right text-xs font-medium text-stone-500">تاريخ الشراء</th>
-                                  <th className="px-4 py-2 text-right text-xs font-medium text-stone-500">رقم الطلب</th>
-                                  <th className="px-4 py-2 text-left text-xs font-medium text-stone-500 rounded-tl-lg">العمولة</th>
+                                  <th className="px-4 py-2 text-right text-xs font-medium text-stone-500">{t.admin.promoRequests.buyer}</th>
+                                  <th className="px-4 py-2 text-right text-xs font-medium text-stone-500">{t.admin.promoRequests.purchaseDate}</th>
+                                  <th className="px-4 py-2 text-right text-xs font-medium text-stone-500">{t.admin.promoRequests.orderNumber}</th>
+                                  <th className="px-4 py-2 text-left text-xs font-medium text-stone-500 rounded-tl-lg">{t.admin.promoRequests.commission}</th>
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-stone-100">
@@ -384,7 +395,7 @@ export default function PromoRequestsPage() {
                               <tfoot>
                                 <tr className="bg-stone-50 border-t border-stone-200">
                                   <td colSpan={4} className="px-4 py-2 text-xs font-semibold text-stone-500 text-right">
-                                    الإجمالي
+                                    {t.admin.promoRequests.total}
                                   </td>
                                   <td className="px-4 py-2 text-left font-bold text-green-700">
                                     {ed!.total?.toFixed(2)} <span className="text-xs font-normal text-stone-400">TND</span>

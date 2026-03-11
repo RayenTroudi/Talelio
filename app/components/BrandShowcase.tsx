@@ -1,12 +1,15 @@
 "use client";
 
 import React from "react";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 const BrandShowcase = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="py-32 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(251,191,36,0.05),transparent_70%)]" />
-      
+
       <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
         {/* Section Header */}
         <div className="text-center mb-20">
@@ -14,10 +17,10 @@ const BrandShowcase = () => {
             <div className="h-px w-16 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto" />
           </div>
           <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
-            <span className="font-serif italic text-amber-600">تجربة</span> فريدة من نوعها
+            <span className="font-serif italic text-amber-600">{t.brand.sectionTitle}</span> {t.brand.sectionTitleHighlight}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            نقدم عطوراً حصرية تجمع بين الأصالة والحداثة، مصنوعة من أجود المكونات الطبيعية
+            {t.brand.sectionSubtitle}
           </p>
         </div>
 
@@ -42,9 +45,9 @@ const BrandShowcase = () => {
                 </svg>
               </div>
             </div>
-            <h3 className="text-2xl font-light text-gray-900 mb-4">جودة استثنائية</h3>
+            <h3 className="text-2xl font-light text-gray-900 mb-4">{t.brand.feature1Title}</h3>
             <p className="text-gray-600 leading-relaxed">
-              مكونات طبيعية نقية ومختارة بعناية من أرقى المصادر حول العالم
+              {t.brand.feature1Desc}
             </p>
           </div>
 
@@ -67,9 +70,9 @@ const BrandShowcase = () => {
                 </svg>
               </div>
             </div>
-            <h3 className="text-2xl font-light text-gray-900 mb-4">حرفية عالية</h3>
+            <h3 className="text-2xl font-light text-gray-900 mb-4">{t.brand.feature2Title}</h3>
             <p className="text-gray-600 leading-relaxed">
-              صُنع بدقة متناهية من قبل خبراء في فن صناعة العطور
+              {t.brand.feature2Desc}
             </p>
           </div>
 
@@ -92,9 +95,9 @@ const BrandShowcase = () => {
                 </svg>
               </div>
             </div>
-            <h3 className="text-2xl font-light text-gray-900 mb-4">ضمان الأصالة</h3>
+            <h3 className="text-2xl font-light text-gray-900 mb-4">{t.brand.feature3Title}</h3>
             <p className="text-gray-600 leading-relaxed">
-              منتجات أصلية 100% مع ضمان الجودة والتسليم الآمن
+              {t.brand.feature3Desc}
             </p>
           </div>
         </div>
@@ -106,25 +109,25 @@ const BrandShowcase = () => {
               <div className="text-4xl md:text-5xl font-light text-amber-600 mb-2 group-hover:scale-110 transition-transform duration-300">
                 15+
               </div>
-              <p className="text-sm text-gray-600 font-light tracking-wide">سنوات من الخبرة</p>
+              <p className="text-sm text-gray-600 font-light tracking-wide">{t.brand.yearsExperience}</p>
             </div>
             <div className="group">
               <div className="text-4xl md:text-5xl font-light text-amber-600 mb-2 group-hover:scale-110 transition-transform duration-300">
                 200+
               </div>
-              <p className="text-sm text-gray-600 font-light tracking-wide">عطر حصري</p>
+              <p className="text-sm text-gray-600 font-light tracking-wide">{t.brand.exclusivePerfumes}</p>
             </div>
             <div className="group">
               <div className="text-4xl md:text-5xl font-light text-amber-600 mb-2 group-hover:scale-110 transition-transform duration-300">
                 50K+
               </div>
-              <p className="text-sm text-gray-600 font-light tracking-wide">عميل سعيد</p>
+              <p className="text-sm text-gray-600 font-light tracking-wide">{t.brand.happyClients}</p>
             </div>
             <div className="group">
               <div className="text-4xl md:text-5xl font-light text-amber-600 mb-2 group-hover:scale-110 transition-transform duration-300">
                 98%
               </div>
-              <p className="text-sm text-gray-600 font-light tracking-wide">رضا العملاء</p>
+              <p className="text-sm text-gray-600 font-light tracking-wide">{t.brand.customerSatisfaction}</p>
             </div>
           </div>
         </div>

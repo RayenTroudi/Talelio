@@ -9,8 +9,10 @@ import { useSession } from "next-auth/react";
 import Checkout from "../components/Checkout";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 const Shipping = () => {
+  const { t } = useTranslation();
   //React Hook Form
   const {
     handleSubmit,
@@ -40,7 +42,7 @@ const Shipping = () => {
       );
       const data = await res.json();
       if (!res.ok) {
-        setPromoError(data.error || "رمز الإحالة غير صالح");
+        setPromoError(data.error || t.shipping.promoInvalid);
       } else {
         dispatch(
           setPromoCode({
@@ -51,7 +53,7 @@ const Shipping = () => {
         setPromoInput("");
       }
     } catch {
-      setPromoError("حدث خطأ. يرجى المحاولة مرة أخرى.");
+      setPromoError(t.shipping.promoError);
     } finally {
       setPromoLoading(false);
     }
@@ -89,7 +91,7 @@ const Shipping = () => {
     <>
     <Navbar/>
     <div className="container mt-10 mb-16">
-      
+
       <Checkout activeStep={1} />
       <form
         className="mx-auto max-w-screen-md bg-gradient-to-br from-white to-amber-50/20 backdrop-blur-sm rounded-3xl shadow-2xl border border-amber-200/30 p-10 md:p-12"
@@ -101,32 +103,32 @@ const Shipping = () => {
           <div className="w-2 h-2 rounded-full bg-amber-500/50"></div>
           <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
         </div>
-        
-        <h1 className="text-4xl font-light text-center mt-4 mb-10 text-stone-900 tracking-wide">عنوان التوصيل</h1>
-        
+
+        <h1 className="text-4xl font-light text-center mt-4 mb-10 text-stone-900 tracking-wide">{t.shipping.title}</h1>
+
         <div className="space-y-6">
           {/* Full Name */}
           <div>
             <label htmlFor="fullName" className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
-              الاسم الكامل <span className="text-red-500">*</span>
+              {t.shipping.fullName} <span className="text-red-500">*</span>
             </label>
             <input
               className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all text-right"
               id="fullName"
               autoFocus
               {...register("fullName", {
-                required: "يرجى إدخال اسمك الكامل",
+                required: t.shipping.errors.fullName,
               })}
             />
             {errors.fullName && (
-              <div className="text-red-500 text-sm mt-1 text-right">{errors.fullName.message}</div>
+              <div className="text-red-500 text-sm mt-1 text-right">{errors.fullName.message as string}</div>
             )}
           </div>
 
           {/* Phone */}
           <div>
             <label htmlFor="phone" className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
-              رقم الهاتف <span className="text-red-500">*</span>
+              {t.shipping.phone} <span className="text-red-500">*</span>
             </label>
             <input
               className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all"
@@ -134,36 +136,36 @@ const Shipping = () => {
               type="tel"
               dir="ltr"
               {...register("phone", {
-                required: "يرجى إدخال رقم هاتفك",
+                required: t.shipping.errors.phone,
                 pattern: {
                   value: /^[0-9\s\-\+\(\)]+$/,
-                  message: "يرجى إدخال رقم هاتف صالح"
+                  message: t.shipping.errors.phoneInvalid
                 }
               })}
             />
             {errors.phone && (
-              <div className="text-red-500 text-sm mt-1 text-right">{errors.phone.message}</div>
+              <div className="text-red-500 text-sm mt-1 text-right">{errors.phone.message as string}</div>
             )}
           </div>
 
           {/* Address */}
           <div>
             <label htmlFor="address" className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
-              عنوان الشارع <span className="text-red-500">*</span>
+              {t.shipping.address} <span className="text-red-500">*</span>
             </label>
             <input
               className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all text-right"
               id="address"
               {...register("address", {
-                required: "يرجى إدخال عنوانك",
+                required: t.shipping.errors.address,
                 minLength: {
                   value: 3,
-                  message: "يجب أن يكون العنوان 3 أحرف على الأقل",
+                  message: t.shipping.errors.addressMin,
                 },
               })}
             />
             {errors.address && (
-              <div className="text-red-500 text-sm mt-1 text-right">{errors.address.message}</div>
+              <div className="text-red-500 text-sm mt-1 text-right">{errors.address.message as string}</div>
             )}
           </div>
 
@@ -171,59 +173,59 @@ const Shipping = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="city" className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
-                المدينة <span className="text-red-500">*</span>
+                {t.shipping.city} <span className="text-red-500">*</span>
               </label>
               <input
                 className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all text-right"
                 id="city"
                 {...register("city", {
-                  required: "يرجى إدخال مدينتك",
+                  required: t.shipping.errors.city,
                 })}
               />
               {errors.city && (
-                <div className="text-red-500 text-sm mt-1 text-right">{errors.city.message}</div>
+                <div className="text-red-500 text-sm mt-1 text-right">{errors.city.message as string}</div>
               )}
             </div>
 
             <div>
               <label htmlFor="gouvernorat" className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
-                الولاية <span className="text-red-500">*</span>
+                {t.shipping.gouvernorat} <span className="text-red-500">*</span>
               </label>
               <select
                 className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all bg-white text-right"
                 id="gouvernorat"
                 {...register("gouvernorat", {
-                  required: "يرجى اختيار ولايتك",
+                  required: t.shipping.errors.gouvernorat,
                 })}
               >
-                <option value="">اختر الولاية</option>
-                <option value="Tunis">تونس</option>
-                <option value="Ariana">أريانة</option>
-                <option value="Ben Arous">بن عروس</option>
-                <option value="Manouba">منوبة</option>
-                <option value="Nabeul">نابل</option>
-                <option value="Zaghouan">زغوان</option>
-                <option value="Bizerte">بنزرت</option>
-                <option value="Béja">باجة</option>
-                <option value="Jendouba">جندوبة</option>
-                <option value="Kef">الكاف</option>
-                <option value="Siliana">سليانة</option>
-                <option value="Sousse">سوسة</option>
-                <option value="Monastir">المنستير</option>
-                <option value="Mahdia">المهدية</option>
-                <option value="Sfax">صفاقس</option>
-                <option value="Kairouan">القيروان</option>
-                <option value="Kasserine">القصرين</option>
-                <option value="Sidi Bouzid">سيدي بوزيد</option>
-                <option value="Gabès">قابس</option>
-                <option value="Medenine">مدنين</option>
-                <option value="Tataouine">تطاوين</option>
-                <option value="Gafsa">قفصة</option>
-                <option value="Tozeur">توزر</option>
-                <option value="Kebili">قبلي</option>
+                <option value="">{t.shipping.selectGouvernorat}</option>
+                <option value="Tunis">{t.shipping.gouvernorats.Tunis}</option>
+                <option value="Ariana">{t.shipping.gouvernorats.Ariana}</option>
+                <option value="Ben Arous">{t.shipping.gouvernorats.BenArous}</option>
+                <option value="Manouba">{t.shipping.gouvernorats.Manouba}</option>
+                <option value="Nabeul">{t.shipping.gouvernorats.Nabeul}</option>
+                <option value="Zaghouan">{t.shipping.gouvernorats.Zaghouan}</option>
+                <option value="Bizerte">{t.shipping.gouvernorats.Bizerte}</option>
+                <option value="Béja">{t.shipping.gouvernorats.Beja}</option>
+                <option value="Jendouba">{t.shipping.gouvernorats.Jendouba}</option>
+                <option value="Kef">{t.shipping.gouvernorats.Kef}</option>
+                <option value="Siliana">{t.shipping.gouvernorats.Siliana}</option>
+                <option value="Sousse">{t.shipping.gouvernorats.Sousse}</option>
+                <option value="Monastir">{t.shipping.gouvernorats.Monastir}</option>
+                <option value="Mahdia">{t.shipping.gouvernorats.Mahdia}</option>
+                <option value="Sfax">{t.shipping.gouvernorats.Sfax}</option>
+                <option value="Kairouan">{t.shipping.gouvernorats.Kairouan}</option>
+                <option value="Kasserine">{t.shipping.gouvernorats.Kasserine}</option>
+                <option value="Sidi Bouzid">{t.shipping.gouvernorats.SidiBouzid}</option>
+                <option value="Gabès">{t.shipping.gouvernorats.Gabes}</option>
+                <option value="Medenine">{t.shipping.gouvernorats.Medenine}</option>
+                <option value="Tataouine">{t.shipping.gouvernorats.Tataouine}</option>
+                <option value="Gafsa">{t.shipping.gouvernorats.Gafsa}</option>
+                <option value="Tozeur">{t.shipping.gouvernorats.Tozeur}</option>
+                <option value="Kebili">{t.shipping.gouvernorats.Kebili}</option>
               </select>
               {errors.gouvernorat && (
-                <div className="text-red-500 text-sm mt-1 text-right">{errors.gouvernorat.message}</div>
+                <div className="text-red-500 text-sm mt-1 text-right">{errors.gouvernorat.message as string}</div>
               )}
             </div>
           </div>
@@ -231,7 +233,7 @@ const Shipping = () => {
           {/* Postal Code */}
           <div>
             <label htmlFor="postalCode" className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
-              الرمز البريدي
+              {t.shipping.postalCode}
             </label>
             <input
               className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all"
@@ -244,13 +246,13 @@ const Shipping = () => {
           {/* Delivery Notes */}
           <div>
             <label htmlFor="notes" className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
-              ملاحظات التوصيل (اختياري)
+              {t.shipping.notes}
             </label>
             <textarea
               className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all resize-none text-right"
               id="notes"
               rows={3}
-              placeholder="أي تعليمات خاصة للتوصيل..."
+              placeholder={t.shipping.notesPlaceholder}
               {...register("notes")}
             />
           </div>
@@ -260,7 +262,7 @@ const Shipping = () => {
           {session ? (
             <div className="border-t border-stone-200/50 pt-6">
               <label className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
-                رمز الإحالة (اختياري)
+                {t.shipping.promoCode}
               </label>
               {appliedPromoCode ? (
                 <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl p-4">
@@ -269,11 +271,11 @@ const Shipping = () => {
                     onClick={() => dispatch(clearPromoCode())}
                     className="text-red-500 text-sm hover:text-red-700 transition-colors"
                   >
-                    إزالة
+                    {t.shipping.promoRemove}
                   </button>
                   <div className="text-right">
                     <p className="font-medium text-green-800 tracking-widest">{appliedPromoCode}</p>
-                      <p className="text-sm text-green-600 font-light">تم تطبيق رمز الإحالة ✔️</p>
+                      <p className="text-sm text-green-600 font-light">{t.shipping.promoApplied}</p>
                   </div>
                 </div>
               ) : (
@@ -286,7 +288,7 @@ const Shipping = () => {
                       setPromoError("");
                     }}
                     onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleApplyPromo())}
-                    placeholder="أدخل رمز الإحالة"
+                    placeholder={t.shipping.promoPlaceholder}
                     className="flex-1 px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all tracking-widest uppercase"
                   />
                   <button
@@ -295,7 +297,7 @@ const Shipping = () => {
                     onClick={handleApplyPromo}
                     className="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:bg-stone-300 text-white font-light text-sm transition-colors whitespace-nowrap"
                   >
-                    {promoLoading ? "..." : "تطبيق"}
+                    {promoLoading ? t.shipping.promoApplying : t.shipping.promoApply}
                   </button>
                 </div>
               )}
@@ -307,7 +309,7 @@ const Shipping = () => {
 
         <div className="mt-10">
           <button className="w-full py-5 rounded-2xl font-light text-lg tracking-wide bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-xl shadow-amber-400/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5">
-            متابعة لمراجعة الطلب
+            {t.shipping.continueBtn}
           </button>
         </div>
       </form>

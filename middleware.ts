@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { LOCALE_COOKIE, DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/i18n';
 
 /**
  * Middleware for role-based route protection
@@ -7,6 +8,16 @@ import { getToken } from 'next-auth/jwt';
  */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Preserve locale cookie on redirects
+  function redirect(url: URL) {
+    const localeCookie = request.cookies.get(LOCALE_COOKIE)?.value;
+    const response = NextResponse.redirect(url);
+    if (localeCookie && SUPPORTED_LOCALES.includes(localeCookie as any)) {
+      response.cookies.set(LOCALE_COOKIE, localeCookie, { path: '/', maxAge: 60 * 60 * 24 * 365 });
+    }
+    return response;
+  }
   
   // Skip middleware for API routes, static files, and public routes
   if (
@@ -40,14 +51,14 @@ export async function middleware(request: NextRequest) {
         const loginUrl = new URL('/SignIn', request.url);
         loginUrl.searchParams.set('redirect', pathname);
         loginUrl.searchParams.set('error', 'unauthenticated');
-        return NextResponse.redirect(loginUrl);
+        return redirect(loginUrl);
       }
-      
+
       // Authenticated but not admin -> redirect to account
       if (token.role !== 'admin') {
         console.log('❌ Admin route - User role, redirecting to account');
         const accountUrl = new URL('/account', request.url);
-        return NextResponse.redirect(accountUrl);
+        return redirect(accountUrl);
       }
       
       console.log('✅ Admin route - Access granted');
@@ -62,25 +73,25 @@ export async function middleware(request: NextRequest) {
         const loginUrl = new URL('/SignIn', request.url);
         loginUrl.searchParams.set('redirect', pathname);
         loginUrl.searchParams.set('error', 'unauthenticated');
-        return NextResponse.redirect(loginUrl);
+        return redirect(loginUrl);
       }
-      
+
       console.log('✅ Account route - Access granted');
       return NextResponse.next();
     }
-    
+
     // All other routes - allow access
     return NextResponse.next();
-    
+
   } catch (error) {
     console.error('❌ Middleware error:', error);
-    
+
     // On error, redirect to login for protected routes
     if (pathname.startsWith('/admin') || pathname.startsWith('/account')) {
       const loginUrl = new URL('/SignIn', request.url);
       loginUrl.searchParams.set('redirect', pathname);
       loginUrl.searchParams.set('error', 'server_error');
-      return NextResponse.redirect(loginUrl);
+      return redirect(loginUrl);
     }
     
     // For other routes, allow access

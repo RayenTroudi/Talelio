@@ -5,65 +5,67 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-const navigation = [
-  {
-    name: "لوحة التحكم",
-    href: "/admin",
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z" />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h4a2 2 0 012 2v4H8V5zM3 7h18" />
-      </svg>
-    ),
-  },
-  {
-    name: "المنتجات",
-    href: "/admin/perfumes",
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-      </svg>
-    ),
-    subItems: [
-      {
-        name: "جميع المنتجات",
-        href: "/admin/perfumes",
-      },
-      {
-        name: "إضافة منتج",
-        href: "/admin/perfumes/add",
-      },
-    ],
-  },
-  {
-    name: "الطلبات",
-    href: "/admin/orders",
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-      </svg>
-    ),
-  },
-  {
-    name: "طلبات الترويج",
-    href: "/admin/promo-requests",
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-      </svg>
-    ),
-  },
-];
-
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const pathname = usePathname();
+  const { t } = useTranslation();
+
+  const navigation = [
+    {
+      name: t.admin.nav.dashboard,
+      href: "/admin",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h4a2 2 0 012 2v4H8V5zM3 7h18" />
+        </svg>
+      ),
+    },
+    {
+      name: t.admin.nav.products,
+      href: "/admin/perfumes",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+      ),
+      subItems: [
+        {
+          name: t.admin.nav.allProducts,
+          href: "/admin/perfumes",
+        },
+        {
+          name: t.admin.nav.addProduct,
+          href: "/admin/perfumes/add",
+        },
+      ],
+    },
+    {
+      name: t.admin.nav.orders,
+      href: "/admin/orders",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+      ),
+    },
+    {
+      name: t.admin.nav.promoRequests,
+      href: "/admin/promo-requests",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+      ),
+    },
+  ];
 
   const toggleExpanded = (name: string) => {
     const newExpanded = new Set(expandedItems);
@@ -197,8 +199,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900">مستخدم الإدارة</p>
-              <p className="text-xs text-gray-500">مسؤول</p>
+              <p className="text-sm font-medium text-gray-900">{t.admin.nav.adminUser}</p>
+              <p className="text-xs text-gray-500">{t.admin.nav.adminRole}</p>
             </div>
           </div>
         </div>
@@ -219,7 +221,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 </svg>
               </button>
             </div>
-            
+
             <div className="flex items-center gap-4">
               {/* Back to Store */}
               <Link href="/">
@@ -227,7 +229,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
-                  العودة للمتجر
+                  {t.admin.nav.backToStore}
                 </Button>
               </Link>
             </div>

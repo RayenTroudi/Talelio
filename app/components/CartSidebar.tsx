@@ -6,12 +6,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 export default function CartSidebar() {
   const dispatch = useDispatch();
   const { showSidebar, CartItems, itemsPrice, loading } = useSelector(
     (state: any) => state.Cart
   );
+  const { t } = useTranslation();
 
   const [isClient, setIsClient] = useState(false);
 
@@ -49,10 +51,10 @@ export default function CartSidebar() {
         <div className="flex items-center justify-between px-6 sm:px-8 py-6 border-b border-stone-200/60 bg-white/80 backdrop-blur-sm">
           <div>
             <h2 className="text-2xl sm:text-3xl font-serif font-light text-stone-900 tracking-tight">
-              سلة التسوق
+              {t.cart.title}
             </h2>
             <p className="text-sm text-stone-500 font-light mt-0.5">
-              {CartItems.length} {CartItems.length === 1 ? "منتج" : "منتجات"}
+              {CartItems.length} {CartItems.length === 1 ? t.cart.product : t.cart.products}
             </p>
           </div>
           <button
@@ -82,7 +84,7 @@ export default function CartSidebar() {
             <div className="flex items-center justify-center h-full">
               <div className="text-center space-y-3">
                 <div className="w-8 h-8 border-2 border-stone-300 border-t-stone-900 rounded-full animate-spin mx-auto"></div>
-                <p className="text-stone-500 font-light text-sm">جاري التحميل...</p>
+                <p className="text-stone-500 font-light text-sm">{t.cart.loading}</p>
               </div>
             </div>
           ) : CartItems.length === 0 ? (
@@ -109,10 +111,10 @@ export default function CartSidebar() {
 
               {/* Refined Typography */}
               <h3 className="text-2xl font-serif font-light text-stone-900 mb-3 tracking-tight">
-                سلة التسوق فارغة
+                {t.cart.empty}
               </h3>
               <p className="text-sm text-stone-600 font-light leading-relaxed max-w-xs mb-8">
-                أضف عطراً لبدء تجربتك العطرية
+                {t.cart.emptyDesc}
               </p>
 
               {/* Elegant CTA Button */}
@@ -133,7 +135,7 @@ export default function CartSidebar() {
                     d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
                   />
                 </svg>
-                <span>اكتشف عطورنا</span>
+                <span>{t.cart.discoverBtn}</span>
               </button>
             </div>
           ) : (
@@ -214,7 +216,7 @@ export default function CartSidebar() {
           <div className="border-t border-stone-200/60 bg-white/90 backdrop-blur-md px-6 sm:px-8 py-6 space-y-5">
             {/* Subtotal */}
             <div className="flex items-baseline justify-between">
-              <span className="text-stone-600 font-light text-sm uppercase tracking-wide">المجموع الفرعي</span>
+              <span className="text-stone-600 font-light text-sm uppercase tracking-wide">{t.cart.subtotal}</span>
               <div className="text-right">
                 <span className="text-3xl font-serif font-light text-stone-900">{itemsPrice}</span>
                 <span className="text-lg text-stone-600 ml-1.5">DT</span>
@@ -229,7 +231,7 @@ export default function CartSidebar() {
               onClick={handleClose}
               className="group relative block w-full py-4 text-center rounded-2xl font-light tracking-widest uppercase bg-white text-gray-700 border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 shadow-lg hover:shadow-xl overflow-hidden transition-all duration-300"
             >
-              <span className="relative z-10">إتمام الطلب</span>
+              <span className="relative z-10">{t.cart.checkout}</span>
               <div className="absolute inset-0 bg-gradient-to-r from-amber-900/20 to-stone-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
           </div>

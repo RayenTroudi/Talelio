@@ -6,6 +6,7 @@ import { ProductImageUI } from "@/types";
 import { useDispatch } from "react-redux";
 import { addToCart } from "@/app/Redux/slices/CartSlice";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 interface ProductDetailProps {
   id: string | number;
@@ -59,6 +60,7 @@ export function ProductDetail({
 }: ProductDetailProps) {
   const dispatch = useDispatch();
   const router = useRouter();
+  const { t } = useTranslation();
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
 
@@ -100,7 +102,7 @@ export function ProductDetail({
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          <span className="font-medium">العودة</span>
+          <span className="font-medium">{t.productDetail.backBtn}</span>
         </button>
 
         {/* Main Product Container */}
@@ -127,12 +129,12 @@ export function ProductDetail({
               <div className="absolute top-8 left-8 flex flex-col gap-3">
                 {isNew && (
                   <span className="inline-flex items-center px-4 py-2 rounded-full text-xs font-medium bg-emerald-100/90 text-emerald-700 backdrop-blur-sm shadow-lg">
-                    وصل حديثاً
+                    {t.productDetail.newArrival}
                   </span>
                 )}
                 {isOnSale && (
                   <span className="inline-flex items-center px-4 py-2 rounded-full text-xs font-medium bg-rose-100/90 text-rose-700 backdrop-blur-sm shadow-lg">
-                    تخفيض
+                    {t.productDetail.onSale}
                   </span>
                 )}
               </div>
@@ -154,11 +156,11 @@ export function ProductDetail({
               <div className="mb-8 pb-8 border-b border-stone-200">
                 <div className="flex items-baseline gap-4">
                   <span className="text-5xl font-serif font-light text-stone-900">
-                    {displayPrice.toFixed(2)} دينار
+                    {displayPrice.toFixed(2)} {t.productDetail.currency}
                   </span>
                   {isOnSale && originalPrice && (
                     <span className="text-2xl text-stone-400 line-through font-light">
-                      {originalPrice.toFixed(2)} دينار
+                      {originalPrice.toFixed(2)} {t.productDetail.currency}
                     </span>
                   )}
                 </div>
@@ -167,7 +169,7 @@ export function ProductDetail({
               {/* Size Selection */}
               <div className="mb-8">
                 <label className="block text-sm font-light tracking-wide text-stone-700 mb-4 text-right">
-                  اختر الحجم
+                  {t.productDetail.selectSize}
                 </label>
                 <div className="flex gap-3 flex-row-reverse">
                   {sizes.map((size) => (
@@ -191,7 +193,7 @@ export function ProductDetail({
               {/* Quantity Selector */}
               <div className="mb-8">
                 <label className="block text-sm font-light tracking-wide text-stone-700 mb-4 text-right">
-                  الكمية
+                  {t.productDetail.qty}
                 </label>
                 <div className="inline-flex items-center bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm flex-row-reverse">
                   <button
@@ -222,12 +224,12 @@ export function ProductDetail({
               <div className="mb-8 text-right">
                 {isInStock ? (
                   <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 text-emerald-700">
-                    <span className="text-sm font-light">متوفر</span>
+                  <span className="text-sm font-light">{t.productDetail.inStock}</span>
                     <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
                   </div>
                 ) : (
                   <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-50 text-rose-700">
-                    <span className="text-sm font-light">غير متوفر</span>
+                  <span className="text-sm font-light">{t.productDetail.outOfStock}</span>
                     <div className="w-2 h-2 rounded-full bg-rose-500"></div>
                   </div>
                 )}
@@ -245,7 +247,7 @@ export function ProductDetail({
                   transition-all duration-300 transform hover:-translate-y-0.5
                 "
               >
-                {!selectedSize ? 'اختر الحجم' : 'أضف إلى السلة'}
+                {!selectedSize ? t.productDetail.selectSize : t.productDetail.addToCart}
               </button>
 
               {/* Trust Badges */}
@@ -254,19 +256,19 @@ export function ProductDetail({
                   <svg className="w-6 h-6 mx-auto mb-2 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                   </svg>
-                  <p className="text-xs text-stone-600 font-light">أصلي 100%</p>
+                  <p className="text-xs text-stone-600 font-light">{t.productDetail.authentic}</p>
                 </div>
                 <div className="text-center">
                   <svg className="w-6 h-6 mx-auto mb-2 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                   </svg>
-                  <p className="text-xs text-stone-600 font-light">توصيل مجاني</p>
+                  <p className="text-xs text-stone-600 font-light">{t.productDetail.freeDelivery}</p>
                 </div>
                 <div className="text-center">
                   <svg className="w-6 h-6 mx-auto mb-2 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
-                  <p className="text-xs text-stone-600 font-light">ضمان 30 يوم</p>
+                  <p className="text-xs text-stone-600 font-light">{t.productDetail.guarantee}</p>
                 </div>
               </div>
             </div>
@@ -281,14 +283,14 @@ export function ProductDetail({
                   <div className="w-2 h-2 rounded-full bg-amber-500/50"></div>
                   <div className="h-px w-24 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
                 </div>
-                <h2 className="text-4xl font-light text-stone-900 mb-3 tracking-wide">مكونات العطر</h2>
-                <p className="text-stone-600 font-light tracking-wide">مزيج متناغم من المكونات الفاخرة</p>
+                <h2 className="text-4xl font-light text-stone-900 mb-3 tracking-wide">{t.productDetail.fragrance}</h2>
+                <p className="text-stone-600 font-light tracking-wide">{t.productDetail.fragranceSubtitle}</p>
               </div>
 
               <div className="grid md:grid-cols-3 gap-8">
                 {/* Top Notes */}
                 <div className="bg-gradient-to-br from-rose-50/50 to-pink-50/30 rounded-3xl p-8 border border-rose-100/50 shadow-lg shadow-rose-100/20 hover:shadow-xl hover:shadow-rose-100/30 transition-all duration-300">
-                  <h3 className="text-sm font-light tracking-[0.2em] text-rose-700 mb-6 text-center">المكونات العليا</h3>
+                  <h3 className="text-sm font-light tracking-[0.2em] text-rose-700 mb-6 text-center">{t.productDetail.topNotesLabel}</h3>
                   <div className="space-y-4">
                     {topNotes.map((note, idx) => (
                       <div key={idx} className="flex items-center gap-4 group flex-row-reverse">
@@ -300,7 +302,7 @@ export function ProductDetail({
 
                 {/* Middle Notes */}
                 <div className="bg-gradient-to-br from-amber-50/50 to-yellow-50/30 rounded-3xl p-8 border border-amber-100/50 shadow-lg shadow-amber-100/20 hover:shadow-xl hover:shadow-amber-100/30 transition-all duration-300">
-                  <h3 className="text-sm font-light tracking-[0.2em] text-amber-700 mb-6 text-center">مكونات القلب</h3>
+                  <h3 className="text-sm font-light tracking-[0.2em] text-amber-700 mb-6 text-center">{t.productDetail.middleNotesLabel}</h3>
                   <div className="space-y-4">
                     {middleNotes.map((note, idx) => (
                       <div key={idx} className="flex items-center gap-4 group flex-row-reverse">
@@ -312,7 +314,7 @@ export function ProductDetail({
 
                 {/* Base Notes */}
                 <div className="bg-gradient-to-br from-stone-50/50 to-slate-50/30 rounded-3xl p-8 border border-stone-200/50 shadow-lg shadow-stone-200/20 hover:shadow-xl hover:shadow-stone-200/30 transition-all duration-300">
-                  <h3 className="text-sm font-light tracking-[0.2em] text-stone-700 mb-6 text-center">المكونات الأساسية</h3>
+                  <h3 className="text-sm font-light tracking-[0.2em] text-stone-700 mb-6 text-center">{t.productDetail.baseNotesLabel}</h3>
                   <div className="space-y-4">
                     {baseNotes.map((note, idx) => (
                       <div key={idx} className="flex items-center gap-4 group flex-row-reverse">

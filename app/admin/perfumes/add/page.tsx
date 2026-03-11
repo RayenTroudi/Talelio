@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AddPerfumeForm } from "@/app/components/admin/AddPerfumeForm";
 import { appwriteConfig } from "@/lib/appwrite-config";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 // Mock Appwrite service - replace with actual Appwrite configuration
 interface PerfumeFormData {
@@ -26,37 +27,38 @@ export default function AddPerfumePage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { t } = useTranslation();
 
   const handleSubmit = async (data: PerfumeFormData) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Step 1: Upload images to Appwrite Storage via server-side API
       let uploadedImageIds: string[] = [];
-      
+
       if (data.productImages && data.productImages.length > 0) {
         console.log(`Uploading ${data.productImages.length} images via server API...`);
-        
+
         const uploadPromises = Array.from(data.productImages).map(async (file) => {
           try {
             // Create FormData for the upload API
             const formData = new FormData();
             formData.append('file', file);
             formData.append('bucketId', appwriteConfig.perfumeImagesBucketId);
-            
+
             // Upload via server-side API route
             const response = await fetch('/api/upload-image', {
               method: 'POST',
               body: formData,
             });
-            
+
             const result = await response.json();
-            
+
             if (!response.ok || !result.success) {
               throw new Error(result.error || 'Failed to upload image');
             }
-            
+
             console.log('Image uploaded successfully:', result.fileId);
             return result.fileId;
           } catch (uploadError) {
@@ -64,11 +66,11 @@ export default function AddPerfumePage() {
             throw uploadError;
           }
         });
-        
+
         uploadedImageIds = await Promise.all(uploadPromises);
         console.log('All images uploaded. File IDs:', uploadedImageIds);
       }
-      
+
       // Step 2: Transform form data for API
       const perfumeData = {
         name: data.name,
@@ -78,13 +80,13 @@ export default function AddPerfumePage() {
         sizes: Array.isArray(data.sizes) ? data.sizes.map(size => `${size}ml`) : [],
         description: data.description || "",
         isInStock: data.isInStock,
-        topNotes: Array.isArray(data.topNotes) 
+        topNotes: Array.isArray(data.topNotes)
           ? data.topNotes.filter(note => note.name.trim()).map(note => note.name.trim())
           : [],
-        middleNotes: Array.isArray(data.middleNotes) 
+        middleNotes: Array.isArray(data.middleNotes)
           ? data.middleNotes.filter(note => note.name.trim()).map(note => note.name.trim())
           : [],
-        baseNotes: Array.isArray(data.baseNotes) 
+        baseNotes: Array.isArray(data.baseNotes)
           ? data.baseNotes.filter(note => note.name.trim()).map(note => note.name.trim())
           : [],
         // Send file IDs directly as array of strings
@@ -105,7 +107,7 @@ export default function AddPerfumePage() {
 
       const result = await response.json();
       console.log('API Response:', result);
-      
+
       if (result.success) {
         setSuccess(true);
         setTimeout(() => {
@@ -115,7 +117,7 @@ export default function AddPerfumePage() {
         console.error('API Error:', result);
         throw new Error(result.error || 'Failed to create perfume');
       }
-      
+
     } catch (error) {
       console.error('Error creating perfume:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -138,9 +140,9 @@ export default function AddPerfumePage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">تم إنشاء العطر بنجاح!</h2>
-          <p className="text-gray-600 mb-6">تمت إضافة العطر الجديد إلى الكتالوج الخاص بك.</p>
-          <Button onClick={() => router.push('/admin/perfumes')}>عرض جميع العطور</Button>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.admin.addPerfume.successTitle}</h2>
+          <p className="text-gray-600 mb-6">{t.admin.addPerfume.successDesc}</p>
+          <Button onClick={() => router.push('/admin/perfumes')}>{t.admin.addPerfume.viewAllBtn}</Button>
         </div>
       </div>
     );
@@ -150,17 +152,17 @@ export default function AddPerfumePage() {
     <div className="space-y-6" dir="rtl">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">إضافة عطر جديد</h1>
-          <p className="text-gray-600 mt-1">إنشاء منتج عطر فاخر جديد لمتجرك</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t.admin.addPerfume.title}</h1>
+          <p className="text-gray-600 mt-1">{t.admin.addPerfume.subtitle}</p>
         </div>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={() => router.back()}
         >
-          عودة ←
+          {t.admin.addPerfume.backBtn}
         </Button>
       </div>
-      
+
       {/* Error Display */}
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
@@ -176,7 +178,7 @@ export default function AddPerfumePage() {
           </div>
         </div>
       )}
-      
+
       <AddPerfumeForm
         onSubmit={handleSubmit}
         onCancel={handleCancel}

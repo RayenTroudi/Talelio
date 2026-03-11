@@ -3,6 +3,8 @@ import { getFirstProductImage } from '@/lib/image-utils';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { getServerLocale } from '@/lib/get-locale';
+import { getTranslations } from '@/lib/i18n';
 
 // Valid categories - URL slugs (lowercase, hyphenated)
 const VALID_CATEGORIES = ['femme', 'homme'];
@@ -11,12 +13,6 @@ const VALID_CATEGORIES = ['femme', 'homme'];
 const CATEGORY_MAP: Record<string, string> = {
   'femme': 'Femme',
   'homme': 'Homme',
-};
-
-// Map URL slugs to Arabic display names
-const CATEGORY_DISPLAY: Record<string, string> = {
-  'femme': 'عطور نسائية',
-  'homme': 'عطور رجالية',
 };
 
 interface CategoryPageProps {
@@ -33,6 +29,14 @@ export async function generateStaticParams() {
 
 export default async function CategoryPage(props: CategoryPageProps) {
   const params = await props.params;
+  const locale = await getServerLocale();
+  const t = getTranslations(locale);
+
+  // Map URL slugs to locale-aware display names
+  const CATEGORY_DISPLAY: Record<string, string> = {
+    'femme': t.categories.women.name,
+    'homme': t.categories.men.name,
+  };
   
   // Safely handle category param
   if (!params?.category || typeof params.category !== 'string') {
@@ -86,12 +90,12 @@ export default async function CategoryPage(props: CategoryPageProps) {
                 {categoryDisplay}
               </h1>
               <p className="text-gray-300 text-lg font-light tracking-wide">
-                {products.length} {products.length === 1 ? 'عطر متاح' : 'عطر متاح'}
+                {products.length}
               </p>
             </div>
             <Link href="/">
               <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 font-light tracking-wide rounded-xl px-6 py-3">
-                العودة للرئيسية ←
+                {t.categoryPage.backHome}
               </Button>
             </Link>
           </div>
@@ -102,8 +106,8 @@ export default async function CategoryPage(props: CategoryPageProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {error !== null && (
           <div className="bg-gradient-to-r from-red-50 to-red-50/50 border border-red-300/50 text-red-700 px-6 py-4 rounded-2xl mb-8 text-right shadow-lg">
-            <p className="font-light text-lg">خطأ في تحميل المنتجات</p>
-            <p className="text-sm mt-2 font-light">يرجى المحاولة مرة أخرى لاحقاً.</p>
+            <p className="font-light text-lg">{t.categoryPage.loadError}</p>
+            <p className="text-sm mt-2 font-light">{t.categoryPage.loadErrorDesc}</p>
           </div>
         )}
 
@@ -125,14 +129,14 @@ export default async function CategoryPage(props: CategoryPageProps) {
               </svg>
             </div>
             <h3 className="text-3xl font-light text-stone-900 mb-4 tracking-wide">
-              لا توجد منتجات متاحة
+              {t.categoryPage.noProducts}
             </h3>
             <p className="text-stone-600 font-light mb-10 max-w-md mx-auto text-lg leading-relaxed">
-              لا توجد عطور حالياً في مجموعة "{categoryDisplay}". تحقق لاحقاً من الإضافات الجديدة.
+              {t.productGrid.noProducts}. {t.productGrid.checkLater}
             </p>
             <Link href="/">
               <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 font-light text-lg px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
-                العودة للرئيسية
+                {t.categoryPage.backHome}
               </Button>
             </Link>
           </div>
@@ -141,7 +145,7 @@ export default async function CategoryPage(props: CategoryPageProps) {
         {error === null && products.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {products.map((product) => (
-              <ProductCard key={product.$id} product={product} />
+              <ProductCard key={product.$id} product={product} t={t} />
             ))}
           </div>
         )}
@@ -154,7 +158,7 @@ export default async function CategoryPage(props: CategoryPageProps) {
  * Product Card Component
  * Displays individual product information
  */
-function ProductCard({ product }: { product: AppwritePerfume }) {
+function ProductCard({ product, t }: { product: AppwritePerfume; t: any }) {
   const inStock = product.isInStock === 'true';
   
   // Get product image with automatic fallback
@@ -177,7 +181,7 @@ function ProductCard({ product }: { product: AppwritePerfume }) {
         
         {!inStock && (
           <div className="absolute top-4 left-4 bg-red-500/95 backdrop-blur-sm text-white text-xs font-light px-4 py-2 rounded-full shadow-xl">
-            غير متوفر
+            {t.categoryPage.outOfStock}
           </div>
         )}
       </div>
@@ -212,10 +216,10 @@ function ProductCard({ product }: { product: AppwritePerfume }) {
         {/* Price */}
         <div className="flex items-center justify-between pt-4 border-t border-stone-100">
           <span className="text-amber-600 text-sm font-light group-hover:-translate-x-1 transition-transform duration-300 inline-block tracking-wide">
-            ← عرض
+            {t.categoryPage.viewProduct}
           </span>
           <p className="text-2xl font-light text-stone-900">
-            {product.price.toFixed(2)} <span className="text-base text-stone-500">د.ت</span>
+            {product.price.toFixed(2)} <span className="text-base text-stone-500">{t.productDetail.currency}</span>
           </p>
         </div>
       </div>

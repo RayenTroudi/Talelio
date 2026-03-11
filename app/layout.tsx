@@ -6,6 +6,9 @@ import { StoreProvider } from "./Redux/StoreProvider";
 import { Suspense } from "react";
 import CartSidebar from "./components/CartSidebar";
 import Script from "next/script";
+import { LocaleProvider } from "./components/LocaleProvider";
+import { getServerLocale } from "@/lib/get-locale";
+import { getDir, getTranslations } from "@/lib/i18n";
 
 const cairo = Cairo({
   variable: "--font-cairo",
@@ -35,33 +38,39 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getServerLocale();
+  const dir = getDir(locale);
+  const t = getTranslations(locale);
+
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    <html lang={locale} dir={dir} suppressHydrationWarning>
       <body
         className={`${cairo.variable} ${tajawal.variable} ${playfair.variable} antialiased`}
         suppressHydrationWarning
       >
         <AuthProvider>
         <StoreProvider>
-        <Suspense fallback={<div>جاري التحميل...</div>}>
+        <LocaleProvider initialLocale={locale}>
+        <Suspense fallback={<div>{t.common.loading}</div>}>
         {children}
         <CartSidebar />
         </Suspense>
+        </LocaleProvider>
         </StoreProvider>
 
         </AuthProvider>
-        
+
         {/* Load THREE.js and Vanta.js from CDN */}
-        <Script 
+        <Script
           src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"
           strategy="beforeInteractive"
         />
-        <Script 
+        <Script
           src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"
           strategy="lazyOnload"
         />

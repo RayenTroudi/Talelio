@@ -9,6 +9,7 @@ import { ProtectedRoute } from "@/app/components/ProtectedRoute";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Toast, useToast } from "@/components/ui/toast";
 import Link from "next/link";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 interface Order {
   $id: string;
@@ -35,6 +36,7 @@ interface Order {
 }
 
 function AccountPageContent() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -68,18 +70,18 @@ function AccountPageContent() {
       const data = await res.json();
       if (res.ok) {
         setPromoRequest(data.request);
-        showToast('\u062a\u0645 \u0625\u0631\u0633\u0627\u0644 \u0637\u0644\u0628\u0643 \u0628\u0646\u062c\u0627\u062d', {
-          description: '\u0633\u064a\u062a\u0645 \u0645\u0631\u0627\u062c\u0639\u062a\u0647 \u0645\u0646 \u0642\u0628\u0644 \u0627\u0644\u0625\u062f\u0627\u0631\u0629.',
+        showToast(t.account.toasts.requestSuccess, {
+          description: t.account.toasts.requestSuccessDesc,
           variant: 'success',
         });
       } else {
-        showToast('\u0641\u0634\u0644', {
-          description: data.error || '\u062d\u062f\u062b \u062e\u0637\u0623.',
+        showToast(t.account.toasts.requestFailed, {
+          description: data.error || t.common.error,
           variant: 'error',
         });
       }
     } catch {
-      showToast('\u062e\u0637\u0623 \u0641\u064a \u0627\u0644\u0627\u062a\u0635\u0627\u0644', { variant: 'error' });
+      showToast(t.account.toasts.requestError, { variant: 'error' });
     } finally {
       setPromoLoading(false);
     }
@@ -101,13 +103,13 @@ function AccountPageContent() {
       try {
         if (user) {
           console.log('📥 Fetching orders for user:', user.email);
-          
+
           const response = await fetch('/api/orders');
           const data = await response.json();
-          
+
           if (response.ok) {
             console.log('✅ Orders fetched successfully:', data.orders?.length || 0);
-            
+
             // Transform Appwrite orders to match our Order interface
             const transformedOrders = (data.orders || []).map((order: any) => {
               // Parse the shipping address JSON
@@ -135,7 +137,7 @@ function AccountPageContent() {
                 items: shippingData.items || []
               };
             });
-            
+
             setOrders(transformedOrders);
           } else {
             console.error('❌ Failed to fetch orders:', data.error);
@@ -190,7 +192,7 @@ function AccountPageContent() {
                 </div>
               </div>
             </div>
-            
+
             {/* Orders skeleton */}
             <div className="lg:col-span-2">
               <div className="space-y-6">
@@ -229,7 +231,7 @@ function AccountPageContent() {
           onClose={() => dismissToast(toast.id)}
         />
       ))}
-      
+
       {/* Header */}
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-amber-500/30 shadow-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -240,12 +242,12 @@ function AccountPageContent() {
                 <div className="w-2 h-2 rounded-full bg-amber-500/50"></div>
                 <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
               </div>
-              <h1 className="text-4xl font-light text-white text-center tracking-wide">حسابي</h1>
-              <p className="mt-3 text-gray-300 font-light text-center tracking-wide">إدارة معلوماتك وعرض سجل طلباتك</p>
+              <h1 className="text-4xl font-light text-white text-center tracking-wide">{t.account.title}</h1>
+              <p className="mt-3 text-gray-300 font-light text-center tracking-wide">{t.account.subtitle}</p>
             </div>
             <Link href="/">
               <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 font-light tracking-wide rounded-xl px-6 py-3">
-                العودة للرئيسية ←
+                {t.account.backHome}
               </Button>
             </Link>
           </div>
@@ -257,18 +259,18 @@ function AccountPageContent() {
           {/* Personal Information Section */}
           <div className="lg:col-span-1 space-y-6">
             <Card className="p-8 bg-gradient-to-br from-white to-amber-50/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-amber-200/30">
-              <h2 className="text-2xl font-light text-stone-900 mb-8 text-right tracking-wide">المعلومات الشخصية</h2>
-              
+              <h2 className="text-2xl font-light text-stone-900 mb-8 text-right tracking-wide">{t.account.personalInfo}</h2>
+
               <div className="space-y-6">
                 <div className="text-right">
-                  <label className="text-sm font-light text-stone-500 tracking-wide">الاسم الكامل</label>
-                  <p className="mt-2 text-xl text-stone-900 font-light">{user.name || "غير متوفر"}</p>
+                  <label className="text-sm font-light text-stone-500 tracking-wide">{t.account.fullName}</label>
+                  <p className="mt-2 text-xl text-stone-900 font-light">{user.name || t.account.notAvailable}</p>
                 </div>
-                
+
                 <Separator className="bg-stone-200/50" />
-                
+
                 <div className="text-right">
-                  <label className="text-sm font-light text-stone-500 tracking-wide">البريد الإلكتروني</label>
+                  <label className="text-sm font-light text-stone-500 tracking-wide">{t.account.email}</label>
                   <p className="mt-2 text-xl text-stone-900 font-light" dir="ltr">{user.email}</p>
                 </div>
               </div>
@@ -276,51 +278,51 @@ function AccountPageContent() {
 
             {/* Promo Code Card */}
             <Card id="referral-section" className="p-8 bg-gradient-to-br from-white to-amber-50/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-amber-200/30">
-              <h2 className="text-2xl font-light text-stone-900 mb-6 text-right tracking-wide">رمز الإحالة</h2>
+              <h2 className="text-2xl font-light text-stone-900 mb-6 text-right tracking-wide">{t.account.referralCode}</h2>
               {promoRequestLoading ? (
                 <div className="h-12 bg-amber-100/40 rounded-xl animate-pulse" />
               ) : !promoRequest ? (
                 <div className="text-right space-y-4">
-                  <p className="text-stone-600 font-light text-sm">عندما يشتري شخص باستخدام رمز إحالتك تحصل على 10% من قيمة طلبه.</p>
+                  <p className="text-stone-600 font-light text-sm">{t.account.referralDesc}</p>
                   <button
                     onClick={handleRequestPromoCode}
                     disabled={promoLoading}
                     className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:bg-stone-300 text-white font-light tracking-wide transition-colors"
                   >
-                    {promoLoading ? 'جاري الإرسال...' : 'طلب رمز ترويجي'}
+                    {promoLoading ? t.account.sending : t.account.requestPromoBtn}
                   </button>
                 </div>
               ) : promoRequest.status === 'PENDING' ? (
                 <div className="text-right space-y-2">
                   <span className="inline-block px-3 py-1 rounded-full text-xs font-light bg-yellow-100 text-yellow-800">
-                    قيد المراجعة
+                    {t.account.pendingStatus}
                   </span>
-                  <p className="text-stone-600 font-light text-sm">طلبك قيد المراجعة من الإدارة. ستحصل على رمزك قريباً.</p>
+                  <p className="text-stone-600 font-light text-sm">{t.account.pendingDesc}</p>
                 </div>
               ) : promoRequest.status === 'APPROVED' ? (
                 <div className="text-right space-y-4">
                   <span className="inline-block px-3 py-1 rounded-full text-xs font-light bg-green-100 text-green-800">
-                    مفعّل
+                    {t.account.approvedStatus}
                   </span>
                   <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-2xl p-5 border border-amber-200/60 text-center">
-                    <p className="text-xs text-stone-500 font-light mb-2">رمز إحالتك</p>
+                    <p className="text-xs text-stone-500 font-light mb-2">{t.account.yourCode}</p>
                     <p className="text-3xl font-mono font-bold tracking-widest text-stone-900 select-all">
                       {promoRequest.promoCode}
                     </p>
-                    <p className="text-xs text-stone-500 font-light mt-2">تكسب 10% من قيمة كل طلب يستخدم هذا الرمز</p>
+                    <p className="text-xs text-stone-500 font-light mt-2">{t.account.codeDesc}</p>
                   </div>
                 </div>
               ) : (
                 <div className="text-right space-y-3">
                   <span className="inline-block px-3 py-1 rounded-full text-xs font-light bg-red-100 text-red-700">
-                    مرفوض
+                    {t.account.deniedStatus}
                   </span>
                   <button
                     onClick={handleRequestPromoCode}
                     disabled={promoLoading}
                     className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:bg-stone-300 text-white font-light tracking-wide transition-colors"
                   >
-                    {promoLoading ? 'جاري الإرسال...' : 'إعادة الطلب'}
+                    {promoLoading ? t.account.sending : t.account.reRequestBtn}
                   </button>
                 </div>
               )}
@@ -330,8 +332,8 @@ function AccountPageContent() {
           {/* Orders Section */}
           <div className="lg:col-span-2">
             <Card className="p-8 bg-gradient-to-br from-white to-amber-50/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-amber-200/30">
-              <h2 className="text-2xl font-light text-stone-900 mb-8 text-right tracking-wide">سجل الطلبات</h2>
-              
+              <h2 className="text-2xl font-light text-stone-900 mb-8 text-right tracking-wide">{t.account.orderHistory}</h2>
+
               {orders.length === 0 ? (
                 <div className="text-center py-16">
                   <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center shadow-xl">
@@ -339,13 +341,13 @@ function AccountPageContent() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                   </div>
-                  <h3 className="text-2xl font-light text-stone-900 mb-3 tracking-wide">لا توجد طلبات بعد</h3>
-                  <p className="text-stone-600 mb-8 font-light tracking-wide">ابدأ التسوق لرؤية طلباتك هنا</p>
+                  <h3 className="text-2xl font-light text-stone-900 mb-3 tracking-wide">{t.account.noOrders}</h3>
+                  <p className="text-stone-600 mb-8 font-light tracking-wide">{t.account.noOrdersDesc}</p>
                   <button
                     onClick={() => router.push("/")}
                     className="inline-flex items-center gap-2 px-8 py-4 text-base font-light rounded-2xl text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-all duration-300 shadow-lg hover:shadow-xl"
                   >
-                    تصفح العطور
+                    {t.account.browseBtn}
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
@@ -358,15 +360,15 @@ function AccountPageContent() {
                       {/* Order Header */}
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 text-right">
                         <div>
-                          <p className="text-sm font-light text-stone-500">رقم الطلب</p>
+                          <p className="text-sm font-light text-stone-500">{t.account.orderNumber}</p>
                           <p className="text-xl font-light text-stone-900">#{order.$id.slice(-8).toUpperCase()}</p>
                         </div>
                         <div className="mt-2 sm:mt-0">
-                          <p className="text-sm font-light text-stone-500">التاريخ</p>
-                          <p className="text-stone-900 font-light">{new Date(order.createdAt).toLocaleDateString('ar-TN', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
+                          <p className="text-sm font-light text-stone-500">{t.account.date}</p>
+                          <p className="text-stone-900 font-light">{new Date(order.createdAt).toLocaleDateString('ar-TN', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
                           })}</p>
                         </div>
                       </div>
@@ -376,7 +378,7 @@ function AccountPageContent() {
                       {/* Order Status and Payment */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 text-right">
                         <div>
-                          <p className="text-sm font-light text-stone-500 mb-2">الحالة</p>
+                          <p className="text-sm font-light text-stone-500 mb-2">{t.account.status}</p>
                           <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-light ${
                             order.status === 'confirmed' ? 'bg-green-100 text-green-800' :
                             order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
@@ -384,23 +386,23 @@ function AccountPageContent() {
                             'bg-red-100 text-red-800'
                           }`}>
                             {
-                              order.status === 'confirmed' ? 'مؤكد' :
-                              order.status === 'pending' ? 'قيد الانتظار' :
-                              order.status === 'delivered' ? 'تم التوصيل' :
-                              'ملغى'
+                              order.status === 'confirmed' ? t.account.orderStatuses.confirmed :
+                              order.status === 'pending' ? t.account.orderStatuses.pending :
+                              order.status === 'delivered' ? t.account.orderStatuses.delivered :
+                              t.account.orderStatuses.cancelled
                             }
                           </span>
                         </div>
-                        
+
                         <div>
-                          <p className="text-sm font-light text-stone-500 mb-2">المجموع</p>
-                          <p className="text-xl font-light text-amber-600">{order.totalPrice.toFixed(2)} د.ت</p>
+                          <p className="text-sm font-light text-stone-500 mb-2">{t.account.total}</p>
+                          <p className="text-xl font-light text-amber-600">{order.totalPrice.toFixed(2)} {t.productDetail.currency}</p>
                         </div>
-                        
+
                         <div className="col-span-2">
-                          <p className="text-sm font-light text-stone-500 mb-2">طريقة الدفع</p>
+                          <p className="text-sm font-light text-stone-500 mb-2">{t.account.paymentMethod}</p>
                           <p className="text-stone-900 font-light">
-                            {order.paymentMethod === 'cash_on_delivery' ? 'الدفع عند الاستلام' : order.paymentMethod}
+                            {order.paymentMethod === 'cash_on_delivery' ? t.account.cashOnDelivery : order.paymentMethod}
                           </p>
                         </div>
                       </div>
@@ -409,25 +411,25 @@ function AccountPageContent() {
 
                       {/* Order Items */}
                       <div className="space-y-4 text-right">
-                        <p className="text-sm font-light text-stone-700 tracking-wide">المنتجات ({order.items?.length || 0})</p>
+                        <p className="text-sm font-light text-stone-700 tracking-wide">{t.account.products} ({order.items?.length || 0})</p>
                         {order.items && order.items.length > 0 ? (
                           order.items.map((item: any, index: number) => (
                             <div key={index} className="flex justify-between items-center py-3 border-b border-stone-100 last:border-0">
                               <div className="text-right flex-1">
-                                <p className="font-light text-stone-900">{item.Name || item.productName || 'منتج'}</p>
+                                <p className="font-light text-stone-900">{item.Name || item.productName || t.account.noProductInfo}</p>
                                 <p className="text-sm text-stone-500 font-light">
-                                  {item.Brand || item.brand || 'غير متوفر'} 
+                                  {item.Brand || item.brand || t.account.notAvailable}
                                   {item.size && ` • ${item.size}`}
                                 </p>
                               </div>
                               <div className="mr-4">
-                                <p className="text-stone-700 font-light text-sm">الكمية: {item.qty || item.quantity || 1}</p>
-                                <p className="font-light text-stone-900">{(item.Price || item.price || 0).toFixed(2)} د.ت</p>
+                                <p className="text-stone-700 font-light text-sm">{t.account.qty}: {item.qty || item.quantity || 1}</p>
+                                <p className="font-light text-stone-900">{(item.Price || item.price || 0).toFixed(2)} {t.productDetail.currency}</p>
                               </div>
                             </div>
                           ))
                         ) : (
-                          <p className="text-sm text-stone-500 font-light italic">لا توجد معلومات عن المنتجات</p>
+                          <p className="text-sm text-stone-500 font-light italic">{t.account.noProductInfo}</p>
                         )}
                       </div>
 
@@ -435,7 +437,7 @@ function AccountPageContent() {
 
                       {/* Delivery Address */}
                       <div className="text-right">
-                        <p className="text-sm font-light text-stone-700 tracking-wide mb-3">عنوان التوصيل</p>
+                        <p className="text-sm font-light text-stone-700 tracking-wide mb-3">{t.account.deliveryAddress}</p>
                         <div className="bg-gradient-to-br from-amber-50/50 to-stone-50 rounded-2xl p-5 border border-amber-200/30">
                           <p className="font-light text-stone-900 text-lg mb-1">{order.deliveryAddress.fullName}</p>
                           <p className="text-stone-700 font-light">{order.deliveryAddress.address}</p>
@@ -443,7 +445,7 @@ function AccountPageContent() {
                             {order.deliveryAddress.city}, {order.deliveryAddress.postalCode}
                           </p>
                           <p className="text-stone-700 font-light">{order.deliveryAddress.country}</p>
-                          <p className="text-stone-700 font-light mt-2" dir="ltr">هاتف: {order.deliveryAddress.phone}</p>
+                          <p className="text-stone-700 font-light mt-2" dir="ltr">{t.account.phone}: {order.deliveryAddress.phone}</p>
                         </div>
                       </div>
                     </div>

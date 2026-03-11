@@ -13,8 +13,10 @@ import Footer from "../components/Footer";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Toast, useToast } from "@/components/ui/toast";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 const page = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [isClient, setIsClient] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,7 +50,7 @@ const page = () => {
 
   const handlePlaceOrder = async () => {
     if (isSubmitting) return;
-    
+
     // Check authentication before submitting order
     if (status === 'unauthenticated') {
       router.push('/SignIn?redirect=/PlaceOrder');
@@ -58,7 +60,7 @@ const page = () => {
     if (status === 'loading') {
       return;
     }
-    
+
     setIsSubmitting(true);
     try {
       console.log('🛒 Submitting order:', {
@@ -84,7 +86,7 @@ const page = () => {
       });
 
       const data = await response.json();
-      
+
       console.log('📬 Order response:', {
         ok: response.ok,
         status: response.status,
@@ -93,50 +95,50 @@ const page = () => {
 
       if (response.ok) {
         console.log('✅ Order created successfully:', data.orderId);
-        
+
         // Set success flag to prevent redirect to shipping page
         setOrderSuccess(true);
-        
+
         // Show elegant success toast
-        showToast("تم تأكيد الطلب بنجاح ✨", {
-          description: "سيتم تحويلك إلى سجل طلباتك...",
+        showToast(t.placeOrder.successToast, {
+          description: t.placeOrder.successToastDesc,
           variant: "success"
         });
-        
+
         // Wait for toast animation, then clear cart and redirect
         setTimeout(() => {
           dispatch(clearCart());
           router.push(`/account?orderSuccess=${data.orderId}`);
         }, 1500);
-        
+
       } else {
         console.error('❌ Order creation failed:', data);
-        
+
         // Show error toast instead of alert
-        showToast("فشل الطلب", {
-          description: data.error || data.details || "حدث خطأ. يرجى المحاولة مرة أخرى.",
+        showToast(t.placeOrder.errorToast, {
+          description: data.error || data.details || t.common.error,
           variant: "error"
         });
-        
+
         // Handle specific errors
         if (response.status === 401) {
           setTimeout(() => {
             router.push('/SignIn?redirect=/PlaceOrder');
           }, 2000);
         }
-        
+
         setIsSubmitting(false); // Re-enable button on error
       }
     } catch (error) {
       console.error('❌ Error placing order:', error);
-      
+
       // Show error toast
-      showToast("خطأ في الاتصال", {
-        description: "تعذر معالجة طلبك. يرجى التحقق من اتصالك.",
+      showToast(t.placeOrder.connectionError, {
+        description: t.placeOrder.connectionErrorDesc,
         variant: "error"
       });
-      
-      alert('حدث خطأ. يرجى المحاولة مرة أخرى.');
+
+      alert(t.common.error);
       setIsSubmitting(false); // Re-enable button on error
     }
     // Note: Don't set isSubmitting to false on success - let the redirect happen
@@ -155,7 +157,7 @@ const page = () => {
           onClose={() => dismissToast(toast.id)}
         />
       ))}
-      
+
       <div>
         <Navbar />
         {isClient ? (
@@ -163,14 +165,14 @@ const page = () => {
             <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/20 to-rose-50/10 py-8 sm:py-12">
               <div className="container mx-auto px-4 max-w-7xl">
                 <Checkout activeStep={2} />
-                
+
                 {/* Enhanced Page Title */}
                 <div className="text-center mt-8 mb-10">
                   <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-light text-stone-900 mb-3 tracking-tight">
-                    تأكيد طلبك
+                    {t.placeOrder.title}
                   </h1>
                   <p className="text-stone-600 font-light text-sm sm:text-base">
-                    تحقق من التفاصيل قبل إتمام عملية الشراء
+                    {t.placeOrder.subtitle}
                   </p>
                 </div>
 
@@ -178,7 +180,7 @@ const page = () => {
                   <div className="flex items-center justify-center py-20">
                     <div className="text-center space-y-3">
                       <div className="w-10 h-10 border-2 border-stone-300 border-t-stone-900 rounded-full animate-spin mx-auto"></div>
-                      <p className="text-stone-500 font-light">جاري التحميل...</p>
+                      <p className="text-stone-500 font-light">{t.common.loading}</p>
                     </div>
                   </div>
                 ) : CartItems.length === 0 ? (
@@ -187,10 +189,10 @@ const page = () => {
                       <svg className="w-16 h-16 text-stone-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                       </svg>
-                      <p className="text-stone-900 font-serif text-xl mb-3">عربة التسوق فارغة</p>
-                      <p className="text-stone-600 mb-6 font-light">عربة التسوق الخاصة بك فارغة حالياً.</p>
+                      <p className="text-stone-900 font-serif text-xl mb-3">{t.placeOrder.emptyCart}</p>
+                      <p className="text-stone-600 mb-6 font-light">{t.placeOrder.emptyCartDesc}</p>
                       <Link href="/" className="inline-block px-8 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-2xl transition-colors font-light tracking-wide">
-                        متابعة التسوق
+                        {t.placeOrder.continueShopping}
                       </Link>
                     </div>
                   </div>
@@ -198,7 +200,7 @@ const page = () => {
                   <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
                     {/* Left Column - Order Details (2 columns on desktop) */}
                     <div className="lg:col-span-2 space-y-6">
-                      
+
                       {/* Shipping Address Card */}
                       <Card className="bg-white/70 backdrop-blur-sm border-stone-200/60 shadow-lg hover:shadow-xl transition-all duration-300 rounded-3xl overflow-hidden">
                         <div className="p-6 sm:p-8">
@@ -211,17 +213,17 @@ const page = () => {
                                 </svg>
                               </div>
                               <h2 className="text-xl sm:text-2xl font-serif font-light text-stone-900">
-                                عنوان التوصيل
+                                {t.placeOrder.shippingAddress}
                               </h2>
                             </div>
                             <Link
                               href="/Shipping"
                               className="text-sm text-stone-600 hover:text-stone-900 font-light underline decoration-dotted underline-offset-4 hover:decoration-solid transition-all"
                             >
-                              تعديل
+                              {t.placeOrder.editAddress}
                             </Link>
                           </div>
-                          
+
                           <div className="bg-stone-50/50 rounded-2xl p-5 space-y-2 text-right">
                             <p className="font-medium text-stone-900 text-lg">{shippingAddress.fullName}</p>
                             {shippingAddress.phone && (
@@ -242,7 +244,7 @@ const page = () => {
                                 <Separator className="my-3 bg-stone-200/50" />
                                 <div className="bg-amber-50/50 rounded-xl p-3 border border-amber-100">
                                   <p className="text-xs text-stone-600 font-light italic leading-relaxed">
-                                    <span className="font-medium not-italic">ملاحظة:</span> {shippingAddress.notes}
+                                    <span className="font-medium not-italic">{t.placeOrder.note}:</span> {shippingAddress.notes}
                                   </p>
                                 </div>
                               </>
@@ -261,10 +263,10 @@ const page = () => {
                               </svg>
                             </div>
                             <h2 className="text-xl sm:text-2xl font-serif font-light text-stone-900">
-                              المنتجات المطلوبة
+                              {t.placeOrder.orderedItems}
                             </h2>
                           </div>
-                          
+
                           <div className="space-y-4">
                             {CartItems.map((item: any, index: number) => (
                               <div key={`${item.id}-${item.size || ""}`}>
@@ -292,9 +294,9 @@ const page = () => {
                                     )}
                                   </div>
                                   <div className="text-right flex flex-col justify-between">
-                                    <p className="text-xs sm:text-sm text-stone-600 font-light">الكمية: {item.qty}</p>
+                                    <p className="text-xs sm:text-sm text-stone-600 font-light">{t.placeOrder.qty}: {item.qty}</p>
                                     <p className="font-serif text-base sm:text-lg text-stone-900">
-                                      {((item.Price || item.price) * item.qty).toFixed(2)} <span className="text-sm">دينار</span>
+                                      {((item.Price || item.price) * item.qty).toFixed(2)} <span className="text-sm">{t.placeOrder.currency}</span>
                                     </p>
                                   </div>
                                 </div>
@@ -317,15 +319,15 @@ const page = () => {
                               </svg>
                             </div>
                             <h2 className="text-xl sm:text-2xl font-serif font-light text-stone-900">
-                              طريقة الدفع
+                              {t.placeOrder.paymentMethod}
                             </h2>
                           </div>
-                          
+
                           <div className="flex items-center gap-4 bg-emerald-50/50 rounded-2xl p-5 border border-emerald-100/50">
                             <div className="text-right flex-1">
-                              <p className="font-medium text-stone-900 mb-1">الدفع عند الاستلام</p>
+                              <p className="font-medium text-stone-900 mb-1">{t.placeOrder.cashOnDelivery}</p>
                               <p className="text-sm text-stone-600 font-light leading-relaxed">
-                                ادفع نقداً عند استلام طلبك
+                                {t.placeOrder.cashOnDeliveryDesc}
                               </p>
                             </div>
                             <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
@@ -342,10 +344,10 @@ const page = () => {
                         <div className="flex items-start gap-4">
                           <div className="flex-1 text-right">
                             <p className="font-medium text-stone-900 mb-2 text-base">
-                              موعد التوصيل المتوقع
+                              {t.placeOrder.estimatedDelivery}
                             </p>
                             <p className="text-sm text-stone-700 font-light leading-relaxed">
-                              سيتم توصيل طلبك خلال <span className="font-medium">من 2 إلى 4 أيام عمل</span>
+                              {t.placeOrder.deliveryDays}
                             </p>
                           </div>
                           <div className="w-10 h-10 rounded-full bg-amber-200/50 flex items-center justify-center flex-shrink-0">
@@ -364,36 +366,36 @@ const page = () => {
                         <Card className="bg-gradient-to-br from-white via-stone-50/50 to-amber-50/30 backdrop-blur-sm border-stone-200/60 shadow-xl rounded-3xl overflow-hidden">
                           <div className="p-6 sm:p-8">
                             <h2 className="text-2xl sm:text-3xl font-serif font-light text-stone-900 mb-8 text-center">
-                              ملخص الطلب
+                              {t.placeOrder.orderSummary}
                             </h2>
-                            
+
                             <div className="space-y-5 mb-8">
                               {/* Subtotal */}
                               <div className="flex justify-between items-baseline text-stone-700">
-                                <span className="font-light text-sm text-right">المجموع الجزئي</span>
-                                <span className="font-serif text-xl">{itemsPrice} <span className="text-base">دينار</span></span>
+                                <span className="font-light text-sm text-right">{t.placeOrder.subtotal}</span>
+                                <span className="font-serif text-xl">{itemsPrice} <span className="text-base">{t.placeOrder.currency}</span></span>
                               </div>
-                              
+
                               {/* Shipping */}
                               <div className="flex justify-between items-baseline text-stone-700">
-                                <span className="font-light text-sm text-right">التوصيل</span>
+                                <span className="font-light text-sm text-right">{t.placeOrder.shipping}</span>
                                 {shippingPrice > 0 ? (
-                                  <span className="font-serif text-xl">{shippingPrice} <span className="text-base">دينار</span></span>
+                                  <span className="font-serif text-xl">{shippingPrice} <span className="text-base">{t.placeOrder.currency}</span></span>
                                 ) : (
                                   <span className="text-emerald-700 font-medium text-sm bg-emerald-50 px-3 py-1 rounded-full">
-                                    مجاني
+                                    {t.placeOrder.free}
                                   </span>
                                 )}
                               </div>
-                              
+
                               <Separator className="bg-stone-300/50" />
-                              
+
                               {/* Total */}
                               <div className="flex justify-between items-baseline pt-2">
-                                <span className="text-stone-900 font-serif text-lg">المجموع</span>
+                                <span className="text-stone-900 font-serif text-lg">{t.placeOrder.total}</span>
                                 <div className="text-right">
                                   <span className="text-stone-900 font-serif text-3xl sm:text-4xl">{totalPrice}</span>
-                                  <span className="text-stone-600 text-xl mr-2">دينار</span>
+                                  <span className="text-stone-600 text-xl mr-2">{t.placeOrder.currency}</span>
                                 </div>
                               </div>
                             </div>
@@ -410,11 +412,11 @@ const page = () => {
                                 {isSubmitting ? (
                                   <>
                                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                    جاري المعالجة...
+                                    {t.placeOrder.processing}
                                   </>
                                 ) : (
                                   <>
-                                    تأكيد الطلب
+                                    {t.placeOrder.placeOrderBtn}
                                     <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
                                     </svg>
@@ -426,9 +428,9 @@ const page = () => {
 
                             {/* Terms */}
                             <p className="text-xs text-center text-stone-500 font-light leading-relaxed mt-6 px-2">
-                              بتأكيد طلبك، أنت توافق على{" "}
+                              {t.placeOrder.termsText}{" "}
                               <Link href="/terms" className="underline hover:text-stone-900">
-                                الشروط والأحكام
+                                {t.placeOrder.terms}
                               </Link>
                             </p>
 
@@ -439,13 +441,13 @@ const page = () => {
                                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                   </svg>
-                                  <span className="text-xs font-light">آمن</span>
+                                  <span className="text-xs font-light">{t.placeOrder.secure}</span>
                                 </div>
                                 <div className="flex flex-col items-center gap-1">
                                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                   </svg>
-                                  <span className="text-xs font-light">موثوق</span>
+                                  <span className="text-xs font-light">{t.placeOrder.trusted}</span>
                                 </div>
                               </div>
                             </div>

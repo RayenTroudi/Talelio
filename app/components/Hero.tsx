@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 // Declare global types for Vanta and THREE
 declare global {
@@ -15,6 +16,7 @@ const Hero = () => {
   const vantaRef = useRef<HTMLDivElement>(null);
   const [vantaEffect, setVantaEffect] = useState<any>(null);
   const [mounted, setMounted] = useState(false);
+  const { t } = useTranslation();
 
   // Ensure client-side only rendering to prevent hydration errors
   useEffect(() => {
@@ -59,7 +61,7 @@ const Hero = () => {
           setTimeout(checkAndInit, 100);
         }
       };
-      
+
       checkAndInit();
     }
 
@@ -75,7 +77,7 @@ const Hero = () => {
   }, [vantaEffect, mounted]);
 
   return (
-    <div 
+    <div
       ref={vantaRef}
       className="relative w-full min-h-[90vh] flex items-center overflow-hidden"
       suppressHydrationWarning
@@ -86,11 +88,11 @@ const Hero = () => {
       {/* Content Container */}
       <div className="relative z-20 w-full max-w-[1200px] mx-auto px-6 lg:px-16 py-24">
         <div className="flex items-center justify-center">
-          
+
           {/* Brand Message (Centered) */}
           <div className="text-center space-y-10">
             {/* Decorative Line */}
-            <div 
+            <div
               className="flex justify-center animate-fade-in-up"
               style={{ animationDelay: "0.15s", animationFillMode: "both" }}
             >
@@ -102,8 +104,8 @@ const Hero = () => {
               className="text-4xl md:text-6xl lg:text-7xl font-light text-gray-900 leading-[1.15] animate-fade-in-up"
               style={{ animationDelay: "0.2s", animationFillMode: "both" }}
             >
-              رحلة إلى عالم <br />
-              <span className="font-serif italic text-amber-600">الفخامة والأناقة</span>
+              {t.hero.title} <br />
+              <span className="font-serif italic text-amber-600">{t.hero.titleHighlight}</span>
             </h1>
 
             {/* Subheadline */}
@@ -111,7 +113,7 @@ const Hero = () => {
               className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto animate-fade-in-up"
               style={{ animationDelay: "0.3s", animationFillMode: "both" }}
             >
-              اكتشف تشكيلة استثنائية من العطور الفاخرة المصممة بعناية فائقة لتعكس شخصيتك وتترك أثراً لا يُنسى
+              {t.hero.subtitle}
             </p>
 
             {/* CTA Buttons */}
@@ -123,7 +125,7 @@ const Hero = () => {
                 href="#categories"
                 className="inline-flex items-center justify-center bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-light py-4 px-10 rounded-xl text-base shadow-2xl shadow-amber-500/30 transition-all duration-500 transform hover:scale-105 hover:shadow-amber-500/40"
               >
-                استكشف المجموعة
+                {t.hero.cta}
               </Link>
             </div>
           </div>

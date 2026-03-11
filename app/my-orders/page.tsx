@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 interface Order {
   $id: string;
@@ -23,6 +24,7 @@ interface Order {
 }
 
 const MyOrdersPage = () => {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const { data: session, status } = useSession();
@@ -74,13 +76,13 @@ const MyOrdersPage = () => {
   const getStatusText = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'قيد الانتظار';
+        return t.myOrders.statuses.pending;
       case 'confirmed':
-        return 'مؤكد';
+        return t.myOrders.statuses.confirmed;
       case 'delivered':
-        return 'تم التوصيل';
+        return t.myOrders.statuses.delivered;
       case 'cancelled':
-        return 'ملغى';
+        return t.myOrders.statuses.cancelled;
       default:
         return status;
     }
@@ -136,10 +138,10 @@ const MyOrdersPage = () => {
               <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto" />
             </div>
             <h1 className="text-4xl md:text-5xl font-light text-gray-900 tracking-tight">
-              طلباتي
+              {t.myOrders.title}
             </h1>
             <p className="text-gray-600 font-light mt-3 text-lg">
-              تتبع حالة طلباتك
+              {t.myOrders.subtitle}
             </p>
           </div>
 
@@ -147,7 +149,7 @@ const MyOrdersPage = () => {
             <div className="flex items-center justify-center min-h-[40vh]">
               <div className="text-center space-y-4">
                 <div className="w-12 h-12 border-2 border-amber-300 border-t-amber-600 rounded-full animate-spin mx-auto"></div>
-                <p className="text-gray-500 font-light">جاري التحميل...</p>
+                <p className="text-gray-500 font-light">{t.myOrders.loading}</p>
               </div>
             </div>
           ) : orders.length === 0 ? (
@@ -173,17 +175,17 @@ const MyOrdersPage = () => {
                 </div>
 
                 <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4 tracking-tight">
-                  لا توجد طلبات
+                  {t.myOrders.noOrders}
                 </h2>
                 <p className="text-gray-600 font-light leading-relaxed mb-10 text-base">
-                  لم تقم بأي طلب بعد. تصفح عطورنا وابدأ تجربتك.
+                  {t.myOrders.noOrdersDesc}
                 </p>
 
                 <Link
                   href="/"
                   className="group inline-flex items-center justify-center px-10 py-5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-2xl font-light tracking-wide transition-all duration-500 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
                 >
-                  <span>اكتشف عطورنا</span>
+                  <span>{t.myOrders.discoverBtn}</span>
                 </Link>
               </div>
             </div>
@@ -208,7 +210,7 @@ const MyOrdersPage = () => {
                       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 pb-6 border-b border-stone-200">
                         <div className="text-right">
                           <p className="text-sm text-stone-500 font-light mb-1">
-                            رقم الطلب
+                            {t.myOrders.orderNumber}
                           </p>
                           <p className="text-lg font-medium text-stone-900">
                             #{order.$id.slice(-8).toUpperCase()}
@@ -216,7 +218,7 @@ const MyOrdersPage = () => {
                         </div>
                         <div className="text-right">
                           <p className="text-sm text-stone-500 font-light mb-1">
-                            التاريخ
+                            {t.myOrders.date}
                           </p>
                           <p className="text-stone-900 font-light">
                             {formatDate(order.$createdAt)}
@@ -224,7 +226,7 @@ const MyOrdersPage = () => {
                         </div>
                         <div className="text-right">
                           <p className="text-sm text-stone-500 font-light mb-1">
-                            الحالة
+                            {t.myOrders.status}
                           </p>
                           <span
                             className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border ${getStatusColor(
@@ -237,7 +239,7 @@ const MyOrdersPage = () => {
                         </div>
                         <div className="text-right">
                           <p className="text-sm text-stone-500 font-light mb-1">
-                            المجموع
+                            {t.myOrders.total}
                           </p>
                           <p className="text-2xl font-light text-amber-600">
                             {order.totalPrice.toFixed(2)} TND
@@ -249,7 +251,7 @@ const MyOrdersPage = () => {
                       {orderItems.length > 0 && (
                         <div className="space-y-3">
                           <p className="text-sm font-medium text-stone-700 mb-3">
-                            المنتجات:
+                            {t.myOrders.products}
                           </p>
                           {orderItems.map((item: any, idx: number) => (
                             <div
@@ -277,7 +279,7 @@ const MyOrdersPage = () => {
                               </div>
                               <div className="text-left">
                                 <p className="text-sm text-stone-700">
-                                  الكمية: {item.qty}
+                                  {t.myOrders.qty}: {item.qty}
                                 </p>
                                 <p className="text-sm font-medium text-amber-600">
                                   {(item.Price * item.qty).toFixed(2)} TND

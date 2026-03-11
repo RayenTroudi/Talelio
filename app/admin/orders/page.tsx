@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 interface Order {
   $id: string;
@@ -35,6 +36,7 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'delivered' | 'cancelled'>('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchOrders();
@@ -47,10 +49,10 @@ export default function OrdersPage() {
       if (filter !== 'all') {
         params.append('status', filter);
       }
-      
+
       const response = await fetch(`/api/admin/orders?${params.toString()}`);
       const data = await response.json();
-      
+
       if (response.ok) {
         setOrders(data.orders || []);
       } else {
@@ -109,7 +111,7 @@ export default function OrdersPage() {
       delivered: 'bg-green-100 text-green-800 border-green-200',
       cancelled: 'bg-red-100 text-red-800 border-red-200',
     };
-    
+
     return styles[status as keyof typeof styles] || styles.pending;
   };
 
@@ -125,14 +127,14 @@ export default function OrdersPage() {
     <div className="space-y-6" dir="rtl">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">الطلبات</h1>
-          <p className="text-gray-600 mt-1">إدارة طلبات العملاء والشحن</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t.admin.orders.title}</h1>
+          <p className="text-gray-600 mt-1">{t.admin.orders.subtitle}</p>
         </div>
         <Button variant="outline" disabled>
           <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          تصدير الطلبات
+          {t.admin.orders.export}
         </Button>
       </div>
 
@@ -146,12 +148,12 @@ export default function OrdersPage() {
               </svg>
             </div>
             <div className="mr-4">
-              <p className="text-sm font-medium text-gray-500">الإجمالي</p>
+              <p className="text-sm font-medium text-gray-500">{t.admin.orders.totalStat}</p>
               <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-6">
           <div className="flex items-center">
             <div className="p-2 bg-yellow-100 rounded-lg">
@@ -160,7 +162,7 @@ export default function OrdersPage() {
               </svg>
             </div>
             <div className="mr-4">
-              <p className="text-sm font-medium text-gray-500">قيد الانتظار</p>
+              <p className="text-sm font-medium text-gray-500">{t.admin.orders.statuses.pending}</p>
               <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
             </div>
           </div>
@@ -174,12 +176,12 @@ export default function OrdersPage() {
               </svg>
             </div>
             <div className="mr-4">
-              <p className="text-sm font-medium text-gray-500">مؤكد</p>
+              <p className="text-sm font-medium text-gray-500">{t.admin.orders.statuses.confirmed}</p>
               <p className="text-2xl font-bold text-gray-900">{stats.confirmed}</p>
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-6">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg">
@@ -188,12 +190,12 @@ export default function OrdersPage() {
               </svg>
             </div>
             <div className="mr-4">
-              <p className="text-sm font-medium text-gray-500">تم التوصيل</p>
+              <p className="text-sm font-medium text-gray-500">{t.admin.orders.statuses.delivered}</p>
               <p className="text-2xl font-bold text-gray-900">{stats.delivered}</p>
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-6">
           <div className="flex items-center">
             <div className="p-2 bg-purple-100 rounded-lg">
@@ -202,7 +204,7 @@ export default function OrdersPage() {
               </svg>
             </div>
             <div className="mr-4">
-              <p className="text-sm font-medium text-gray-500">الإيرادات</p>
+              <p className="text-sm font-medium text-gray-500">{t.admin.dashboard.revenue}</p>
               <p className="text-2xl font-bold text-gray-900">{stats.revenue.toFixed(2)} DT</p>
             </div>
           </div>
@@ -213,13 +215,13 @@ export default function OrdersPage() {
       <div className="flex gap-2 flex-wrap">
         {(['all', 'pending', 'confirmed', 'delivered', 'cancelled'] as const).map((status) => {
           const statusLabels = {
-            all: 'الكل',
-            pending: 'قيد الانتظار',
-            confirmed: 'مؤكد',
-            delivered: 'تم التوصيل',
-            cancelled: 'ملغى'
+            all: t.admin.promoRequests.all,
+            pending: t.admin.orders.statuses.pending,
+            confirmed: t.admin.orders.statuses.confirmed,
+            delivered: t.admin.orders.statuses.delivered,
+            cancelled: t.admin.orders.statuses.cancelled,
           };
-          
+
           return (
             <button
               key={status}
@@ -245,15 +247,15 @@ export default function OrdersPage() {
       <Card>
         <div className="px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-medium text-gray-900">
-            {filter === 'all' ? 'جميع الطلبات' : `طلبات ${{
-              pending: 'قيد الانتظار',
-              confirmed: 'مؤكدة',
-              delivered: 'تم توصيلها',
-              cancelled: 'ملغاة'
+            {filter === 'all' ? t.admin.orders.allOrders : `${t.admin.orders.title} ${{
+              pending: t.admin.orders.statuses.pending,
+              confirmed: t.admin.orders.statuses.confirmed,
+              delivered: t.admin.orders.statuses.delivered,
+              cancelled: t.admin.orders.statuses.cancelled,
             }[filter as 'pending' | 'confirmed' | 'delivered' | 'cancelled']}`}
           </h3>
         </div>
-        
+
         {loading ? (
           <div className="p-12">
             {/* Table Skeleton */}
@@ -277,16 +279,16 @@ export default function OrdersPage() {
             <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">لم يتم العثور على طلبات</h3>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">{t.admin.orders.noOrders}</h3>
             <p className="mt-1 text-sm text-gray-500">
-              {filter === 'all' 
-                ? 'ستظهر الطلبات هنا عندما يقوم العملاء بعمليات الشراء.' 
-                : `لا توجد طلبات ${{
-                  pending: 'قيد الانتظار',
-                  confirmed: 'مؤكدة',
-                  delivered: 'تم توصيلها',
-                  cancelled: 'ملغاة'
-                }[filter as 'pending' | 'confirmed' | 'delivered' | 'cancelled']} في الوقت الحالي.`}
+              {filter === 'all'
+                ? t.admin.orders.filterEmptyAll
+                : `${t.admin.orders.noOrders} ${{
+                  pending: t.admin.orders.statuses.pending,
+                  confirmed: t.admin.orders.statuses.confirmed,
+                  delivered: t.admin.orders.statuses.delivered,
+                  cancelled: t.admin.orders.statuses.cancelled,
+                }[filter as 'pending' | 'confirmed' | 'delivered' | 'cancelled']} ${t.admin.orders.filterEmptySuffix}`}
             </p>
           </div>
         ) : (
@@ -295,25 +297,25 @@ export default function OrdersPage() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    رقم الطلب
+                    {t.admin.orders.orderNumber}
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    العميل
+                    {t.admin.orders.customer}
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    الهاتف
+                    {t.admin.orders.phone}
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    الولاية
+                    {t.shipping.gouvernorat}
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    الإجمالي
+                    {t.admin.orders.total}
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    الحالة
+                    {t.admin.orders.status}
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    التاريخ
+                    {t.admin.orders.date}
                   </th>
 
                 </tr>
@@ -321,7 +323,7 @@ export default function OrdersPage() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {orders.map((order) => {
                   const address = parseAddress(order.shipingAdress);
-                  
+
                   return (
                     <React.Fragment key={order.$id}>
                       <tr className="hover:bg-gray-50">
@@ -356,10 +358,10 @@ export default function OrdersPage() {
                             onChange={(e) => updateOrderStatus(order.$id, e.target.value)}
                             className={`px-3 py-1 text-xs font-semibold rounded-full border cursor-pointer focus:outline-none ${getStatusBadge(order.status)}`}
                           >
-                            <option value="pending">قيد الانتظار</option>
-                            <option value="confirmed">مؤكد</option>
-                            <option value="delivered">تم التوصيل</option>
-                            <option value="cancelled">ملغى</option>
+                            <option value="pending">{t.admin.orders.statuses.pending}</option>
+                            <option value="confirmed">{t.admin.orders.statuses.confirmed}</option>
+                            <option value="delivered">{t.admin.orders.statuses.delivered}</option>
+                            <option value="cancelled">{t.admin.orders.statuses.cancelled}</option>
                           </select>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -390,7 +392,7 @@ export default function OrdersPage() {
               {/* Modal Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
                 <div>
-                  <h2 className="text-lg font-bold text-gray-900">تفاصيل الطلب</h2>
+                  <h2 className="text-lg font-bold text-gray-900">{t.admin.orders.orderDetails}</h2>
                   <p className="text-sm text-gray-500">#{selectedOrder.$id.slice(-8).toUpperCase()}</p>
                 </div>
                 <button
@@ -413,16 +415,16 @@ export default function OrdersPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
-                      معلومات التوصيل
+                      {t.admin.orders.shippingAddress}
                     </h3>
-                    <p><span className="font-medium text-gray-700">الاسم: </span>{addr.fullName || selectedOrder.UserName}</p>
-                    <p><span className="font-medium text-gray-700">البريد: </span>{selectedOrder.UserEmail}</p>
-                    <p><span className="font-medium text-gray-700">الهاتف: </span>{addr.phone || 'N/A'}</p>
-                    <p><span className="font-medium text-gray-700">العنوان: </span>{addr.address || 'N/A'}</p>
-                    <p><span className="font-medium text-gray-700">المدينة: </span>{addr.city || 'N/A'}</p>
-                    <p><span className="font-medium text-gray-700">الولاية: </span>{addr.gouvernorat || 'N/A'}</p>
-                    <p><span className="font-medium text-gray-700">الرمز البريدي: </span>{addr.postalCode || 'N/A'}</p>
-                    {addr.notes && <p className="pt-2 border-t border-gray-200"><span className="font-medium text-gray-700">ملاحظات: </span>{addr.notes}</p>}
+                    <p><span className="font-medium text-gray-700">{t.admin.orders.name}: </span>{addr.fullName || selectedOrder.UserName}</p>
+                    <p><span className="font-medium text-gray-700">{t.admin.orders.email}: </span>{selectedOrder.UserEmail}</p>
+                    <p><span className="font-medium text-gray-700">{t.admin.orders.phone}: </span>{addr.phone || 'N/A'}</p>
+                    <p><span className="font-medium text-gray-700">{t.admin.orders.addressLabel}: </span>{addr.address || 'N/A'}</p>
+                    <p><span className="font-medium text-gray-700">{t.shipping.city}: </span>{addr.city || 'N/A'}</p>
+                    <p><span className="font-medium text-gray-700">{t.shipping.gouvernorat}: </span>{addr.gouvernorat || 'N/A'}</p>
+                    <p><span className="font-medium text-gray-700">{t.shipping.postalCode}: </span>{addr.postalCode || 'N/A'}</p>
+                    {addr.notes && <p className="pt-2 border-t border-gray-200"><span className="font-medium text-gray-700">{t.admin.orders.notes}: </span>{addr.notes}</p>}
                   </div>
 
                   {/* Order Summary */}
@@ -431,15 +433,15 @@ export default function OrdersPage() {
                       <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                       </svg>
-                      ملخص الطلب
+                      {t.admin.orders.orderSummaryLabel}
                     </h3>
-                    <p><span className="font-medium text-gray-700">التاريخ: </span>{formatDate(selectedOrder.$createdAt)}</p>
-                    <p><span className="font-medium text-gray-700">طريقة الدفع: </span>{selectedOrder.paymentmethod === 'cash_on_delivery' ? 'الدفع عند الاستلام' : selectedOrder.paymentmethod}</p>
-                    <p><span className="font-medium text-gray-700">تم الدفع: </span>{selectedOrder.Ispaid ? 'نعم' : 'لا'}</p>
+                    <p><span className="font-medium text-gray-700">{t.admin.orders.date}: </span>{formatDate(selectedOrder.$createdAt)}</p>
+                    <p><span className="font-medium text-gray-700">{t.admin.orders.paymentMethod}: </span>{selectedOrder.paymentmethod === 'cash_on_delivery' ? t.placeOrder.cashOnDelivery : selectedOrder.paymentmethod}</p>
+                    <p><span className="font-medium text-gray-700">{t.admin.orders.isPaid}: </span>{selectedOrder.Ispaid ? t.admin.orders.yes : t.admin.orders.no}</p>
                     <div className="pt-2 border-t border-gray-200 space-y-1">
-                      <p><span className="font-medium text-gray-700">سعر المنتجات: </span>{selectedOrder.itemsPrice.toFixed(2)} دينار</p>
-                      <p><span className="font-medium text-gray-700">الشحن: </span>{selectedOrder.shipingPrice.toFixed(2)} دينار</p>
-                      <p className="text-base font-bold text-gray-900 pt-1 border-t border-gray-200">الإجمالي: {selectedOrder.totalPrice.toFixed(2)} دينار</p>
+                      <p><span className="font-medium text-gray-700">{t.admin.orders.itemsPrice}: </span>{selectedOrder.itemsPrice.toFixed(2)} {t.productDetail.currency}</p>
+                      <p><span className="font-medium text-gray-700">{t.admin.orders.shippingCost}: </span>{selectedOrder.shipingPrice.toFixed(2)} {t.productDetail.currency}</p>
+                      <p className="text-base font-bold text-gray-900 pt-1 border-t border-gray-200">{t.admin.orders.total}: {selectedOrder.totalPrice.toFixed(2)} {t.productDetail.currency}</p>
                     </div>
                   </div>
                 </div>
@@ -450,24 +452,24 @@ export default function OrdersPage() {
                     <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                     </svg>
-                    المنتجات المطلوبة ({addr.items?.length || 0})
+                    {t.admin.orders.items} ({addr.items?.length || 0})
                   </h3>
                   {addr.items && addr.items.length > 0 ? (
                     <div className="space-y-2">
                       {addr.items.map((item: any, idx: number) => (
                         <div key={idx} className="flex justify-between items-start p-3 bg-gray-50 rounded-xl border border-gray-200">
                           <div>
-                            <p className="font-medium text-gray-900">{item.Name || item.name || 'منتج غير معروف'}</p>
+                            <p className="font-medium text-gray-900">{item.Name || item.name || t.admin.orders.unknownProduct}</p>
                             <p className="text-sm text-gray-500">{item.Brand || item.brand || ''}</p>
-                            {item.size && <p className="text-xs text-gray-400">الحجم: {item.size}</p>}
-                            <p className="text-xs text-gray-400">الكمية: {item.qty || item.quantity || 1}</p>
+                            {item.size && <p className="text-xs text-gray-400">{t.admin.orders.sizeLabel}: {item.size}</p>}
+                            <p className="text-xs text-gray-400">{t.placeOrder.qty}: {item.qty || item.quantity || 1}</p>
                           </div>
-                          <p className="font-semibold text-gray-900 text-sm">{(item.Price || item.price || 0).toFixed(2)} د</p>
+                          <p className="font-semibold text-gray-900 text-sm">{(item.Price || item.price || 0).toFixed(2)} {t.productDetail.currency}</p>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500">لا تتوفر معلومات عن المنتجات</p>
+                    <p className="text-sm text-gray-500">{t.admin.orders.noProductsInfo}</p>
                   )}
                 </div>
               </div>

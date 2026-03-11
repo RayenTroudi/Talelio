@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ProductThumbnail } from './ProductImage';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 /**
  * Product Card Interface
@@ -89,6 +90,7 @@ const ProductCardComponent = function ProductCard({
   isOnSale = false,
   isNew = false,
 }: ProductCardProps) {
+  const { t } = useTranslation();
   return (
     <Card className="group overflow-hidden rounded-3xl border-0 shadow-xl shadow-stone-200/40 hover:shadow-2xl hover:shadow-amber-500/20 transition-all duration-700 bg-white backdrop-blur-sm transform hover:-translate-y-2">
       <Link href={`/products/${id}`} className="block">
@@ -104,17 +106,17 @@ const ProductCardComponent = function ProductCard({
           <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
             {isNew && (
               <span className="inline-flex items-center px-3.5 py-2 rounded-full text-xs font-light bg-emerald-500/95 text-white backdrop-blur-sm shadow-xl tracking-wide">
-                جديد
+                {t.productCard.new}
               </span>
             )}
             {isOnSale && (
               <span className="inline-flex items-center px-3.5 py-2 rounded-full text-xs font-light bg-rose-500/95 text-white backdrop-blur-sm shadow-xl tracking-wide">
-                خصم
+                {t.productCard.sale}
               </span>
             )}
             {!isInStock && (
               <span className="inline-flex items-center px-3.5 py-2 rounded-full text-xs font-light bg-stone-500/95 text-white backdrop-blur-sm shadow-xl tracking-wide">
-                غير متوفر
+                {t.productCard.outOfStock}
               </span>
             )}
           </div>
@@ -141,7 +143,7 @@ const ProductCardComponent = function ProductCard({
           {/* Category (optional) */}
           {category && (
             <p className="text-xs text-stone-400 mb-4 font-light">
-              {category === 'Femme' ? 'نسائي' : category === 'Homme' ? 'رجالي' : category}
+              {category === 'Femme' ? t.productCard.categoryFemme : category === 'Homme' ? t.productCard.categoryHomme : category}
             </p>
           )}
           
@@ -159,10 +161,10 @@ const ProductCardComponent = function ProductCard({
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
               </svg>
-              <span className="text-xs font-light text-amber-700 tracking-wide">عرض التفاصيل</span>
+              <span className="text-xs font-light text-amber-700 tracking-wide">{t.productCard.viewDetails}</span>
             </div>
             <span className="text-2xl font-light text-stone-900">
-              {price.toFixed(2)} <span className="text-base text-stone-500">د.ت</span>
+              {price.toFixed(2)} <span className="text-base text-stone-500">{t.productDetail.currency}</span>
             </span>
           </div>
         </CardContent>

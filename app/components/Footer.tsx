@@ -1,112 +1,116 @@
+"use client";
+
 import Link from "next/link";
+import { useTranslation } from "@/app/components/LocaleProvider";
 
 export default function Footer() {
+  const { t } = useTranslation();
   return (
     <footer className="relative bg-gradient-to-b from-white via-amber-50/20 to-amber-50/40 text-gray-600 mt-32 overflow-hidden border-t border-amber-200/50">
       {/* Decorative Elements */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(251,191,36,0.08),transparent_60%)]" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
-      
+
       {/* Main Content */}
       <div className="relative container mx-auto px-6 lg:px-16 py-20">
 
         {/* Links Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 max-w-4xl mx-auto mb-16 mt-12">
-          
-          {/* المتجر */}
+
+          {/* Store */}
           <div className="text-center space-y-6">
             <h3 className="text-lg font-light text-amber-700 mb-8 tracking-wide">
-              المتجر
+              {t.footer.store}
             </h3>
             <ul className="space-y-4">
               <li>
-                <Link 
-                  href="/" 
+                <Link
+                  href="/"
                   className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
                 >
-                  الرئيسية
+                  {t.footer.home}
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/categories/femme" 
+                <Link
+                  href="/categories/femme"
                   className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
                 >
-                  عطور نسائية
+                  {t.footer.womenPerfumes}
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/categories/homme" 
+                <Link
+                  href="/categories/homme"
                   className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
                 >
-                  عطور رجالية
+                  {t.footer.menPerfumes}
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* الشركة */}
+          {/* Company */}
           <div className="text-center space-y-6">
             <h3 className="text-lg font-light text-amber-700 mb-8 tracking-wide">
-              الشركة
+              {t.footer.company}
             </h3>
             <ul className="space-y-4">
               <li>
-                <Link 
-                  href="/about" 
+                <Link
+                  href="/about"
                   className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
                 >
-                  من نحن
+                  {t.footer.about}
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/contact" 
+                <Link
+                  href="/contact"
                   className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
                 >
-                  تواصل معنا
+                  {t.footer.contact}
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="#" 
+                <Link
+                  href="#"
                   className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
                 >
-                  سياسة الخصوصية
+                  {t.footer.privacy}
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="#" 
+                <Link
+                  href="#"
                   className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
                 >
-                  الشروط والأحكام
+                  {t.footer.terms}
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* تابعنا */}
+          {/* Follow Us */}
           <div className="text-center space-y-6">
             <h3 className="text-lg font-light text-amber-700 mb-8 tracking-wide">
-              تابعنا
+              {t.footer.followUs}
             </h3>
             <ul className="space-y-4">
               <li>
-                <a 
-                  href="#" 
+                <a
+                  href="#"
                   className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
                 >
-                  انستغرام
+                  {t.footer.instagram}
                 </a>
               </li>
               <li>
-                <a 
-                  href="#" 
+                <a
+                  href="#"
                   className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
                 >
-                  فيسبوك
+                  {t.footer.facebook}
                 </a>
               </li>
               <li>
@@ -114,7 +118,7 @@ export default function Footer() {
                   href="/account#referral-section"
                   className="inline-flex items-center gap-1.5 mt-2 px-4 py-2 rounded-full bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md"
                 >
-                  إنضم ألينا
+                  {t.footer.joinUs}
                 </Link>
               </li>
             </ul>
@@ -129,7 +133,7 @@ export default function Footer() {
         {/* Copyright */}
         <div className="text-center pb-8">
           <p className="text-gray-500 text-sm tracking-wide font-light">
-            &copy; {new Date().getFullYear()} متجر العطور الفاخرة • جميع الحقوق محفوظة
+            &copy; {new Date().getFullYear()} {t.footer.copyright}
           </p>
         </div>
       </div>
