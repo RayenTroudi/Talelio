@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { PiCurrencyDollarSimpleBold } from "react-icons/pi";
 
 interface EarningRecord {
   $id: string;
@@ -82,14 +81,21 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
       {/* Trigger button */}
       <button
         onClick={() => setOpen((p) => !p)}
-        className="relative group p-2 hover:bg-amber-50 rounded-xl transition-all duration-200"
+        className={`relative group p-2 rounded-xl transition-all duration-200 ${
+          hasEarnings ? "hover:bg-amber-50" : "hover:bg-gray-50"
+        }`}
         aria-label="عمولاتي"
         title="عمولاتي"
       >
-        <PiCurrencyDollarSimpleBold
-          size="24px"
-          className="text-amber-600 group-hover:text-amber-700 transition-colors duration-200"
-        />
+        <span
+          className={`text-[11px] font-bold tracking-tight leading-none select-none ${
+            hasEarnings
+              ? "text-amber-600 group-hover:text-amber-700"
+              : "text-gray-500 group-hover:text-gray-700"
+          } transition-colors duration-200`}
+        >
+          TND
+        </span>
         {/* Dot badge when there are earnings */}
         {data && data.total > 0 && (
           <span
