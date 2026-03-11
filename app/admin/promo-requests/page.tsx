@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 
 interface PromoRequest {
   $id: string;
@@ -109,9 +107,10 @@ export default function PromoRequestsPage() {
 
   return (
     <div className="space-y-6" dir="rtl">
+      {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">طلبات رمز الترويج</h1>
-        <p className="text-gray-600">مراجعة طلبات رموز الإحالة والموافقة عليها أو رفضها.</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-1">طلبات رمز الإحالة</h1>
+        <p className="text-gray-500 text-sm">مراجعة الطلبات والموافقة عليها أو رفضها</p>
       </div>
 
       {/* Filter Tabs */}
@@ -120,10 +119,10 @@ export default function PromoRequestsPage() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-lg text-sm font-light transition-colors ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filter === f
-                ? "bg-amber-500 text-white"
-                : "bg-white border border-stone-200 text-stone-700 hover:bg-stone-50"
+                ? "bg-amber-500 text-white shadow-sm"
+                : "bg-white border border-stone-200 text-stone-600 hover:bg-stone-50"
             }`}
           >
             {f === "all" ? "الكل" : (statusLabel[f]?.label || f)}
@@ -131,153 +130,204 @@ export default function PromoRequestsPage() {
         ))}
       </div>
 
+      {/* Table */}
       {loading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} className="p-6">
-              <div className="h-5 w-48 bg-stone-200 rounded animate-pulse mb-3" />
-              <div className="h-4 w-full bg-stone-100 rounded animate-pulse" />
-            </Card>
-          ))}
+        <div className="rounded-xl border border-stone-200 overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-stone-50 border-b border-stone-200">
+              <tr>
+                {["المستخدم", "الحالة", "الرمز", "العمولات", "تاريخ الطلب", "إجراء"].map((h) => (
+                  <th key={h} className="px-5 py-3 text-right font-medium text-stone-500">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-stone-100 bg-white">
+              {[1, 2, 3].map((i) => (
+                <tr key={i}>
+                  {[1, 2, 3, 4, 5, 6].map((j) => (
+                    <td key={j} className="px-5 py-4">
+                      <div className="h-4 bg-stone-100 rounded animate-pulse w-24" />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       ) : requests.length === 0 ? (
-        <Card className="p-12 text-center text-gray-500">لا توجد طلبات</Card>
+        <div className="rounded-xl border border-stone-200 bg-white p-16 text-center text-gray-400">
+          لا توجد طلبات
+        </div>
       ) : (
-        <div className="space-y-4">
-          {requests.map((req) => {
-            const ed = earnings[req.userId];
-            const isOpen = !!expanded[req.userId];
-            const hasRecords = ed && ed.records.length > 0;
+        <div className="rounded-xl border border-stone-200 overflow-hidden shadow-sm">
+          <table className="w-full text-sm">
+            <thead className="bg-stone-50 border-b border-stone-200">
+              <tr>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">المستخدم</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">الحالة</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">رمز الإحالة</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">إجمالي العمولات</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">تاريخ الطلب</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">إجراء</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-stone-100 bg-white">
+              {requests.map((req) => {
+                const ed = earnings[req.userId];
+                const isOpen = !!expanded[req.userId];
+                const hasRecords = ed && ed.records.length > 0;
 
-            return (
-              <Card key={req.$id} className="p-6">
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div className="space-y-1 text-right flex-1">
-                    <p className="font-semibold text-gray-900">{req.userName || "—"}</p>
-                    <p className="text-sm text-gray-600" dir="ltr">{req.userEmail}</p>
-                    <p className="text-xs text-gray-400">
-                      {new Date(req.$createdAt).toLocaleDateString("ar-TN", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
-                  </div>
+                return (
+                  <React.Fragment key={req.$id}>
+                    {/* Main row */}
+                    <tr className="hover:bg-stone-50 transition-colors">
+                      {/* User */}
+                      <td className="px-5 py-4">
+                        <p className="font-medium text-gray-900">{req.userName || "—"}</p>
+                        <p className="text-xs text-gray-400 mt-0.5" dir="ltr">{req.userEmail}</p>
+                      </td>
 
-                  <div className="flex flex-col items-end gap-3">
-                    <span
-                      className={`inline-block px-3 py-1 rounded-full text-xs font-light ${
-                        statusLabel[req.status]?.cls || ""
-                      }`}
-                    >
-                      {statusLabel[req.status]?.label || req.status}
-                    </span>
-
-                    {req.status === "APPROVED" && req.promoCode && (
-                      <p className="font-mono font-bold tracking-widest text-stone-900 bg-amber-50 px-3 py-1 rounded-lg border border-amber-200">
-                        {req.promoCode}
-                      </p>
-                    )}
-
-                    {req.status === "PENDING" && (
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          disabled={!!processing}
-                          onClick={() => handleAction(req.$id, "deny")}
-                          className="text-red-600 border-red-200 hover:bg-red-50"
-                        >
-                          {processing === req.$id + "deny" ? "..." : "رفض"}
-                        </Button>
-                        <Button
-                          size="sm"
-                          disabled={!!processing}
-                          onClick={() => handleAction(req.$id, "approve")}
-                          className="bg-green-600 hover:bg-green-700 text-white"
-                        >
-                          {processing === req.$id + "approve" ? "..." : "موافقة"}
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <Separator className="my-4" />
-
-                {req.status === "APPROVED" ? (
-                  <div className="text-right space-y-3">
-                    {/* Summary row + toggle */}
-                    <div className="flex items-center justify-between">
-                      <button
-                        onClick={() => toggleExpanded(req.userId)}
-                        disabled={!hasRecords}
-                        className={`flex items-center gap-1 text-sm font-medium transition-colors ${
-                          hasRecords
-                            ? "text-amber-600 hover:text-amber-700 cursor-pointer"
-                            : "text-gray-400 cursor-default"
-                        }`}
-                      >
-                        <span>
-                          {hasRecords
-                            ? isOpen
-                              ? "▲ إخفاء المشتريات"
-                              : `▼ عرض المشتريات (${ed!.records.length})`
-                            : "لا توجد مشتريات بعد"}
+                      {/* Status */}
+                      <td className="px-5 py-4">
+                        <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${statusLabel[req.status]?.cls || ""}`}>
+                          {statusLabel[req.status]?.label || req.status}
                         </span>
-                      </button>
-                      <p className="text-sm text-gray-500">
-                        إجمالي العمولات:{" "}
-                        <span className="font-semibold text-green-700">
-                          {ed === undefined
-                            ? "..."
-                            : ed.total === null
-                            ? "—"
-                            : `${ed.total.toFixed(2)} TND`}
-                        </span>
-                      </p>
-                    </div>
+                      </td>
 
-                    {/* Buyers dropdown */}
+                      {/* Promo code */}
+                      <td className="px-5 py-4">
+                        {req.status === "APPROVED" && req.promoCode ? (
+                          <span className="font-mono font-bold tracking-widest text-stone-800 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200 text-xs">
+                            {req.promoCode}
+                          </span>
+                        ) : (
+                          <span className="text-stone-300">—</span>
+                        )}
+                      </td>
+
+                      {/* Earnings */}
+                      <td className="px-5 py-4">
+                        {req.status === "APPROVED" ? (
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-green-700">
+                              {ed === undefined ? (
+                                <span className="text-stone-300 font-normal">...</span>
+                              ) : ed.total === null ? (
+                                <span className="text-stone-300 font-normal">—</span>
+                              ) : (
+                                `${ed.total.toFixed(2)} TND`
+                              )}
+                            </span>
+                            {hasRecords && (
+                              <button
+                                onClick={() => toggleExpanded(req.userId)}
+                                className="text-amber-500 hover:text-amber-600 transition-colors text-xs underline underline-offset-2"
+                              >
+                                {isOpen ? "إخفاء" : `${ed!.records.length} مشتريات`}
+                              </button>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-stone-400">10% على كل طلب</span>
+                        )}
+                      </td>
+
+                      {/* Date */}
+                      <td className="px-5 py-4 text-stone-500 text-xs whitespace-nowrap">
+                        {new Date(req.$createdAt).toLocaleDateString("ar-TN", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </td>
+
+                      {/* Action */}
+                      <td className="px-5 py-4">
+                        {req.status === "PENDING" ? (
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={!!processing}
+                              onClick={() => handleAction(req.$id, "deny")}
+                              className="text-red-600 border-red-200 hover:bg-red-50 h-7 text-xs px-3"
+                            >
+                              {processing === req.$id + "deny" ? "..." : "رفض"}
+                            </Button>
+                            <Button
+                              size="sm"
+                              disabled={!!processing}
+                              onClick={() => handleAction(req.$id, "approve")}
+                              className="bg-green-600 hover:bg-green-700 text-white h-7 text-xs px-3"
+                            >
+                              {processing === req.$id + "approve" ? "..." : "موافقة"}
+                            </Button>
+                          </div>
+                        ) : (
+                          <span className="text-stone-300 text-xs">—</span>
+                        )}
+                      </td>
+                    </tr>
+
+                    {/* Expanded buyers sub-table */}
                     {isOpen && hasRecords && (
-                      <div className="border border-stone-100 rounded-lg overflow-hidden mt-2">
-                        <table className="w-full text-sm">
-                          <thead className="bg-stone-50 text-stone-600">
-                            <tr>
-                              <th className="px-4 py-2 text-right font-medium">المشتري</th>
-                              <th className="px-4 py-2 text-right font-medium">التاريخ</th>
-                              <th className="px-4 py-2 text-left font-medium">العمولة</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-stone-100">
-                            {ed!.records.map((rec) => (
-                              <tr key={rec.$id} className="hover:bg-stone-50 transition-colors">
-                                <td className="px-4 py-3 text-gray-700" dir="ltr">
-                                  {rec.buyerEmail || "—"}
-                                </td>
-                                <td className="px-4 py-3 text-gray-500">
-                                  {new Date(rec.$createdAt).toLocaleDateString("ar-TN", {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                  })}
-                                </td>
-                                <td className="px-4 py-3 text-left font-semibold text-green-700">
-                                  {rec.amount.toFixed(2)} {rec.currency}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+                      <tr>
+                        <td colSpan={6} className="px-0 py-0 bg-amber-50/40">
+                          <div className="px-8 py-4 border-t border-amber-100">
+                            <p className="text-xs font-semibold text-amber-700 mb-3 tracking-wide uppercase">
+                              تفاصيل المشتريات
+                            </p>
+                            <table className="w-full text-sm rounded-lg overflow-hidden">
+                              <thead>
+                                <tr className="bg-white border border-stone-100 rounded-lg">
+                                  <th className="px-4 py-2 text-right text-xs font-medium text-stone-500 rounded-tr-lg">#</th>
+                                  <th className="px-4 py-2 text-right text-xs font-medium text-stone-500">المشتري</th>
+                                  <th className="px-4 py-2 text-right text-xs font-medium text-stone-500">تاريخ الشراء</th>
+                                  <th className="px-4 py-2 text-right text-xs font-medium text-stone-500">رقم الطلب</th>
+                                  <th className="px-4 py-2 text-left text-xs font-medium text-stone-500 rounded-tl-lg">العمولة</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-stone-100">
+                                {ed!.records.map((rec, idx) => (
+                                  <tr key={rec.$id} className="bg-white hover:bg-stone-50 transition-colors">
+                                    <td className="px-4 py-2.5 text-stone-400 text-xs">{idx + 1}</td>
+                                    <td className="px-4 py-2.5 text-gray-700" dir="ltr">{rec.buyerEmail || "—"}</td>
+                                    <td className="px-4 py-2.5 text-stone-500 text-xs">
+                                      {new Date(rec.$createdAt).toLocaleDateString("ar-TN", {
+                                        year: "numeric",
+                                        month: "short",
+                                        day: "numeric",
+                                      })}
+                                    </td>
+                                    <td className="px-4 py-2.5 text-stone-400 text-xs font-mono" dir="ltr">
+                                      {rec.orderId.slice(0, 12)}…
+                                    </td>
+                                    <td className="px-4 py-2.5 text-left font-semibold text-green-700">
+                                      +{rec.amount.toFixed(2)} <span className="text-xs font-normal text-stone-400">{rec.currency}</span>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                              <tfoot>
+                                <tr className="bg-stone-50 border-t border-stone-200">
+                                  <td colSpan={4} className="px-4 py-2 text-xs font-semibold text-stone-500 text-right">
+                                    الإجمالي
+                                  </td>
+                                  <td className="px-4 py-2 text-left font-bold text-green-700">
+                                    {ed!.total?.toFixed(2)} <span className="text-xs font-normal text-stone-400">TND</span>
+                                  </td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        </td>
+                      </tr>
                     )}
-                  </div>
-                ) : (
-                  <p className="text-xs text-gray-400 text-right">10% عمولة على كل طلب</p>
-                )}
-              </Card>
-            );
-          })}
+                  </React.Fragment>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
