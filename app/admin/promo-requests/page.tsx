@@ -162,7 +162,7 @@ export default function PromoRequestsPage() {
           <table className="w-full text-sm">
             <thead className="bg-stone-50 border-b border-stone-200">
               <tr>
-                {["المستخدم", "الحالة", "الرمز", "العمولات", "حالة الدفع", "تاريخ الطلب", "المبلغ المستحق"].map((h) => (
+                {["المستخدم", "الحالة", "الرمز", "العمولات", "حالة الدفع", "تاريخ الطلب", "المبلغ المستحق", "الإجراءات"].map((h) => (
                   <th key={h} className="px-5 py-3 text-right font-medium text-stone-500">{h}</th>
                 ))}
               </tr>
@@ -170,7 +170,7 @@ export default function PromoRequestsPage() {
             <tbody className="divide-y divide-stone-100 bg-white">
               {[1, 2, 3].map((i) => (
                 <tr key={i}>
-                  {[1, 2, 3, 4, 5, 6, 7].map((j) => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((j) => (
                     <td key={j} className="px-5 py-4">
                       <div className="h-4 bg-stone-100 rounded animate-pulse w-24" />
                     </td>
@@ -196,6 +196,7 @@ export default function PromoRequestsPage() {
                 <th className="px-5 py-3 text-right font-medium text-stone-500">حالة الدفع</th>
                 <th className="px-5 py-3 text-right font-medium text-stone-500">تاريخ الطلب</th>
                 <th className="px-5 py-3 text-right font-medium text-stone-500">المبلغ المستحق</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">الإجراءات</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100 bg-white">
@@ -316,12 +317,35 @@ export default function PromoRequestsPage() {
                           <span className="text-stone-300 text-xs">—</span>
                         )}
                       </td>
+                      {/* Actions */}
+                      <td className="px-5 py-4">
+                        {req.status === "PENDING" ? (
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleAction(req.$id, "approve")}
+                              disabled={processing === req.$id + "approve" || processing === req.$id + "deny"}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-green-500 text-white hover:bg-green-600 transition-colors disabled:opacity-50"
+                            >
+                              {processing === req.$id + "approve" ? "..." : "قبول"}
+                            </button>
+                            <button
+                              onClick={() => handleAction(req.$id, "deny")}
+                              disabled={processing === req.$id + "approve" || processing === req.$id + "deny"}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50"
+                            >
+                              {processing === req.$id + "deny" ? "..." : "رفض"}
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-stone-300 text-xs">—</span>
+                        )}
+                      </td>
                     </tr>
 
                     {/* Expanded buyers sub-table */}
                     {isOpen && hasRecords && (
                       <tr>
-                        <td colSpan={7} className="px-0 py-0 bg-amber-50/40">
+                        <td colSpan={8} className="px-0 py-0 bg-amber-50/40">
                           <div className="px-8 py-4 border-t border-amber-100">
                             <p className="text-xs font-semibold text-amber-700 mb-3 tracking-wide uppercase">
                               تفاصيل المشتريات
