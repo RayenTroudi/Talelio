@@ -323,3 +323,25 @@
   margin-left: 88px;
 }
 }
+
+/* Custom scrollbar — amber theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #fef3c7;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb {
+  background: #f59e0b;
+  border-radius: 999px;
+  border: 2px solid #fef3c7;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d97706;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #f59e0b #fef3c7;
+}
