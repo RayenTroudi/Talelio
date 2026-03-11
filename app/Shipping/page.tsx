@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { saveShippingAddress } from "../Redux/slices/CartSlice";
+import { saveShippingAddress, setPromoCode, clearPromoCode } from "../Redux/slices/CartSlice";
+import { useSession } from "next-auth/react";
 import Checkout from "../components/Checkout";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -20,7 +21,41 @@ const Shipping = () => {
   //
   const router = useRouter();
   const dispatch = useDispatch();
-  const { shippingAddress } = useSelector((state: any) => state.Cart);
+  const { data: session } = useSession();
+  const { shippingAddress, appliedPromoCode } = useSelector(
+    (state: any) => state.Cart
+  );
+
+  const [promoInput, setPromoInput] = useState("");
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoError, setPromoError] = useState("");
+
+  const handleApplyPromo = async () => {
+    if (!promoInput.trim()) return;
+    setPromoLoading(true);
+    setPromoError("");
+    try {
+      const res = await fetch(
+        `/api/promo/validate?code=${encodeURIComponent(promoInput.trim().toUpperCase())}`
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        setPromoError(data.error || "رمز الإحالة غير صالح");
+      } else {
+        dispatch(
+          setPromoCode({
+            code: data.code,
+            promoCodeId: data.promoCodeId,
+          })
+        );
+        setPromoInput("");
+      }
+    } catch {
+      setPromoError("حدث خطأ. يرجى المحاولة مرة أخرى.");
+    } finally {
+      setPromoLoading(false);
+    }
+  };
 
   useEffect(() => {
     setValue("fullName", shippingAddress?.fullName);
@@ -220,6 +255,55 @@ const Shipping = () => {
             />
           </div>
         </div>
+
+          {/* Promo Code Section */}
+          {session ? (
+            <div className="border-t border-stone-200/50 pt-6">
+              <label className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
+                رمز الإحالة (اختياري)
+              </label>
+              {appliedPromoCode ? (
+                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl p-4">
+                  <button
+                    type="button"
+                    onClick={() => dispatch(clearPromoCode())}
+                    className="text-red-500 text-sm hover:text-red-700 transition-colors"
+                  >
+                    إزالة
+                  </button>
+                  <div className="text-right">
+                    <p className="font-medium text-green-800 tracking-widest">{appliedPromoCode}</p>
+                      <p className="text-sm text-green-600 font-light">تم تطبيق رمز الإحالة ✔️</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-2" dir="rtl">
+                  <input
+                    type="text"
+                    value={promoInput}
+                    onChange={(e) => {
+                      setPromoInput(e.target.value.toUpperCase());
+                      setPromoError("");
+                    }}
+                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleApplyPromo())}
+                    placeholder="أدخل رمز الإحالة"
+                    className="flex-1 px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all tracking-widest uppercase"
+                  />
+                  <button
+                    type="button"
+                    disabled={promoLoading || !promoInput.trim()}
+                    onClick={handleApplyPromo}
+                    className="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:bg-stone-300 text-white font-light text-sm transition-colors whitespace-nowrap"
+                  >
+                    {promoLoading ? "..." : "تطبيق"}
+                  </button>
+                </div>
+              )}
+              {promoError && (
+                <p className="text-red-500 text-sm mt-1 text-right">{promoError}</p>
+              )}
+            </div>
+          ) : null}
 
         <div className="mt-10">
           <button className="w-full py-5 rounded-2xl font-light text-lg tracking-wide bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-xl shadow-amber-400/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5">

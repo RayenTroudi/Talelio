@@ -135,6 +135,25 @@ export async function PATCH(request: Request) {
 
     console.log(`✅ Order ${orderId} status updated to: ${status}`);
 
+    // When an order is cancelled, remove any referral commission earned from it
+    if (status === 'cancelled') {
+      try {
+        const earningsCol = appwriteConfig.referralEarningsCollectionId || 'referralEarnings';
+        const existing = await databases.listDocuments(
+          appwriteConfig.databaseId,
+          earningsCol,
+          [Query.equal('orderId', orderId), Query.limit(5)]
+        );
+        for (const doc of existing.documents) {
+          await databases.deleteDocument(appwriteConfig.databaseId, earningsCol, doc.$id);
+          console.log(`🗑️ Deleted referral earning ${doc.$id} for cancelled order ${orderId}`);
+        }
+      } catch (err: any) {
+        // Non-fatal — log but don't fail the status update
+        console.error('⚠️ Failed to remove referral earnings for cancelled order:', err.message);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       order: updatedOrder

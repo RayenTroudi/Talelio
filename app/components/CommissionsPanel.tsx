@@ -88,7 +88,7 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
         title="عمولاتي"
       >
         <span
-          className={`text-[11px] font-bold tracking-tight leading-none select-none ${
+          className={`text-[15px] font-bold tracking-tight leading-none select-none ${
             hasEarnings
               ? "text-amber-600 group-hover:text-amber-700"
               : "text-gray-500 group-hover:text-gray-700"

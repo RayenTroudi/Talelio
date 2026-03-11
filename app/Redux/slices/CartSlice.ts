@@ -8,12 +8,26 @@ const initialState =  Cookies.get("cart")
     CartItems:[],
     showSidebar:false,
     qty: 1,
-    shippingAddress:{}
+    shippingAddress:{},
+    appliedPromoCode: null as string | null,
+    promoCodeId: null as string | null,
 };
 
 
 const addDecimals = (num:number) => {
     return(Math.round(num * 100)/ 100).toFixed(2)
+}
+
+/** Recalculates itemsPrice, shippingPrice and totalPrice in-place. */
+const recalcPrices = (state: any) => {
+    state.itemsPrice = addDecimals(
+        state.CartItems.reduce((acc:any, item:any) => acc + item.Price * item.qty, 0)
+    )
+    const gouvernorat = state.shippingAddress?.gouvernorat || ''
+    state.shippingPrice = gouvernorat === 'Nabeul' ? 0 : (gouvernorat ? 8 : 0)
+    state.totalPrice = addDecimals(
+        Number(state.itemsPrice) + Number(state.shippingPrice)
+    )
 }
 
 const CartSlice = createSlice({
@@ -32,22 +46,8 @@ const CartSlice = createSlice({
                 state.CartItems = [...state.CartItems, item]
             }
             
-            // Calculate itemsPrice (subtotal)
-            state.itemsPrice = addDecimals(state.CartItems.reduce((acc:any, item:any) => acc + (item.Price) * (item.qty), 0))
-            
-            // Calculate delivery fee based on gouvernorat
-            // Free for Nabeul, 8 DT for all others
-            const gouvernorat = state.shippingAddress?.gouvernorat || ''
-            state.shippingPrice = gouvernorat === 'Nabeul' ? 0 : (gouvernorat ? 8 : 0)
-            
-            // Calculate total (no tax)
-            state.totalPrice = addDecimals(
-                Number(state.itemsPrice) + Number(state.shippingPrice)
-            )
-            
-            // Set loading to false to show the cart items
+            recalcPrices(state)
             state.loading = false
-            
             Cookies.set("cart", JSON.stringify(state))
             state.showSidebar = true
         },
@@ -58,22 +58,8 @@ const CartSlice = createSlice({
  
         removeFromCart:(state:any, action:any) => {
             state.CartItems = state.CartItems.filter((x:any) => x.id !== action.payload)
-            
-            // Recalculate itemsPrice
-            state.itemsPrice = addDecimals(state.CartItems.reduce((acc:any, item:any) => acc + (item.Price) * (item.qty), 0))
-
-            // Recalculate delivery fee
-            const gouvernorat = state.shippingAddress?.gouvernorat || ''
-            state.shippingPrice = gouvernorat === 'Nabeul' ? 0 : (gouvernorat ? 8 : 0)
-            
-            // Recalculate total (no tax)
-            state.totalPrice = addDecimals(
-                Number(state.itemsPrice) + Number(state.shippingPrice)
-            )
-            
-            // Keep loading false
+            recalcPrices(state)
             state.loading = false
-            
             Cookies.set("cart", JSON.stringify(state))
         },
 
@@ -93,6 +79,21 @@ const CartSlice = createSlice({
             
             Cookies.set("cart" , JSON.stringify(state))
         },
+
+        setPromoCode:(state:any, action:any) => {
+            // Record which referral code was applied — no discount for buyer
+            const { code, promoCodeId } = action.payload
+            state.appliedPromoCode = code
+            state.promoCodeId = promoCodeId
+            Cookies.set("cart", JSON.stringify(state))
+        },
+
+        clearPromoCode:(state:any) => {
+            state.appliedPromoCode = null
+            state.promoCodeId = null
+            Cookies.set("cart", JSON.stringify(state))
+        },
+
         hideloading:(state:any) => {
             state.loading = false
         },
@@ -102,10 +103,12 @@ const CartSlice = createSlice({
             state.shippingPrice = 0
             state.totalPrice = 0
             state.shippingAddress = {}
+            state.appliedPromoCode = null
+            state.promoCodeId = null
             Cookies.remove("cart")
         }
     }
 })
 
-export const {addToCart, toggleCartSidebar, removeFromCart, hideloading, saveShippingAddress, clearCart} = CartSlice.actions
+export const {addToCart, toggleCartSidebar, removeFromCart, hideloading, saveShippingAddress, clearCart, setPromoCode, clearPromoCode} = CartSlice.actions
 export default CartSlice.reducer

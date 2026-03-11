@@ -13,6 +13,8 @@ export const appwriteConfig = {
   perfumesCollectionId: process.env.NEXT_PUBLIC_APPWRITE_PERFUMES_COLLECTION_ID || '',
   ordersCollectionId: process.env.NEXT_PUBLIC_APPWRITE_ORDERS_COLLECTION_ID || '',
   usersCollectionId: process.env.NEXT_PUBLIC_APPWRITE_USERS_COLLECTION_ID || '',
+  promoRequestsCollectionId: process.env.NEXT_PUBLIC_APPWRITE_PROMO_REQUESTS_COLLECTION_ID || '',
+  referralEarningsCollectionId: process.env.NEXT_PUBLIC_APPWRITE_REFERRAL_EARNINGS_COLLECTION_ID || '',
   
   // Storage
   perfumeImagesBucketId: process.env.NEXT_PUBLIC_APPWRITE_PERFUME_IMAGES_BUCKET_ID || '',

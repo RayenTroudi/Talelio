@@ -34,7 +34,7 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'delivered' | 'cancelled'>('all');
-  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     fetchOrders();
@@ -315,15 +315,12 @@ export default function OrdersPage() {
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     التاريخ
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    الإجراءات
-                  </th>
+
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {orders.map((order) => {
                   const address = parseAddress(order.shipingAdress);
-                  const isExpanded = expandedOrder === order.$id;
                   
                   return (
                     <React.Fragment key={order.$id}>
@@ -333,9 +330,12 @@ export default function OrdersPage() {
                             #{order.$id.slice(-8).toUpperCase()}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
+                        <td
+                          className="px-6 py-4 cursor-pointer"
+                          onClick={() => setSelectedOrder(order)}
+                        >
                           <div className="text-sm">
-                            <div className="font-medium text-gray-900">{address.fullName || order.UserName}</div>
+                            <div className="font-medium text-gray-900 hover:text-amber-600 transition-colors underline-offset-2 hover:underline">{address.fullName || order.UserName}</div>
                             <div className="text-gray-500">{order.UserEmail}</div>
                           </div>
                         </td>
@@ -351,136 +351,21 @@ export default function OrdersPage() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getStatusBadge(order.status)}`}>
-                            {{
-                              pending: 'قيد الانتظار',
-                              confirmed: 'مؤكد',
-                              delivered: 'تم التوصيل',
-                              cancelled: 'ملغى'
-                            }[order.status] || order.status}
-                          </span>
+                          <select
+                            value={order.status}
+                            onChange={(e) => updateOrderStatus(order.$id, e.target.value)}
+                            className={`px-3 py-1 text-xs font-semibold rounded-full border cursor-pointer focus:outline-none ${getStatusBadge(order.status)}`}
+                          >
+                            <option value="pending">قيد الانتظار</option>
+                            <option value="confirmed">مؤكد</option>
+                            <option value="delivered">تم التوصيل</option>
+                            <option value="cancelled">ملغى</option>
+                          </select>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {new Date(order.$createdAt).toLocaleDateString('ar-TN')}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <button
-                            onClick={() => setExpandedOrder(isExpanded ? null : order.$id)}
-                            className="text-stone-600 hover:text-stone-900 font-medium"
-                          >
-                            {isExpanded ? 'إخفاء' : 'عرض'}
-                          </button>
-                        </td>
                       </tr>
-                      
-                      {/* Expanded Details Row */}
-                      {isExpanded && (
-                        <tr>
-                          <td colSpan={8} className="px-6 py-6 bg-gray-50">
-                            <div className="space-y-6">
-                              {/* Order Info Grid */}
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Delivery Information */}
-                                <Card className="p-4">
-                                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
-                                    <svg className="w-5 h-5 ml-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                    معلومات التوصيل
-                                  </h4>
-                                  <div className="space-y-2 text-sm">
-                                    <p><span className="font-medium text-gray-700">الاسم:</span> {address.fullName || 'N/A'}</p>
-                                    <p><span className="font-medium text-gray-700">الهاتف:</span> {address.phone || 'N/A'}</p>
-                                    <p><span className="font-medium text-gray-700">العنوان:</span> {address.address || 'N/A'}</p>
-                                    <p><span className="font-medium text-gray-700">المدينة:</span> {address.city || 'N/A'}</p>
-                                    <p><span className="font-medium text-gray-700">الولاية:</span> {address.gouvernorat || 'N/A'}</p>
-                                    <p><span className="font-medium text-gray-700">الرمز البريدي:</span> {address.postalCode || 'N/A'}</p>
-                                    {address.notes && (
-                                      <p className="pt-2 border-t border-gray-200">
-                                        <span className="font-medium text-gray-700">ملاحظات:</span> {address.notes}
-                                      </p>
-                                    )}
-                                  </div>
-                                </Card>
-
-                                {/* Order Summary */}
-                                <Card className="p-4">
-                                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
-                                    <svg className="w-5 h-5 ml-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                    </svg>
-                                    ملخص الطلب
-                                  </h4>
-                                  <div className="space-y-2 text-sm">
-                                    <p><span className="font-medium text-gray-700">رقم الطلب:</span> #{order.$id.slice(-8).toUpperCase()}</p>
-                                    <p><span className="font-medium text-gray-700">التاريخ:</span> {formatDate(order.$createdAt)}</p>
-                                    <p><span className="font-medium text-gray-700">طريقة الدفع:</span> {order.paymentmethod === 'cash_on_delivery' ? 'الدفع عند الاستلام' : order.paymentmethod}</p>
-                                    <p><span className="font-medium text-gray-700">تم الدفع:</span> {order.Ispaid ? 'نعم' : 'لا'}</p>
-                                    <Separator className="my-2" />
-                                    <p><span className="font-medium text-gray-700">سعر المنتجات:</span> {order.itemsPrice.toFixed(2)} دينار</p>
-                                    <p><span className="font-medium text-gray-700">الشحن:</span> {order.shipingPrice.toFixed(2)} دينار</p>
-                                    <p className="text-base font-semibold text-gray-900 pt-2 border-t border-gray-200">
-                                      <span>الإجمالي:</span> {order.totalPrice.toFixed(2)} دينار
-                                    </p>
-                                  </div>
-                                </Card>
-                              </div>
-
-                              {/* Ordered Items */}
-                              <Card className="p-4">
-                                <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
-                                  <svg className="w-5 h-5 ml-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                  </svg>
-                                  المنتجات المطلوبة ({address.items?.length || 0})
-                                </h4>
-                                {address.items && address.items.length > 0 ? (
-                                  <div className="space-y-3">
-                                    {address.items.map((item: any, idx: number) => (
-                                      <div key={idx} className="flex justify-between items-start p-3 bg-white rounded-lg border border-gray-200">
-                                        <div>
-                                          <p className="font-medium text-gray-900">{item.Name || item.name || 'منتج غير معروف'}</p>
-                                          <p className="text-sm text-gray-600">{item.Brand || item.brand || ''}</p>
-                                          {item.size && <p className="text-sm text-gray-500">الحجم: {item.size}</p>}
-                                          <p className="text-sm text-gray-500">الكمية: {item.qty || item.quantity || 1}</p>
-                                        </div>
-                                        <div className="text-left">
-                                          <p className="font-semibold text-gray-900">{(item.Price || item.price || 0).toFixed(2)} دينار</p>
-                                          <p className="text-xs text-gray-500">للواحد</p>
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <p className="text-sm text-gray-500">لا تتوفر معلومات عن المنتجات</p>
-                                )}
-                              </Card>
-
-                              {/* Status Update */}
-                              <Card className="p-4">
-                                <h4 className="font-semibold text-gray-900 mb-3">تحديث حالة الطلب</h4>
-                                <div className="flex gap-2 flex-wrap">
-                                  {[{value: 'pending', label: 'قيد الانتظار'}, {value: 'confirmed', label: 'مؤكد'}, {value: 'delivered', label: 'تم التوصيل'}, {value: 'cancelled', label: 'ملغى'}].map(({value, label}) => (
-                                    <button
-                                      key={value}
-                                      onClick={() => updateOrderStatus(order.$id, value)}
-                                      disabled={order.status === value}
-                                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                                        order.status === value
-                                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                          : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-gray-400'
-                                      }`}
-                                    >
-                                      تحديد إلى {label}
-                                    </button>
-                                  ))}
-                                </div>
-                              </Card>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
                     </React.Fragment>
                   );
                 })}
@@ -489,6 +374,107 @@ export default function OrdersPage() {
           </div>
         )}
       </Card>
+      {/* Order Details Modal */}
+      {selectedOrder && (() => {
+        const addr = parseAddress(selectedOrder.shipingAdress);
+        return (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+            onClick={() => setSelectedOrder(null)}
+          >
+            <div
+              className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+              dir="rtl"
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">تفاصيل الطلب</h2>
+                  <p className="text-sm text-gray-500">#{selectedOrder.$id.slice(-8).toUpperCase()}</p>
+                </div>
+                <button
+                  onClick={() => setSelectedOrder(null)}
+                  className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                >
+                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="p-6 space-y-5">
+                {/* Customer & Summary */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Delivery Info */}
+                  <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
+                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                      <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      معلومات التوصيل
+                    </h3>
+                    <p><span className="font-medium text-gray-700">الاسم: </span>{addr.fullName || selectedOrder.UserName}</p>
+                    <p><span className="font-medium text-gray-700">البريد: </span>{selectedOrder.UserEmail}</p>
+                    <p><span className="font-medium text-gray-700">الهاتف: </span>{addr.phone || 'N/A'}</p>
+                    <p><span className="font-medium text-gray-700">العنوان: </span>{addr.address || 'N/A'}</p>
+                    <p><span className="font-medium text-gray-700">المدينة: </span>{addr.city || 'N/A'}</p>
+                    <p><span className="font-medium text-gray-700">الولاية: </span>{addr.gouvernorat || 'N/A'}</p>
+                    <p><span className="font-medium text-gray-700">الرمز البريدي: </span>{addr.postalCode || 'N/A'}</p>
+                    {addr.notes && <p className="pt-2 border-t border-gray-200"><span className="font-medium text-gray-700">ملاحظات: </span>{addr.notes}</p>}
+                  </div>
+
+                  {/* Order Summary */}
+                  <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
+                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                      <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                      </svg>
+                      ملخص الطلب
+                    </h3>
+                    <p><span className="font-medium text-gray-700">التاريخ: </span>{formatDate(selectedOrder.$createdAt)}</p>
+                    <p><span className="font-medium text-gray-700">طريقة الدفع: </span>{selectedOrder.paymentmethod === 'cash_on_delivery' ? 'الدفع عند الاستلام' : selectedOrder.paymentmethod}</p>
+                    <p><span className="font-medium text-gray-700">تم الدفع: </span>{selectedOrder.Ispaid ? 'نعم' : 'لا'}</p>
+                    <div className="pt-2 border-t border-gray-200 space-y-1">
+                      <p><span className="font-medium text-gray-700">سعر المنتجات: </span>{selectedOrder.itemsPrice.toFixed(2)} دينار</p>
+                      <p><span className="font-medium text-gray-700">الشحن: </span>{selectedOrder.shipingPrice.toFixed(2)} دينار</p>
+                      <p className="text-base font-bold text-gray-900 pt-1 border-t border-gray-200">الإجمالي: {selectedOrder.totalPrice.toFixed(2)} دينار</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ordered Items */}
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                    المنتجات المطلوبة ({addr.items?.length || 0})
+                  </h3>
+                  {addr.items && addr.items.length > 0 ? (
+                    <div className="space-y-2">
+                      {addr.items.map((item: any, idx: number) => (
+                        <div key={idx} className="flex justify-between items-start p-3 bg-gray-50 rounded-xl border border-gray-200">
+                          <div>
+                            <p className="font-medium text-gray-900">{item.Name || item.name || 'منتج غير معروف'}</p>
+                            <p className="text-sm text-gray-500">{item.Brand || item.brand || ''}</p>
+                            {item.size && <p className="text-xs text-gray-400">الحجم: {item.size}</p>}
+                            <p className="text-xs text-gray-400">الكمية: {item.qty || item.quantity || 1}</p>
+                          </div>
+                          <p className="font-semibold text-gray-900 text-sm">{(item.Price || item.price || 0).toFixed(2)} د</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">لا تتوفر معلومات عن المنتجات</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

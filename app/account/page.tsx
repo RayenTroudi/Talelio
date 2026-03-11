@@ -41,15 +41,53 @@ function AccountPageContent() {
   const [loading, setLoading] = useState(true);
   const { toasts, showToast, dismissToast } = useToast();
 
+  // Promo code state
+  const [promoRequest, setPromoRequest] = useState<any>(null);
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoRequestLoading, setPromoRequestLoading] = useState(true);
+
+  const fetchPromoRequest = async () => {
+    try {
+      const res = await fetch('/api/promo/request');
+      if (res.ok) {
+        const data = await res.json();
+        setPromoRequest(data.promoRequest);
+      }
+    } catch {
+      // non-fatal
+    } finally {
+      setPromoRequestLoading(false);
+    }
+  };
+
+  const handleRequestPromoCode = async () => {
+    setPromoLoading(true);
+    try {
+      const res = await fetch('/api/promo/request', { method: 'POST' });
+      const data = await res.json();
+      if (res.ok) {
+        setPromoRequest(data.request);
+        showToast('\u062a\u0645 \u0625\u0631\u0633\u0627\u0644 \u0637\u0644\u0628\u0643 \u0628\u0646\u062c\u0627\u062d', {
+          description: '\u0633\u064a\u062a\u0645 \u0645\u0631\u0627\u062c\u0639\u062a\u0647 \u0645\u0646 \u0642\u0628\u0644 \u0627\u0644\u0625\u062f\u0627\u0631\u0629.',
+          variant: 'success',
+        });
+      } else {
+        showToast('\u0641\u0634\u0644', {
+          description: data.error || '\u062d\u062f\u062b \u062e\u0637\u0623.',
+          variant: 'error',
+        });
+      }
+    } catch {
+      showToast('\u062e\u0637\u0623 \u0641\u064a \u0627\u0644\u0627\u062a\u0635\u0627\u0644', { variant: 'error' });
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
   // Show success notification if redirected from successful order
   useEffect(() => {
     const orderSuccessId = searchParams.get('orderSuccess');
     if (orderSuccessId) {
-      showToast("🎉 Commande passée avec succès !", {
-        description: `Votre commande #${orderSuccessId.slice(-8).toUpperCase()} a été enregistrée.`,
-        variant: "success"
-      });
-      
       // Clean up URL after showing notification
       const newUrl = window.location.pathname;
       window.history.replaceState({}, '', newUrl);
@@ -111,6 +149,7 @@ function AccountPageContent() {
 
     if (user) {
       fetchOrders();
+      fetchPromoRequest();
     }
   }, [user]);
 
@@ -193,7 +232,7 @@ function AccountPageContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Personal Information Section */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
             <Card className="p-8 bg-gradient-to-br from-white to-amber-50/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-amber-200/30">
               <h2 className="text-2xl font-light text-stone-900 mb-8 text-right tracking-wide">المعلومات الشخصية</h2>
               
@@ -237,6 +276,58 @@ function AccountPageContent() {
                   </>
                 )}
               </div>
+            </Card>
+
+            {/* Promo Code Card */}
+            <Card className="p-8 bg-gradient-to-br from-white to-amber-50/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-amber-200/30">
+              <h2 className="text-2xl font-light text-stone-900 mb-6 text-right tracking-wide">رمز الإحالة</h2>
+              {promoRequestLoading ? (
+                <div className="h-12 bg-amber-100/40 rounded-xl animate-pulse" />
+              ) : !promoRequest ? (
+                <div className="text-right space-y-4">
+                  <p className="text-stone-600 font-light text-sm">عندما يشتري شخص باستخدام رمز إحالتك تحصل على 10% من قيمة طلبه.</p>
+                  <button
+                    onClick={handleRequestPromoCode}
+                    disabled={promoLoading}
+                    className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:bg-stone-300 text-white font-light tracking-wide transition-colors"
+                  >
+                    {promoLoading ? 'جاري الإرسال...' : 'طلب رمز ترويجي'}
+                  </button>
+                </div>
+              ) : promoRequest.status === 'PENDING' ? (
+                <div className="text-right space-y-2">
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-light bg-yellow-100 text-yellow-800">
+                    قيد المراجعة
+                  </span>
+                  <p className="text-stone-600 font-light text-sm">طلبك قيد المراجعة من الإدارة. ستحصل على رمزك قريباً.</p>
+                </div>
+              ) : promoRequest.status === 'APPROVED' ? (
+                <div className="text-right space-y-4">
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-light bg-green-100 text-green-800">
+                    مفعّل
+                  </span>
+                  <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-2xl p-5 border border-amber-200/60 text-center">
+                    <p className="text-xs text-stone-500 font-light mb-2">رمز إحالتك</p>
+                    <p className="text-3xl font-mono font-bold tracking-widest text-stone-900 select-all">
+                      {promoRequest.promoCode}
+                    </p>
+                    <p className="text-xs text-stone-500 font-light mt-2">تكسب 10% من قيمة كل طلب يستخدم هذا الرمز</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-right space-y-3">
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-light bg-red-100 text-red-700">
+                    مرفوض
+                  </span>
+                  <button
+                    onClick={handleRequestPromoCode}
+                    disabled={promoLoading}
+                    className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:bg-stone-300 text-white font-light tracking-wide transition-colors"
+                  >
+                    {promoLoading ? 'جاري الإرسال...' : 'إعادة الطلب'}
+                  </button>
+                </div>
+              )}
             </Card>
           </div>
 

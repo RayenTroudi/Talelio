@@ -162,7 +162,7 @@ export default function PromoRequestsPage() {
           <table className="w-full text-sm">
             <thead className="bg-stone-50 border-b border-stone-200">
               <tr>
-                {["المستخدم", "الحالة", "الرمز", "العمولات", "حالة الدفع", "تاريخ الطلب", "إجراء"].map((h) => (
+                {["المستخدم", "الحالة", "الرمز", "العمولات", "حالة الدفع", "تاريخ الطلب", "المبلغ المستحق"].map((h) => (
                   <th key={h} className="px-5 py-3 text-right font-medium text-stone-500">{h}</th>
                 ))}
               </tr>
@@ -195,7 +195,7 @@ export default function PromoRequestsPage() {
                 <th className="px-5 py-3 text-right font-medium text-stone-500">إجمالي العمولات</th>
                 <th className="px-5 py-3 text-right font-medium text-stone-500">حالة الدفع</th>
                 <th className="px-5 py-3 text-right font-medium text-stone-500">تاريخ الطلب</th>
-                <th className="px-5 py-3 text-right font-medium text-stone-500">إجراء</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">المبلغ المستحق</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100 bg-white">
@@ -294,28 +294,24 @@ export default function PromoRequestsPage() {
                         })}
                       </td>
 
-                      {/* Action */}
+                      {/* Amount Due */}
                       <td className="px-5 py-4">
-                        {req.status === "PENDING" ? (
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              disabled={!!processing}
-                              onClick={() => handleAction(req.$id, "deny")}
-                              className="text-red-600 border-red-200 hover:bg-red-50 h-7 text-xs px-3"
-                            >
-                              {processing === req.$id + "deny" ? "..." : "رفض"}
-                            </Button>
-                            <Button
-                              size="sm"
-                              disabled={!!processing}
-                              onClick={() => handleAction(req.$id, "approve")}
-                              className="bg-green-600 hover:bg-green-700 text-white h-7 text-xs px-3"
-                            >
-                              {processing === req.$id + "approve" ? "..." : "موافقة"}
-                            </Button>
-                          </div>
+                        {req.status === "APPROVED" ? (
+                          ed === undefined ? (
+                            <span className="text-stone-300 text-xs">...</span>
+                          ) : req.isPaid ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+                              <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                              تم الدفع
+                            </span>
+                          ) : ed.total !== null && ed.total > 0 ? (
+                            <span className="font-bold text-amber-700 text-sm">
+                              {ed.total.toFixed(2)}{" "}
+                              <span className="text-xs font-medium text-stone-400">TND</span>
+                            </span>
+                          ) : (
+                            <span className="text-stone-300 text-xs">—</span>
+                          )
                         ) : (
                           <span className="text-stone-300 text-xs">—</span>
                         )}

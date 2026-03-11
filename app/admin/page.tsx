@@ -60,6 +60,22 @@ export default function AdminDashboard() {
               </Button>
             </div>
           </Card>
+
+          {/* Promo Code Requests */}
+          <Card className="p-6 hover:shadow-lg transition-shadow">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-amber-100 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">طلبات الترويج</h3>
+              <p className="text-gray-600 mb-4">مراجعة وتفعيل رموز الإحالة</p>
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/admin/promo-requests">عرض الطلبات</Link>
+              </Button>
+            </div>
+          </Card>
         </div>
 
         {/* Quick Stats */}

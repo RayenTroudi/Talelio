@@ -33,6 +33,8 @@ const page = () => {
     shippingPrice,
     shippingAddress,
     hideloading,
+    appliedPromoCode,
+    promoCodeId,
   } = useSelector((state: any) => state.Cart);
 
   const router = useRouter();
@@ -76,6 +78,8 @@ const page = () => {
           itemsPrice,
           shippingPrice,
           totalPrice,
+          promoCodeId: promoCodeId || null,
+          appliedPromoCode: appliedPromoCode || null,
         }),
       });
 

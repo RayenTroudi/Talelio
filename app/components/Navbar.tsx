@@ -226,6 +226,11 @@ const Navbar = () => {
             </>
           )}
 
+          {/* Commissions panel — only for non-admin approved referral users */}
+          {isAuthenticated && !isAdmin && !isInAdminArea && (
+            <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
+          )}
+
           <div className="w-px h-6 bg-gray-200"></div>
 
           {isAuthenticated && (
@@ -240,11 +245,6 @@ const Navbar = () => {
                 className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200" 
               />
             </Link>
-          )}
-
-          {/* Commissions panel — only for non-admin approved referral users */}
-          {isAuthenticated && !isAdmin && !isInAdminArea && (
-            <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
           )}
 
           <Link 
@@ -278,13 +278,6 @@ const Navbar = () => {
           </Link>
         )}
 
-        {/* Mobile Commissions icon */}
-        {isAuthenticated && !isAdmin && !isInAdminArea && (
-          <div className="md:hidden order-2">
-            <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
-          </div>
-        )}
-
         {/* Mobile Profile Icon */}
         {isAuthenticated && (
           <Link 
@@ -297,6 +290,13 @@ const Navbar = () => {
               className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200" 
             />
           </Link>
+        )}
+
+        {/* Mobile Commissions icon */}
+        {isAuthenticated && !isAdmin && !isInAdminArea && (
+          <div className="md:hidden order-2">
+            <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
+          </div>
         )}
 
         {/* Mobile Cart Icon */}
