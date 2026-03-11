@@ -11,6 +11,7 @@ interface PromoRequest {
   userName: string;
   status: "PENDING" | "APPROVED" | "DENIED";
   promoCode?: string;
+  isPaid?: boolean;
 }
 
 interface EarningRecord {
@@ -32,6 +33,7 @@ export default function PromoRequestsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "PENDING" | "APPROVED" | "DENIED">("all");
   const [processing, setProcessing] = useState<string | null>(null);
+  const [payProcessing, setPayProcessing] = useState<string | null>(null);
   const [earnings, setEarnings] = useState<Record<string, EarningsData>>({});
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
@@ -99,6 +101,30 @@ export default function PromoRequestsPage() {
   const toggleExpanded = (userId: string) =>
     setExpanded((prev) => ({ ...prev, [userId]: !prev[userId] }));
 
+  const togglePaid = async (req: PromoRequest) => {
+    const action = req.isPaid ? "markUnpaid" : "markPaid";
+    setPayProcessing(req.$id);
+    try {
+      const res = await fetch(`/api/admin/promo-requests/${req.$id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setRequests((prev) =>
+          prev.map((r) => (r.$id === req.$id ? { ...r, isPaid: !req.isPaid } : r))
+        );
+      } else {
+        alert(data.error || "فشل تحديث حالة الدفع");
+      }
+    } catch {
+      alert("حدث خطأ");
+    } finally {
+      setPayProcessing(null);
+    }
+  };
+
   const statusLabel: Record<string, { label: string; cls: string }> = {
     PENDING: { label: "قيد الانتظار", cls: "bg-yellow-100 text-yellow-800" },
     APPROVED: { label: "موافق عليه", cls: "bg-green-100 text-green-800" },
@@ -136,7 +162,7 @@ export default function PromoRequestsPage() {
           <table className="w-full text-sm">
             <thead className="bg-stone-50 border-b border-stone-200">
               <tr>
-                {["المستخدم", "الحالة", "الرمز", "العمولات", "تاريخ الطلب", "إجراء"].map((h) => (
+                {["المستخدم", "الحالة", "الرمز", "العمولات", "حالة الدفع", "تاريخ الطلب", "إجراء"].map((h) => (
                   <th key={h} className="px-5 py-3 text-right font-medium text-stone-500">{h}</th>
                 ))}
               </tr>
@@ -144,7 +170,7 @@ export default function PromoRequestsPage() {
             <tbody className="divide-y divide-stone-100 bg-white">
               {[1, 2, 3].map((i) => (
                 <tr key={i}>
-                  {[1, 2, 3, 4, 5, 6].map((j) => (
+                  {[1, 2, 3, 4, 5, 6, 7].map((j) => (
                     <td key={j} className="px-5 py-4">
                       <div className="h-4 bg-stone-100 rounded animate-pulse w-24" />
                     </td>
@@ -167,6 +193,7 @@ export default function PromoRequestsPage() {
                 <th className="px-5 py-3 text-right font-medium text-stone-500">الحالة</th>
                 <th className="px-5 py-3 text-right font-medium text-stone-500">رمز الإحالة</th>
                 <th className="px-5 py-3 text-right font-medium text-stone-500">إجمالي العمولات</th>
+                <th className="px-5 py-3 text-right font-medium text-stone-500">حالة الدفع</th>
                 <th className="px-5 py-3 text-right font-medium text-stone-500">تاريخ الطلب</th>
                 <th className="px-5 py-3 text-right font-medium text-stone-500">إجراء</th>
               </tr>
@@ -232,6 +259,32 @@ export default function PromoRequestsPage() {
                         )}
                       </td>
 
+                      {/* Payment status */}
+                      <td className="px-5 py-4">
+                        {req.status === "APPROVED" && ed && (ed.total ?? 0) > 0 ? (
+                          <button
+                            onClick={() => togglePaid(req)}
+                            disabled={payProcessing === req.$id}
+                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all border ${
+                              req.isPaid
+                                ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
+                                : "bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100"
+                            } disabled:opacity-50`}
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              req.isPaid ? "bg-green-500" : "bg-orange-400"
+                            }`} />
+                            {payProcessing === req.$id
+                              ? "..."
+                              : req.isPaid
+                              ? "تم الدفع"
+                              : "لم يُدفع بعد"}
+                          </button>
+                        ) : (
+                          <span className="text-stone-300 text-xs">—</span>
+                        )}
+                      </td>
+
                       {/* Date */}
                       <td className="px-5 py-4 text-stone-500 text-xs whitespace-nowrap">
                         {new Date(req.$createdAt).toLocaleDateString("ar-TN", {
@@ -272,7 +325,7 @@ export default function PromoRequestsPage() {
                     {/* Expanded buyers sub-table */}
                     {isOpen && hasRecords && (
                       <tr>
-                        <td colSpan={6} className="px-0 py-0 bg-amber-50/40">
+                        <td colSpan={7} className="px-0 py-0 bg-amber-50/40">
                           <div className="px-8 py-4 border-t border-amber-100">
                             <p className="text-xs font-semibold text-amber-700 mb-3 tracking-wide uppercase">
                               تفاصيل المشتريات
