@@ -221,11 +221,11 @@ const page = () => {
                           <div className="bg-stone-50/50 rounded-2xl p-5 space-y-2 text-right">
                             <p className="font-medium text-stone-900 text-lg">{shippingAddress.fullName}</p>
                             {shippingAddress.phone && (
-                              <p className="text-stone-700 flex items-center gap-2 justify-end">
-                                <span dir="ltr">{shippingAddress.phone}</span>
+                              <p className="text-stone-700 flex items-center gap-2 justify-start">
                                 <svg className="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                 </svg>
+                                <span dir="ltr">{shippingAddress.phone}</span>
                               </p>
                             )}
                             <Separator className="my-3 bg-stone-200/50" />
@@ -318,16 +318,16 @@ const page = () => {
                           </div>
                           
                           <div className="flex items-center gap-4 bg-emerald-50/50 rounded-2xl p-5 border border-emerald-100/50">
-                            <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                              <svg className="w-6 h-6 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                              </svg>
-                            </div>
-                            <div className="text-right">
+                            <div className="text-right flex-1">
                               <p className="font-medium text-stone-900 mb-1">الدفع عند الاستلام</p>
                               <p className="text-sm text-stone-600 font-light leading-relaxed">
                                 ادفع نقداً عند استلام طلبك
                               </p>
+                            </div>
+                            <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                              <svg className="w-6 h-6 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                              </svg>
                             </div>
                           </div>
                         </div>
@@ -336,11 +336,6 @@ const page = () => {
                       {/* Delivery Info Banner */}
                       <div className="bg-gradient-to-br from-amber-50 via-amber-100/30 to-orange-50/20 backdrop-blur-sm rounded-3xl p-6 shadow-md border border-amber-200/50">
                         <div className="flex items-start gap-4">
-                          <div className="w-10 h-10 rounded-full bg-amber-200/50 flex items-center justify-center flex-shrink-0">
-                            <svg className="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          </div>
                           <div className="flex-1 text-right">
                             <p className="font-medium text-stone-900 mb-2 text-base">
                               موعد التوصيل المتوقع
@@ -348,6 +343,11 @@ const page = () => {
                             <p className="text-sm text-stone-700 font-light leading-relaxed">
                               سيتم توصيل طلبك خلال <span className="font-medium">من 2 إلى 4 أيام عمل</span>
                             </p>
+                          </div>
+                          <div className="w-10 h-10 rounded-full bg-amber-200/50 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                           </div>
                         </div>
                       </div>
