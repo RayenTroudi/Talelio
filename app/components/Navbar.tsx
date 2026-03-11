@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CiShoppingCart } from "react-icons/ci";
 import { TbLogout } from "react-icons/tb";
-import { HiOutlineClipboardDocumentList } from "react-icons/hi2";
+import { HiOutlineClipboardDocumentList, HiOutlineUser } from "react-icons/hi2";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
@@ -40,6 +40,19 @@ const Navbar = () => {
   };
 
   const [open, setOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <header className="w-full bg-white/98 backdrop-blur-lg shadow-sm border-b border-gray-100/80 fixed top-0 left-0 z-50">
@@ -72,19 +85,19 @@ const Navbar = () => {
           </li>
           <li>
             <Link 
-              href="/about" 
+              href="/categories/femme" 
               className="relative text-base hover:text-gray-900 transition-all duration-300 group py-1"
             >
-              من نحن
+              عطور نسائية
               <span className="absolute bottom-0 right-0 w-0 h-[1.5px] bg-gradient-to-l from-amber-400 to-amber-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
           </li>
           <li>
             <Link 
-              href="/contact" 
+              href="/categories/homme" 
               className="relative text-base hover:text-gray-900 transition-all duration-300 group py-1"
             >
-              تواصل معنا
+              عطور رجالية
               <span className="absolute bottom-0 right-0 w-0 h-[1.5px] bg-gradient-to-l from-amber-400 to-amber-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
           </li>
@@ -129,46 +142,84 @@ const Navbar = () => {
                     العودة للمتجر
                   </Link>
                   
-                  <Link
-                    href="/account"
-                    className="text-sm font-light text-gray-600 hover:text-gray-900 transition-colors duration-200"
-                  >
-                    حسابي
-                  </Link>
-                  
-                  <button
-                    onClick={handleLogout}
-                    className="text-sm font-light text-gray-500 hover:text-red-600 transition-colors duration-200"
-                    title="تسجيل الخروج"
-                  >
-                    <TbLogout className="w-5 h-5" />
-                  </button>
+                  <div className="relative" ref={dropdownRef}>
+                    <button
+                      onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                      className="relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200"
+                      aria-label="حسابي"
+                    >
+                      <HiOutlineUser 
+                        size="24px" 
+                        className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200" 
+                      />
+                    </button>
+                    
+                    {userDropdownOpen && (
+                      <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50">
+                        <div className="py-1">
+                          <Link
+                            href="/account"
+                            onClick={() => setUserDropdownOpen(false)}
+                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                          >
+                            حسابي
+                          </Link>
+                          <button
+                            onClick={() => { setUserDropdownOpen(false); handleLogout(); }}
+                            className="w-full text-right px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200 flex items-center gap-2"
+                          >
+                            <TbLogout className="w-4 h-4" />
+                            <span>تسجيل الخروج</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </>
               ) : (
                 <>
-                  {isAdmin && (
-                    <Link
-                      href="/admin"
-                      className="text-sm font-light text-gray-600 hover:text-gray-900 transition-colors duration-200"
+                  <div className="relative" ref={dropdownRef}>
+                    <button
+                      onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                      className="relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200"
+                      aria-label="حسابي"
                     >
-                      لوحة الإدارة
-                    </Link>
-                  )}
-                  
-                  <Link
-                    href="/account"
-                    className="text-sm font-light text-gray-600 hover:text-gray-900 transition-colors duration-200"
-                  >
-                    {user?.name || 'حسابي'}
-                  </Link>
-                  
-                  <button
-                    onClick={handleLogout}
-                    className="text-sm font-light text-gray-500 hover:text-red-600 transition-colors duration-200"
-                    title="تسجيل الخروج"
-                  >
-                    <TbLogout className="w-5 h-5" />
-                  </button>
+                      <HiOutlineUser 
+                        size="24px" 
+                        className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200" 
+                      />
+                    </button>
+                    
+                    {userDropdownOpen && (
+                      <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50">
+                        <div className="py-1">
+                          {isAdmin && (
+                            <Link
+                              href="/admin"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                            >
+                              لوحة الإدارة
+                            </Link>
+                          )}
+                          <Link
+                            href="/account"
+                            onClick={() => setUserDropdownOpen(false)}
+                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                          >
+                            حسابي
+                          </Link>
+                          <button
+                            onClick={() => { setUserDropdownOpen(false); handleLogout(); }}
+                            className="w-full text-right px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200 flex items-center gap-2"
+                          >
+                            <TbLogout className="w-4 h-4" />
+                            <span>تسجيل الخروج</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </>
               )}
             </>
@@ -252,20 +303,20 @@ const Navbar = () => {
             </li>
             <li>
               <Link 
-                href="/about" 
+                href="/categories/femme" 
                 onClick={() => setOpen(false)}
                 className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
               >
-                من نحن
+                عطور نسائية
               </Link>
             </li>
             <li>
               <Link 
-                href="/contact" 
+                href="/categories/homme" 
                 onClick={() => setOpen(false)}
                 className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
               >
-                تواصل معنا
+                عطور رجالية
               </Link>
             </li>
             

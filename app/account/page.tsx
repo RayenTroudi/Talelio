@@ -210,17 +210,6 @@ function AccountPageContent() {
                   <p className="mt-2 text-xl text-stone-900 font-light" dir="ltr">{user.email}</p>
                 </div>
                 
-                <Separator className="bg-stone-200/50" />
-                
-                <div className="text-right">
-                  <label className="text-sm font-light text-stone-500 tracking-wide">نوع الحساب</label>
-                  <p className="mt-2">
-                    <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-light bg-amber-100 text-amber-800 shadow-sm">
-                      {user.role === 'admin' ? 'مدير' : 'عميل'}
-                    </span>
-                  </p>
-                </div>
-                
                 {/* Return to Home Button - Only for non-admin users */}
                 {user.role !== 'admin' && (
                   <>
@@ -232,7 +221,7 @@ function AccountPageContent() {
                     >
                       <span className="text-sm">العودة للصفحة الرئيسية</span>
                       <svg 
-                        className="w-4 h-4 transition-transform group-hover:translate-x-1 duration-300" 
+                        className="w-4 h-4 transition-transform group-hover:-translate-x-1 duration-300" 
                         fill="none" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
@@ -241,7 +230,7 @@ function AccountPageContent() {
                           strokeLinecap="round" 
                           strokeLinejoin="round" 
                           strokeWidth={2} 
-                          d="M14 5l7 7m0 0l-7 7m7-7H3" 
+                          d="M10 19l-7-7m0 0l7-7m-7 7h18" 
                         />
                       </svg>
                     </Link>
@@ -271,7 +260,7 @@ function AccountPageContent() {
                   >
                     تصفح العطور
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                   </button>
                 </div>
