@@ -306,6 +306,11 @@ const Navbar = () => {
           </div>
         )}
 
+        {/* Mobile Language Switcher */}
+        <div className="md:hidden order-2">
+          <LanguageSwitcher />
+        </div>
+
         {/* Mobile Cart Icon */}
         <Link
           href="/Cart"
@@ -355,13 +360,6 @@ const Navbar = () => {
             </li>
 
             <div className="h-px bg-gray-200 my-3"></div>
-
-            {/* Language switcher in mobile menu */}
-            <li className="px-5 py-2">
-              <LanguageSwitcher />
-            </li>
-
-            <div className="h-px bg-gray-200 my-2"></div>
 
             {!isAuthenticated ? (
               <>
