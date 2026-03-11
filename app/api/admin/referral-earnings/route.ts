@@ -38,6 +38,15 @@ export async function GET(request: Request) {
     return NextResponse.json({
       total: parseFloat(total.toFixed(2)),
       count: result.total,
+      records: result.documents.map((doc: any) => ({
+        $id: doc.$id,
+        $createdAt: doc.$createdAt,
+        orderId: doc.orderId,
+        buyerEmail: doc.buyerEmail,
+        buyerUserId: doc.buyerUserId,
+        amount: doc.amount,
+        currency: doc.currency || 'TND',
+      })),
     });
   } catch (error: any) {
     console.error('GET /api/admin/referral-earnings error:', error);
