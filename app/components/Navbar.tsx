@@ -272,6 +272,20 @@ const Navbar = () => {
           </Link>
         )}
 
+        {/* Mobile Profile Icon */}
+        {isAuthenticated && (
+          <Link 
+            href="/account" 
+            className="md:hidden relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200 order-2"
+            aria-label="حسابي"
+          >
+            <HiOutlineUser 
+              size="22px" 
+              className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200" 
+            />
+          </Link>
+        )}
+
         {/* Mobile Cart Icon */}
         <Link 
           href="/Cart" 
@@ -356,22 +370,13 @@ const Navbar = () => {
                         العودة للمتجر
                       </Link>
                     </li>
-                    <li>
-                      <Link 
-                        href="/account" 
-                        onClick={() => setOpen(false)}
-                        className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
-                      >
-                        حسابي
-                      </Link>
-                    </li>
-                    <li>
+                    <li className="flex justify-center">
                       <button 
-                        className="w-full flex items-center justify-end gap-3 py-3.5 px-5 hover:bg-red-50 text-red-600 rounded-xl transition-colors duration-200 text-sm" 
+                        className="p-3 hover:bg-red-50 text-red-600 rounded-xl transition-colors duration-200" 
                         onClick={() => { setOpen(false); handleLogout(); }}
-                        title="تسجيل الخروج"
+                        aria-label="تسجيل الخروج"
                       >
-                        <TbLogout className="w-5 h-5" />
+                        <TbLogout className="w-6 h-6" />
                       </button>
                     </li>
                   </>
@@ -388,22 +393,13 @@ const Navbar = () => {
                         </Link>
                       </li>
                     )}
-                    <li>
-                      <Link 
-                        href="/account" 
-                        onClick={() => setOpen(false)}
-                        className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
-                      >
-                        {user?.name || 'حسابي'}
-                      </Link>
-                    </li>
-                    <li>
+                    <li className="flex justify-center">
                       <button 
-                        className="w-full flex items-center justify-end gap-3 py-3.5 px-5 hover:bg-red-50 text-red-600 rounded-xl transition-colors duration-200 text-sm" 
+                        className="p-3 hover:bg-red-50 text-red-600 rounded-xl transition-colors duration-200" 
                         onClick={() => { setOpen(false); handleLogout(); }}
-                        title="تسجيل الخروج"
+                        aria-label="تسجيل الخروج"
                       >
-                        <TbLogout className="w-5 h-5" />
+                        <TbLogout className="w-6 h-6" />
                       </button>
                     </li>
                   </>
