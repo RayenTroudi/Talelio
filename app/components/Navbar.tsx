@@ -11,6 +11,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useAuth } from "@/app/context/AuthContext";
 import { logout } from "@/lib/logout";
 import { clearCart } from "@/app/Redux/slices/CartSlice";
+import CommissionsPanel from "@/app/components/CommissionsPanel";
 
 const Navbar = () => {
   const { loading, CartItems } = useSelector((state: any) => state.Cart);
@@ -241,6 +242,11 @@ const Navbar = () => {
             </Link>
           )}
 
+          {/* Commissions panel — only for non-admin approved referral users */}
+          {isAuthenticated && !isAdmin && !isInAdminArea && (
+            <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
+          )}
+
           <Link 
             href="/Cart" 
             className="relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200"
@@ -270,6 +276,13 @@ const Navbar = () => {
               className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200" 
             />
           </Link>
+        )}
+
+        {/* Mobile Commissions icon */}
+        {isAuthenticated && !isAdmin && !isInAdminArea && (
+          <div className="md:hidden order-2">
+            <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
+          </div>
         )}
 
         {/* Mobile Profile Icon */}
