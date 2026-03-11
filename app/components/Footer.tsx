@@ -109,7 +109,14 @@ export default function Footer() {
                   فيسبوك
                 </a>
               </li>
-            
+              <li>
+                <Link
+                  href="/account#referral-section"
+                  className="inline-flex items-center gap-1.5 mt-2 px-4 py-2 rounded-full bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md"
+                >
+                  إنضم ألينا
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

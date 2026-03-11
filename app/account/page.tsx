@@ -153,6 +153,19 @@ function AccountPageContent() {
     }
   }, [user]);
 
+  // Scroll to hash anchor after content finishes loading
+  useEffect(() => {
+    if (!loading && !promoRequestLoading && typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      if (hash) {
+        const el = document.querySelector(hash);
+        if (el) {
+          setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        }
+      }
+    }
+  }, [loading, promoRequestLoading]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-white via-amber-50/20 to-white">
@@ -279,7 +292,7 @@ function AccountPageContent() {
             </Card>
 
             {/* Promo Code Card */}
-            <Card className="p-8 bg-gradient-to-br from-white to-amber-50/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-amber-200/30">
+            <Card id="referral-section" className="p-8 bg-gradient-to-br from-white to-amber-50/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-amber-200/30">
               <h2 className="text-2xl font-light text-stone-900 mb-6 text-right tracking-wide">رمز الإحالة</h2>
               {promoRequestLoading ? (
                 <div className="h-12 bg-amber-100/40 rounded-xl animate-pulse" />
