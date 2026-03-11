@@ -8,6 +8,7 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -19,7 +20,7 @@ const Register = () => {
     setSuccess("");
     
     // Form validation
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !confirmPassword) {
       setError("جميع الحقول مطلوبة");
       return;
     }
@@ -36,6 +37,11 @@ const Register = () => {
     
     if (password.length < 6) {
       setError("يجب أن تكون كلمة المرور 6 أحرف على الأقل");
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      setError("كلمتا المرور غير متطابقتين");
       return;
     }
     
@@ -91,6 +97,7 @@ const Register = () => {
           setName("");
           setEmail("");
           setPassword("");
+          setConfirmPassword("");
           
           // Redirect to homepage
           setTimeout(() => {
@@ -160,6 +167,18 @@ const Register = () => {
               placeholder="كلمة المرور (6 أحرف على الأقل)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
+              className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
+              minLength={6}
+            />
+          </div>
+          
+          <div>
+            <input
+              type="password"
+              placeholder="تأكيد كلمة المرور"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={isLoading}
               className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
               minLength={6}
