@@ -65,13 +65,6 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(loginUrl);
       }
       
-      // Authenticated admin trying to access user account -> redirect to admin
-      if (token.role === 'admin') {
-        console.log('ℹ️ Account route - Admin user, redirecting to admin dashboard');
-        const adminUrl = new URL('/admin', request.url);
-        return NextResponse.redirect(adminUrl);
-      }
-      
       console.log('✅ Account route - Access granted');
       return NextResponse.next();
     }

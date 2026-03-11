@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/app/context/AuthContext";
 import { ProtectedRoute } from "@/app/components/ProtectedRoute";
@@ -232,13 +233,22 @@ function AccountPageContent() {
       {/* Header */}
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-amber-500/30 shadow-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
-            <div className="w-2 h-2 rounded-full bg-amber-500/50"></div>
-            <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-6">
+            <div className="text-right flex-1">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
+                <div className="w-2 h-2 rounded-full bg-amber-500/50"></div>
+                <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
+              </div>
+              <h1 className="text-4xl font-light text-white text-center tracking-wide">حسابي</h1>
+              <p className="mt-3 text-gray-300 font-light text-center tracking-wide">إدارة معلوماتك وعرض سجل طلباتك</p>
+            </div>
+            <Link href="/">
+              <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 font-light tracking-wide rounded-xl px-6 py-3">
+                العودة للرئيسية ←
+              </Button>
+            </Link>
           </div>
-          <h1 className="text-4xl font-light text-white text-center tracking-wide">حسابي</h1>
-          <p className="mt-3 text-gray-300 font-light text-center tracking-wide">إدارة معلوماتك وعرض سجل طلباتك</p>
         </div>
       </div>
 
@@ -261,33 +271,6 @@ function AccountPageContent() {
                   <label className="text-sm font-light text-stone-500 tracking-wide">البريد الإلكتروني</label>
                   <p className="mt-2 text-xl text-stone-900 font-light" dir="ltr">{user.email}</p>
                 </div>
-                
-                {/* Return to Home Button - Only for non-admin users */}
-                {user.role !== 'admin' && (
-                  <>
-                    <Separator className="my-6 bg-stone-200/50" />
-                    
-                    <Link 
-                      href="/"
-                      className="group flex items-center justify-center gap-3 w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-amber-50 to-amber-100/50 hover:from-amber-100 hover:to-amber-50 border border-amber-200/60 hover:border-amber-300/80 text-stone-800 hover:text-stone-900 font-light tracking-wide transition-all duration-300 shadow-md hover:shadow-lg"
-                    >
-                      <span className="text-sm">العودة للصفحة الرئيسية</span>
-                      <svg 
-                        className="w-4 h-4 transition-transform group-hover:-translate-x-1 duration-300" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                      >
-                        <path 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round" 
-                          strokeWidth={2} 
-                          d="M10 19l-7-7m0 0l7-7m-7 7h18" 
-                        />
-                      </svg>
-                    </Link>
-                  </>
-                )}
               </div>
             </Card>
 
