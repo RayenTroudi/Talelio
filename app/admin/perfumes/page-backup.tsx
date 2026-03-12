@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -87,7 +87,7 @@ export default function PerfumesPage() {
       case "In Stock":
         return `${baseClasses} bg-green-100 text-green-800`;
       case "Low Stock":
-        return `${baseClasses} bg-yellow-100 text-yellow-800`;
+        return `${baseClasses} bg-gold-100 text-yellow-800`;
       case "Out of Stock":
         return `${baseClasses} bg-red-100 text-red-800`;
       default:
@@ -144,7 +144,7 @@ export default function PerfumesPage() {
         
         <Card className="p-6">
           <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
+            <div className="p-2 bg-gold-100 rounded-lg">
               <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>

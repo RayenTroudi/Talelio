@@ -101,9 +101,9 @@ const SignIn = () => {
         <div className='w-full max-w-md'>
                 {/* Decorative element */}
                 <div className="flex items-center justify-center gap-3 mb-8">
-                  <div className="h-px w-16 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
-                  <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-                  <div className="h-px w-16 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
+                  <div className="h-px w-16 bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
+                  <div className="w-2 h-2 rounded-full bg-gold-500"></div>
+                  <div className="h-px w-16 bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
                 </div>
 
                 <h1 className='text-4xl font-light mb-12 text-center text-gray-900 tracking-tight'>{t.signIn.title}</h1>
@@ -116,7 +116,7 @@ const SignIn = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         disabled={isLoading}
-                        className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
+                        className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
                       />
                     </div>
 
@@ -127,7 +127,7 @@ const SignIn = () => {
                         value={password}
                         onChange={(e) => setPasword(e.target.value)}
                         disabled={isLoading}
-                        className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
+                        className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
                       />
                     </div>
 
@@ -137,7 +137,7 @@ const SignIn = () => {
                       className={`w-full text-white font-light text-lg px-6 py-4 rounded-2xl transition-all duration-300 shadow-lg mt-2 ${
                         isLoading
                           ? 'bg-gray-400 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 cursor-pointer hover:shadow-xl hover:scale-[1.02]'
+                          : 'bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 cursor-pointer hover:shadow-xl hover:scale-[1.02]'
                       }`}
                     >
                         {isLoading ? t.signIn.signingIn : t.signIn.signInBtn}
@@ -156,7 +156,7 @@ const SignIn = () => {
                     )}
 
                     <Link href='/Register' className='text-sm mt-4 text-center text-gray-600 hover:text-gray-900 font-light transition-colors'>
-                      {t.signIn.noAccount} <span className='underline text-amber-600 hover:text-amber-700'>{t.signIn.registerLink}</span>
+                      {t.signIn.noAccount} <span className='underline text-gold-600 hover:text-gold-700'>{t.signIn.registerLink}</span>
                     </Link>
                 </form>
         </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { useTranslation } from "@/app/components/LocaleProvider";
@@ -14,10 +14,10 @@ const BrandShowcase = () => {
         {/* Section Header */}
         <div className="text-center mb-20">
           <div className="inline-block mb-6">
-            <div className="h-px w-16 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto" />
+            <div className="h-px w-16 bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto" />
           </div>
           <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
-            <span className="font-serif italic text-amber-600">{t.brand.sectionTitle}</span> {t.brand.sectionTitleHighlight}
+            <span className="font-serif italic text-gold-600">{t.brand.sectionTitle}</span> {t.brand.sectionTitleHighlight}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
             {t.brand.sectionSubtitle}
@@ -29,9 +29,9 @@ const BrandShowcase = () => {
           {/* Feature 1 */}
           <div className="group text-center">
             <div className="relative mb-8">
-              <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-amber-50 to-amber-100/50 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+              <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-gold-50 to-gold-100/50 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                 <svg
-                  className="w-12 h-12 text-amber-600"
+                  className="w-12 h-12 text-gold-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -54,9 +54,9 @@ const BrandShowcase = () => {
           {/* Feature 2 */}
           <div className="group text-center">
             <div className="relative mb-8">
-              <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-amber-50 to-amber-100/50 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+              <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-gold-50 to-gold-100/50 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                 <svg
-                  className="w-12 h-12 text-amber-600"
+                  className="w-12 h-12 text-gold-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -79,9 +79,9 @@ const BrandShowcase = () => {
           {/* Feature 3 */}
           <div className="group text-center">
             <div className="relative mb-8">
-              <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-amber-50 to-amber-100/50 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+              <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-gold-50 to-gold-100/50 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                 <svg
-                  className="w-12 h-12 text-amber-600"
+                  className="w-12 h-12 text-gold-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -106,25 +106,25 @@ const BrandShowcase = () => {
         <div className="mt-24 pt-16 border-t border-gray-200">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div className="group">
-              <div className="text-4xl md:text-5xl font-light text-amber-600 mb-2 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-4xl md:text-5xl font-light text-gold-600 mb-2 group-hover:scale-110 transition-transform duration-300">
                 15+
               </div>
               <p className="text-sm text-gray-600 font-light tracking-wide">{t.brand.yearsExperience}</p>
             </div>
             <div className="group">
-              <div className="text-4xl md:text-5xl font-light text-amber-600 mb-2 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-4xl md:text-5xl font-light text-gold-600 mb-2 group-hover:scale-110 transition-transform duration-300">
                 200+
               </div>
               <p className="text-sm text-gray-600 font-light tracking-wide">{t.brand.exclusivePerfumes}</p>
             </div>
             <div className="group">
-              <div className="text-4xl md:text-5xl font-light text-amber-600 mb-2 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-4xl md:text-5xl font-light text-gold-600 mb-2 group-hover:scale-110 transition-transform duration-300">
                 50K+
               </div>
               <p className="text-sm text-gray-600 font-light tracking-wide">{t.brand.happyClients}</p>
             </div>
             <div className="group">
-              <div className="text-4xl md:text-5xl font-light text-amber-600 mb-2 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-4xl md:text-5xl font-light text-gold-600 mb-2 group-hover:scale-110 transition-transform duration-300">
                 98%
               </div>
               <p className="text-sm text-gray-600 font-light tracking-wide">{t.brand.customerSatisfaction}</p>

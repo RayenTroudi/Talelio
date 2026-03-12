@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from 'react';
 import Image from 'next/image';
@@ -103,7 +103,7 @@ export function ProductImage({
     >
       {/* Elegant loading skeleton with luxury gradient */}
       {isLoading && (
-        <div className="absolute inset-0 bg-gradient-to-br from-stone-100 via-amber-50/40 to-rose-50/30">
+        <div className="absolute inset-0 bg-gradient-to-br from-stone-100 via-gold-50/40 to-rose-50/30">
           <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-transparent via-white/40 to-transparent" />
         </div>
       )}
@@ -144,7 +144,7 @@ export function ProductImage({
       
       {/* Elegant error state for luxury brand */}
       {imageError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-stone-50 via-amber-50/20 to-rose-50/10 backdrop-blur-sm">
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-stone-50 via-gold-50/20 to-rose-50/10 backdrop-blur-sm">
           <div className="text-center p-6">
             <svg
               className="w-16 h-16 mx-auto mb-3 text-stone-300"

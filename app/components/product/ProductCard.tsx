@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { memo } from 'react';
 import Link from 'next/link';
@@ -92,10 +92,10 @@ const ProductCardComponent = function ProductCard({
 }: ProductCardProps) {
   const { t } = useTranslation();
   return (
-    <Card className="group overflow-hidden rounded-3xl border-0 shadow-xl shadow-stone-200/40 hover:shadow-2xl hover:shadow-amber-500/20 transition-all duration-700 bg-white backdrop-blur-sm transform hover:-translate-y-2">
+    <Card className="group overflow-hidden rounded-3xl border-0 shadow-xl shadow-stone-200/40 hover:shadow-2xl hover:shadow-gold-500/20 transition-all duration-700 bg-white backdrop-blur-sm transform hover:-translate-y-2">
       <Link href={`/products/${id}`} className="block">
         {/* Image Container */}
-        <div className="relative aspect-square bg-gradient-to-br from-amber-50/40 via-white to-amber-50/20 overflow-hidden">
+        <div className="relative aspect-square bg-gradient-to-br from-gold-50/40 via-white to-gold-50/20 overflow-hidden">
           <ProductThumbnail
             fileId={images}
             productName={name}
@@ -125,7 +125,7 @@ const ProductCardComponent = function ProductCard({
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
           
           {/* Hover overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-amber-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-gold-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         </div>
         
         {/* Content */}
@@ -136,7 +136,7 @@ const ProductCardComponent = function ProductCard({
           </p>
           
           {/* Product Name */}
-          <CardTitle className="text-xl font-light text-stone-900 mb-4 line-clamp-2 leading-snug group-hover:text-amber-700 transition-colors duration-300">
+          <CardTitle className="text-xl font-light text-stone-900 mb-4 line-clamp-2 leading-snug group-hover:text-gold-700 transition-colors duration-300">
             {name}
           </CardTitle>
           
@@ -148,20 +148,20 @@ const ProductCardComponent = function ProductCard({
           )}
           
           {/* Decorative line */}
-          <div className="h-px w-12 bg-gradient-to-l from-amber-400/40 to-transparent mb-5 mr-auto" />
+          <div className="h-px w-12 bg-gradient-to-l from-gold-400/40 to-transparent mb-5 mr-auto" />
           
           {/* Price and CTA */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
               <svg 
-                className="w-4 h-4 text-amber-600" 
+                className="w-4 h-4 text-gold-600" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
               </svg>
-              <span className="text-xs font-light text-amber-700 tracking-wide">{t.productCard.viewDetails}</span>
+              <span className="text-xs font-light text-gold-700 tracking-wide">{t.productCard.viewDetails}</span>
             </div>
             <span className="text-2xl font-light text-stone-900">
               {price.toFixed(2)} <span className="text-base text-stone-500">{t.productDetail.currency}</span>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -94,14 +94,14 @@ const Shipping = () => {
 
       <Checkout activeStep={1} />
       <form
-        className="mx-auto max-w-screen-md bg-gradient-to-br from-white to-amber-50/20 backdrop-blur-sm rounded-3xl shadow-2xl border border-amber-200/30 p-10 md:p-12"
+        className="mx-auto max-w-screen-md bg-gradient-to-br from-white to-gold-50/20 backdrop-blur-sm rounded-3xl shadow-2xl border border-gold-200/30 p-10 md:p-12"
         onSubmit={handleSubmit(submitHandler)}
       >
         {/* Decorative element */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
-          <div className="w-2 h-2 rounded-full bg-amber-500/50"></div>
-          <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
+          <div className="h-px w-20 bg-gradient-to-r from-transparent via-gold-500/50 to-transparent"></div>
+          <div className="w-2 h-2 rounded-full bg-gold-500/50"></div>
+          <div className="h-px w-20 bg-gradient-to-r from-transparent via-gold-500/50 to-transparent"></div>
         </div>
 
         <h1 className="text-4xl font-light text-center mt-4 mb-10 text-stone-900 tracking-wide">{t.shipping.title}</h1>
@@ -295,7 +295,7 @@ const Shipping = () => {
                     type="button"
                     disabled={promoLoading || !promoInput.trim()}
                     onClick={handleApplyPromo}
-                    className="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:bg-stone-300 text-white font-light text-sm transition-colors whitespace-nowrap"
+                    className="px-5 py-3 rounded-xl bg-gold-500 hover:bg-gold-600 disabled:bg-stone-300 text-white font-light text-sm transition-colors whitespace-nowrap"
                   >
                     {promoLoading ? t.shipping.promoApplying : t.shipping.promoApply}
                   </button>
@@ -308,7 +308,7 @@ const Shipping = () => {
           ) : null}
 
         <div className="mt-10">
-          <button className="w-full py-5 rounded-2xl font-light text-lg tracking-wide bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-xl shadow-amber-400/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5">
+          <button className="w-full py-5 rounded-2xl font-light text-lg tracking-wide bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white shadow-xl shadow-gold-400/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5">
             {t.shipping.continueBtn}
           </button>
         </div>

@@ -36,7 +36,7 @@ const Hero = () => {
               className="flex justify-center animate-fade-in-up"
               style={{ animationDelay: "0.15s", animationFillMode: "both" }}
             >
-              <div className="h-px w-24 bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
+              <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-400 to-transparent" />
             </div>
 
             {/* Headline */}
@@ -45,7 +45,7 @@ const Hero = () => {
               style={{ animationDelay: "0.2s", animationFillMode: "both" }}
             >
               {t.hero.title} <br />
-              <span className="font-serif italic text-amber-400">{t.hero.titleHighlight}</span>
+              <span className="font-serif italic text-gold-400">{t.hero.titleHighlight}</span>
             </h1>
 
             {/* Subheadline */}
@@ -56,18 +56,7 @@ const Hero = () => {
               {t.hero.subtitle}
             </p>
 
-            {/* CTA Buttons */}
-            <div
-              className="flex flex-wrap gap-4 animate-fade-in-up justify-center"
-              style={{ animationDelay: "0.4s", animationFillMode: "both" }}
-            >
-              <Link
-                href="#categories"
-                className="inline-flex items-center justify-center bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-light py-4 px-10 rounded-xl text-base shadow-2xl shadow-amber-500/30 transition-all duration-500 transform hover:scale-105 hover:shadow-amber-500/40"
-              >
-                {t.hero.cta}
-              </Link>
-            </div>
+
           </div>
         </div>
       </div>

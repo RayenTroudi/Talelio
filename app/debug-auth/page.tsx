@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { account } from "@/lib/appwrite-config";
@@ -81,7 +81,7 @@ export default function AuthDebugger() {
         </div>
 
         {/* Test Login */}
-        <div className="bg-yellow-50 p-4 rounded-lg">
+        <div className="bg-gold-50 p-4 rounded-lg">
           <h3 className="font-semibold mb-2">Test Login Credentials</h3>
           <div className="space-y-3">
             <input
@@ -89,7 +89,7 @@ export default function AuthDebugger() {
               placeholder="Email"
               value={testEmail}
               onChange={(e) => setTestEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500"
               disabled={isLoading}
             />
             <input
@@ -97,7 +97,7 @@ export default function AuthDebugger() {
               placeholder="Password"
               value={testPassword}
               onChange={(e) => setTestPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500"
               disabled={isLoading}
             />
             <button

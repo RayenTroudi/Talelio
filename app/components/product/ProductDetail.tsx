@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Image from "next/image";
@@ -86,7 +86,7 @@ export function ProductDetail({
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-rose-50/20 ${className}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-stone-50 via-gold-50/30 to-rose-50/20 ${className}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         
         {/* Back Button */}
@@ -111,9 +111,9 @@ export function ProductDetail({
           <div className="grid lg:grid-cols-2 gap-0">
             
             {/* Left - Product Image */}
-            <div className="relative bg-gradient-to-br from-stone-100/50 to-amber-50/30 p-12 lg:p-16 flex items-center justify-center">
+            <div className="relative bg-gradient-to-br from-stone-100/50 to-gold-50/30 p-12 lg:p-16 flex items-center justify-center">
               <div className="relative w-full max-w-md aspect-square">
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-200/20 to-rose-200/20 rounded-full blur-3xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-gold-200/20 to-rose-200/20 rounded-full blur-3xl"></div>
                 <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-xl shadow-stone-300/40">
                   <Image
                     src={images[0]?.src || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23f3f4f6" width="400" height="400"/%3E%3Ctext fill="%239ca3af" font-family="Arial" font-size="16" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E'}
@@ -145,7 +145,7 @@ export function ProductDetail({
               
               {/* Header */}
               <div className="mb-8">
-                <p className="text-base font-serif italic tracking-wide text-amber-600 mb-3">{brand}</p>
+                <p className="text-base font-serif italic tracking-wide text-gold-600 mb-3">{brand}</p>
                 <h1 className="text-4xl lg:text-5xl font-serif font-light text-stone-900 mb-4 leading-tight">{name}</h1>
                 {description && (
                   <p className="text-stone-600 leading-relaxed font-light">{description}</p>
@@ -179,8 +179,8 @@ export function ProductDetail({
                       className={`
                         px-6 py-3 rounded-2xl font-light text-sm transition-all duration-300
                         ${selectedSize === size
-                          ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg shadow-amber-400/30 scale-105'
-                          : 'bg-white border-2 border-stone-300 text-stone-700 hover:border-amber-400 hover:shadow-md'
+                          ? 'bg-gradient-to-r from-gold-500 to-gold-600 text-white shadow-lg shadow-gold-400/30 scale-105'
+                          : 'bg-white border-2 border-stone-300 text-stone-700 hover:border-gold-400 hover:shadow-md'
                         }
                       `}
                     >
@@ -241,8 +241,8 @@ export function ProductDetail({
                 disabled={!selectedSize || !isInStock}
                 className="
                   w-full py-5 rounded-2xl font-light text-lg tracking-wide
-                  bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-xl shadow-amber-500/30
-                  hover:from-amber-600 hover:to-amber-700 hover:shadow-2xl hover:shadow-amber-600/40
+                  bg-gradient-to-r from-gold-500 to-gold-600 text-white shadow-xl shadow-gold-500/30
+                  hover:from-gold-600 hover:to-gold-700 hover:shadow-2xl hover:shadow-gold-600/40
                   disabled:from-stone-200 disabled:to-stone-300 disabled:text-stone-400 disabled:cursor-not-allowed disabled:shadow-none
                   transition-all duration-300 transform hover:-translate-y-0.5
                 "
@@ -253,19 +253,19 @@ export function ProductDetail({
               {/* Trust Badges */}
               <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-stone-200">
                 <div className="text-center">
-                  <svg className="w-6 h-6 mx-auto mb-2 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 mx-auto mb-2 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                   </svg>
                   <p className="text-xs text-stone-600 font-light">{t.productDetail.authentic}</p>
                 </div>
                 <div className="text-center">
-                  <svg className="w-6 h-6 mx-auto mb-2 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 mx-auto mb-2 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                   </svg>
                   <p className="text-xs text-stone-600 font-light">{t.productDetail.freeDelivery}</p>
                 </div>
                 <div className="text-center">
-                  <svg className="w-6 h-6 mx-auto mb-2 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 mx-auto mb-2 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
                   <p className="text-xs text-stone-600 font-light">{t.productDetail.guarantee}</p>
@@ -275,13 +275,13 @@ export function ProductDetail({
           </div>
 
           {/* Fragrance Notes Section */}
-          <div className="px-8 lg:px-12 py-16 bg-gradient-to-b from-white to-amber-50/30">
+          <div className="px-8 lg:px-12 py-16 bg-gradient-to-b from-white to-gold-50/30">
             <div className="max-w-5xl mx-auto">
               <div className="text-center mb-12">
                 <div className="flex items-center justify-center gap-3 mb-4">
-                  <div className="h-px w-24 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
-                  <div className="w-2 h-2 rounded-full bg-amber-500/50"></div>
-                  <div className="h-px w-24 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
+                  <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-500/50 to-transparent"></div>
+                  <div className="w-2 h-2 rounded-full bg-gold-500/50"></div>
+                  <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-500/50 to-transparent"></div>
                 </div>
                 <h2 className="text-4xl font-light text-stone-900 mb-3 tracking-wide">{t.productDetail.fragrance}</h2>
                 <p className="text-stone-600 font-light tracking-wide">{t.productDetail.fragranceSubtitle}</p>
@@ -301,8 +301,8 @@ export function ProductDetail({
                 </div>
 
                 {/* Middle Notes */}
-                <div className="bg-gradient-to-br from-amber-50/50 to-yellow-50/30 rounded-3xl p-8 border border-amber-100/50 shadow-lg shadow-amber-100/20 hover:shadow-xl hover:shadow-amber-100/30 transition-all duration-300">
-                  <h3 className="text-sm font-light tracking-[0.2em] text-amber-700 mb-6 text-center">{t.productDetail.middleNotesLabel}</h3>
+                <div className="bg-gradient-to-br from-gold-50/50 to-gold-50/30 rounded-3xl p-8 border border-gold-100/50 shadow-lg shadow-gold-100/20 hover:shadow-xl hover:shadow-gold-100/30 transition-all duration-300">
+                  <h3 className="text-sm font-light tracking-[0.2em] text-gold-700 mb-6 text-center">{t.productDetail.middleNotesLabel}</h3>
                   <div className="space-y-4">
                     {middleNotes.map((note, idx) => (
                       <div key={idx} className="flex items-center gap-4 group flex-row-reverse">

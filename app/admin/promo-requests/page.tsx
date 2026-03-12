@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -128,7 +128,7 @@ export default function PromoRequestsPage() {
   };
 
   const statusLabel: Record<string, { label: string; cls: string }> = {
-    PENDING: { label: t.admin.promoRequests.pending, cls: "bg-yellow-100 text-yellow-800" },
+    PENDING: { label: t.admin.promoRequests.pending, cls: "bg-gold-100 text-yellow-800" },
     APPROVED: { label: t.admin.promoRequests.approved, cls: "bg-green-100 text-green-800" },
     DENIED: { label: t.admin.promoRequests.denied, cls: "bg-red-100 text-red-700" },
   };
@@ -149,7 +149,7 @@ export default function PromoRequestsPage() {
             onClick={() => setFilter(f)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filter === f
-                ? "bg-amber-500 text-white shadow-sm"
+                ? "bg-gold-500 text-white shadow-sm"
                 : "bg-white border border-stone-200 text-stone-600 hover:bg-stone-50"
             }`}
           >
@@ -236,7 +236,7 @@ export default function PromoRequestsPage() {
                       {/* Promo code */}
                       <td className="px-5 py-4">
                         {req.status === "APPROVED" && req.promoCode ? (
-                          <span className="font-mono font-bold tracking-widest text-stone-800 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200 text-xs">
+                          <span className="font-mono font-bold tracking-widest text-stone-800 bg-gold-50 px-2.5 py-1 rounded-md border border-gold-200 text-xs">
                             {req.promoCode}
                           </span>
                         ) : (
@@ -260,7 +260,7 @@ export default function PromoRequestsPage() {
                             {hasRecords && (
                               <button
                                 onClick={() => toggleExpanded(req.userId)}
-                                className="text-amber-500 hover:text-amber-600 transition-colors text-xs underline underline-offset-2"
+                                className="text-gold-500 hover:text-gold-600 transition-colors text-xs underline underline-offset-2"
                               >
                                 {isOpen ? t.admin.promoRequests.hide : `${ed!.records.length} ${t.admin.promoRequests.purchases}`}
                               </button>
@@ -280,11 +280,11 @@ export default function PromoRequestsPage() {
                             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all border ${
                               req.isPaid
                                 ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
-                                : "bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100"
+                                : "bg-gold-50 text-gold-600 border-gold-200 hover:bg-gold-100"
                             } disabled:opacity-50`}
                           >
                             <span className={`w-1.5 h-1.5 rounded-full ${
-                              req.isPaid ? "bg-green-500" : "bg-orange-400"
+                              req.isPaid ? "bg-green-500" : "bg-gold-400"
                             }`} />
                             {payProcessing === req.$id
                               ? "..."
@@ -317,7 +317,7 @@ export default function PromoRequestsPage() {
                               {t.admin.promoRequests.paid}
                             </span>
                           ) : ed.total !== null && ed.total > 0 ? (
-                            <span className="font-bold text-amber-700 text-sm">
+                            <span className="font-bold text-gold-700 text-sm">
                               {ed.total.toFixed(2)}{" "}
                               <span className="text-xs font-medium text-stone-400">TND</span>
                             </span>
@@ -356,9 +356,9 @@ export default function PromoRequestsPage() {
                     {/* Expanded buyers sub-table */}
                     {isOpen && hasRecords && (
                       <tr>
-                        <td colSpan={8} className="px-0 py-0 bg-amber-50/40">
-                          <div className="px-8 py-4 border-t border-amber-100">
-                            <p className="text-xs font-semibold text-amber-700 mb-3 tracking-wide uppercase">
+                        <td colSpan={8} className="px-0 py-0 bg-gold-50/40">
+                          <div className="px-8 py-4 border-t border-gold-100">
+                            <p className="text-xs font-semibold text-gold-700 mb-3 tracking-wide uppercase">
                               {t.admin.promoRequests.purchaseDetails}
                             </p>
                             <table className="w-full text-sm rounded-lg overflow-hidden">

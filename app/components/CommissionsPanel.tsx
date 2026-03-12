@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "@/app/components/LocaleProvider";
@@ -84,7 +84,7 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
       <button
         onClick={() => setOpen((p) => !p)}
         className={`relative group p-2 rounded-xl transition-all duration-200 ${
-          hasEarnings ? "hover:bg-amber-50" : "hover:bg-gray-50"
+          hasEarnings ? "hover:bg-gold-50" : "hover:bg-gray-50"
         }`}
         aria-label={t.commissions.myCommissions}
         title={t.commissions.myCommissions}
@@ -92,7 +92,7 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
         <span
           className={`text-[15px] font-bold tracking-tight leading-none select-none ${
             hasEarnings
-              ? "text-amber-600 group-hover:text-amber-700"
+              ? "text-gold-600 group-hover:text-gold-700"
               : "text-gray-500 group-hover:text-gray-700"
           } transition-colors duration-200`}
         >
@@ -102,7 +102,7 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
         {data && data.total > 0 && (
           <span
             className={`absolute top-1 right-1 w-2 h-2 rounded-full ${
-              data.isPaid ? "bg-green-500" : "bg-orange-400"
+              data.isPaid ? "bg-green-500" : "bg-gold-400"
             }`}
           />
         )}
@@ -115,7 +115,7 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
           dir="rtl"
         >
           {/* Header */}
-          <div className="bg-gradient-to-l from-amber-50 to-white px-5 py-4 border-b border-stone-100">
+          <div className="bg-gradient-to-l from-gold-50 to-white px-5 py-4 border-b border-stone-100">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-semibold text-gray-900 text-sm">{t.commissions.referralCommissions}</p>
@@ -131,7 +131,7 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
                     data.isPaid
                       ? "bg-green-50 text-green-700 border-green-200"
                       : data.total > 0
-                      ? "bg-orange-50 text-orange-600 border-orange-200"
+                      ? "bg-gold-50 text-gold-600 border-gold-200"
                       : "bg-stone-50 text-stone-400 border-stone-200"
                   }`}
                 >
@@ -140,7 +140,7 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
                       data.isPaid
                         ? "bg-green-500"
                         : data.total > 0
-                        ? "bg-orange-400"
+                        ? "bg-gold-400"
                         : "bg-stone-300"
                     }`}
                   />

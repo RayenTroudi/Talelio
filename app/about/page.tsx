@@ -31,11 +31,11 @@ export default function AboutPage() {
             </div>
 
             <div className="inline-block mb-6">
-              <div className="h-px w-24 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto" />
+              <div className="h-px w-24 bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto" />
             </div>
 
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-light mb-8 tracking-tight">
-              <span className="font-serif italic text-amber-400">{t.about.heroTitle}</span>
+              <span className="font-serif italic text-gold-400">{t.about.heroTitle}</span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed font-light">
               {t.about.heroSubtitle}
@@ -49,7 +49,7 @@ export default function AboutPage() {
           <div className="mb-24 text-right">
             <div className="text-center mb-16">
               <div className="inline-block mb-6">
-                <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto" />
+                <div className="h-px w-20 bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto" />
               </div>
               <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6 tracking-tight">
                 {t.about.craftTitle}

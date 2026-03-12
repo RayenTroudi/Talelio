@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -14,7 +14,7 @@ const toastVariants = cva(
         error:
           "bg-gradient-to-br from-rose-50/95 to-red-50/95 border border-rose-200/50 text-rose-900",
         info:
-          "bg-gradient-to-br from-amber-50/95 to-yellow-50/95 border border-amber-200/50 text-amber-900",
+          "bg-gradient-to-br from-gold-50/95 to-gold-50/95 border border-gold-200/50 text-gold-900",
       },
       visible: {
         true: "animate-in slide-in-from-right-8 fade-in-0 zoom-in-95",
@@ -87,7 +87,7 @@ export function Toast({
     ),
     info: (
       <svg
-        className="w-6 h-6 text-amber-600 flex-shrink-0"
+        className="w-6 h-6 text-gold-600 flex-shrink-0"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"

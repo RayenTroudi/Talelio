@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from 'react'
 import { useTranslation } from "@/app/components/LocaleProvider";
@@ -12,7 +12,7 @@ const Checkout = ({activeStep = 0}) => {
         {steps.map((step, index) => (
             <div
                 key={step}
-                className={`flex-1 border-b-2 text-center ${index <= activeStep ? 'border-amber-500 text-amber-600' : 'border-gray-400 text-gray-400 mx-2' }`}>
+                className={`flex-1 border-b-2 text-center ${index <= activeStep ? 'border-gold-500 text-gold-600' : 'border-gray-400 text-gray-400 mx-2' }`}>
                     {step}
             </div>
         ))}

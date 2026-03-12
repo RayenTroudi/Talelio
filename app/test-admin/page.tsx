@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { account } from "@/lib/appwrite-config";
@@ -91,7 +91,7 @@ export default function CreateAdminUser() {
             message.includes("✅") 
               ? "bg-green-100 text-green-800" 
               : message.includes("⚠️")
-              ? "bg-yellow-100 text-yellow-800"
+              ? "bg-gold-100 text-yellow-800"
               : "bg-red-100 text-red-800"
           }`}>
             {message}

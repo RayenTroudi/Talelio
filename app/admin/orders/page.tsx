@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
@@ -106,7 +106,7 @@ export default function OrdersPage() {
 
   const getStatusBadge = (status: string) => {
     const styles = {
-      pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      pending: 'bg-gold-100 text-yellow-800 border-gold-200',
       confirmed: 'bg-blue-100 text-blue-800 border-blue-200',
       delivered: 'bg-green-100 text-green-800 border-green-200',
       cancelled: 'bg-red-100 text-red-800 border-red-200',
@@ -156,7 +156,7 @@ export default function OrdersPage() {
 
         <Card className="p-6">
           <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
+            <div className="p-2 bg-gold-100 rounded-lg">
               <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -337,7 +337,7 @@ export default function OrdersPage() {
                           onClick={() => setSelectedOrder(order)}
                         >
                           <div className="text-sm">
-                            <div className="font-medium text-gray-900 hover:text-amber-600 transition-colors underline-offset-2 hover:underline">{address.fullName || order.UserName}</div>
+                            <div className="font-medium text-gray-900 hover:text-gold-600 transition-colors underline-offset-2 hover:underline">{address.fullName || order.UserName}</div>
                             <div className="text-gray-500">{order.UserEmail}</div>
                           </div>
                         </td>

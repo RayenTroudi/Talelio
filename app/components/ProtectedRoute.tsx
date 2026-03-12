@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -52,9 +52,9 @@ export function ProtectedRoute({
   // Show loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gold-50 via-white to-rose-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gold-600"></div>
           <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>

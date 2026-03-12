@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -162,7 +162,7 @@ const page = () => {
         <Navbar />
         {isClient ? (
           <>
-            <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/20 to-rose-50/10 py-8 sm:py-12">
+            <div className="min-h-screen bg-gradient-to-br from-stone-50 via-gold-50/20 to-rose-50/10 py-8 sm:py-12">
               <div className="container mx-auto px-4 max-w-7xl">
                 <Checkout activeStep={2} />
 
@@ -191,7 +191,7 @@ const page = () => {
                       </svg>
                       <p className="text-stone-900 font-serif text-xl mb-3">{t.placeOrder.emptyCart}</p>
                       <p className="text-stone-600 mb-6 font-light">{t.placeOrder.emptyCartDesc}</p>
-                      <Link href="/" className="inline-block px-8 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-2xl transition-colors font-light tracking-wide">
+                      <Link href="/" className="inline-block px-8 py-3 bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white rounded-2xl transition-colors font-light tracking-wide">
                         {t.placeOrder.continueShopping}
                       </Link>
                     </div>
@@ -206,8 +206,8 @@ const page = () => {
                         <div className="p-6 sm:p-8">
                           <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
-                                <svg className="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <div className="w-10 h-10 rounded-full bg-gold-100 flex items-center justify-center">
+                                <svg className="w-5 h-5 text-gold-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
@@ -242,7 +242,7 @@ const page = () => {
                             {shippingAddress.notes && (
                               <>
                                 <Separator className="my-3 bg-stone-200/50" />
-                                <div className="bg-amber-50/50 rounded-xl p-3 border border-amber-100">
+                                <div className="bg-gold-50/50 rounded-xl p-3 border border-gold-100">
                                   <p className="text-xs text-stone-600 font-light italic leading-relaxed">
                                     <span className="font-medium not-italic">{t.placeOrder.note}:</span> {shippingAddress.notes}
                                   </p>
@@ -340,7 +340,7 @@ const page = () => {
                       </Card>
 
                       {/* Delivery Info Banner */}
-                      <div className="bg-gradient-to-br from-amber-50 via-amber-100/30 to-orange-50/20 backdrop-blur-sm rounded-3xl p-6 shadow-md border border-amber-200/50">
+                      <div className="bg-gradient-to-br from-gold-50 via-gold-100/30 to-gold-50/20 backdrop-blur-sm rounded-3xl p-6 shadow-md border border-gold-200/50">
                         <div className="flex items-start gap-4">
                           <div className="flex-1 text-right">
                             <p className="font-medium text-stone-900 mb-2 text-base">
@@ -350,8 +350,8 @@ const page = () => {
                               {t.placeOrder.deliveryDays}
                             </p>
                           </div>
-                          <div className="w-10 h-10 rounded-full bg-amber-200/50 flex items-center justify-center flex-shrink-0">
-                            <svg className="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-10 h-10 rounded-full bg-gold-200/50 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-5 h-5 text-gold-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                           </div>
@@ -363,7 +363,7 @@ const page = () => {
                     {/* Right Column - Order Summary (Sticky) */}
                     <div className="lg:col-span-1">
                       <div className="lg:sticky lg:top-24">
-                        <Card className="bg-gradient-to-br from-white via-stone-50/50 to-amber-50/30 backdrop-blur-sm border-stone-200/60 shadow-xl rounded-3xl overflow-hidden">
+                        <Card className="bg-gradient-to-br from-white via-stone-50/50 to-gold-50/30 backdrop-blur-sm border-stone-200/60 shadow-xl rounded-3xl overflow-hidden">
                           <div className="p-6 sm:p-8">
                             <h2 className="text-2xl sm:text-3xl font-serif font-light text-stone-900 mb-8 text-center">
                               {t.placeOrder.orderSummary}
@@ -406,7 +406,7 @@ const page = () => {
                             <button
                               onClick={handlePlaceOrder}
                               disabled={isSubmitting}
-                              className="group relative w-full py-5 rounded-2xl font-light text-base tracking-widest bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-xl hover:shadow-2xl disabled:bg-stone-400 disabled:cursor-not-allowed transition-all duration-300 overflow-hidden"
+                              className="group relative w-full py-5 rounded-2xl font-light text-base tracking-widest bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white shadow-xl hover:shadow-2xl disabled:bg-stone-400 disabled:cursor-not-allowed transition-all duration-300 overflow-hidden"
                             >
                               <span className="relative z-10 flex items-center justify-center gap-3">
                                 {isSubmitting ? (
@@ -423,7 +423,7 @@ const page = () => {
                                   </>
                                 )}
                               </span>
-                              <div className="absolute inset-0 bg-gradient-to-l from-amber-900/20 to-amber-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                              <div className="absolute inset-0 bg-gradient-to-l from-gold-900/20 to-gold-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             </button>
 
                             {/* Terms */}

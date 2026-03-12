@@ -131,9 +131,9 @@ const Register = () => {
       <div className="w-full max-w-md">
         {/* Decorative element */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="h-px w-16 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
-          <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-          <div className="h-px w-16 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
+          <div className="h-px w-16 bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
+          <div className="w-2 h-2 rounded-full bg-gold-500"></div>
+          <div className="h-px w-16 bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
         </div>
 
         <h1 className="text-4xl font-light mb-12 text-center text-gray-900 tracking-tight">{t.register.title}</h1>
@@ -146,7 +146,7 @@ const Register = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={isLoading}
-              className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
+              className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
               minLength={2}
             />
           </div>
@@ -158,7 +158,7 @@ const Register = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
-              className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
+              className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
               dir="ltr"
             />
           </div>
@@ -170,7 +170,7 @@ const Register = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
-              className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
+              className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
               minLength={6}
             />
           </div>
@@ -182,7 +182,7 @@ const Register = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={isLoading}
-              className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
+              className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
               minLength={6}
             />
           </div>
@@ -193,7 +193,7 @@ const Register = () => {
             className={`w-full text-white font-light text-lg px-6 py-4 rounded-2xl transition-all duration-300 shadow-lg mt-2 ${
               isLoading
                 ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 cursor-pointer hover:shadow-xl hover:scale-[1.02]'
+                : 'bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 cursor-pointer hover:shadow-xl hover:scale-[1.02]'
             }`}
           >
             {isLoading ? t.register.creating : t.register.createBtn}
@@ -219,7 +219,7 @@ const Register = () => {
           )}
 
           <Link href="/SignIn" className="text-sm mt-4 text-center text-gray-600 hover:text-gray-900 font-light transition-colors">
-            {t.register.hasAccount} <span className="underline text-amber-600 hover:text-amber-700">{t.register.signInLink}</span>
+            {t.register.hasAccount} <span className="underline text-gold-600 hover:text-gold-700">{t.register.signInLink}</span>
           </Link>
         </form>
       </div>

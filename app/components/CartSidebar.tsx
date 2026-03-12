@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useDispatch, useSelector } from "react-redux";
 import { toggleCartSidebar, removeFromCart } from "../Redux/slices/CartSlice";
@@ -43,7 +43,7 @@ export default function CartSidebar() {
 
       {/* Cart Sidebar - Enhanced */}
       <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-[420px] lg:w-[480px] bg-gradient-to-b from-white via-stone-50/50 to-amber-50/20 shadow-2xl transform transition-all duration-500 ease-out z-50 ${
+        className={`fixed top-0 right-0 h-full w-full sm:w-[420px] lg:w-[480px] bg-gradient-to-b from-white via-stone-50/50 to-gold-50/20 shadow-2xl transform transition-all duration-500 ease-out z-50 ${
           showSidebar ? "translate-x-0" : "translate-x-full"
         } flex flex-col`}
       >
@@ -91,8 +91,8 @@ export default function CartSidebar() {
             <div className="flex flex-col items-center justify-center h-full text-center px-4 animate-in fade-in zoom-in-95 duration-500">
               {/* Elegant Icon Container */}
               <div className="relative w-32 h-32 mb-8">
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-100/40 to-stone-100/40 rounded-full animate-pulse"></div>
-                <div className="relative w-full h-full rounded-full bg-gradient-to-br from-stone-50 to-amber-50/30 flex items-center justify-center shadow-inner border border-stone-200/30">
+                <div className="absolute inset-0 bg-gradient-to-br from-gold-100/40 to-stone-100/40 rounded-full animate-pulse"></div>
+                <div className="relative w-full h-full rounded-full bg-gradient-to-br from-stone-50 to-gold-50/30 flex items-center justify-center shadow-inner border border-stone-200/30">
                   <svg
                     className="w-16 h-16 text-stone-300"
                     fill="none"
@@ -232,7 +232,7 @@ export default function CartSidebar() {
               className="group relative block w-full py-4 text-center rounded-2xl font-light tracking-widest uppercase bg-white text-gray-700 border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 shadow-lg hover:shadow-xl overflow-hidden transition-all duration-300"
             >
               <span className="relative z-10">{t.cart.checkout}</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-amber-900/20 to-stone-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-gold-900/20 to-stone-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
           </div>
         )}

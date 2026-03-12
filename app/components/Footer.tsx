@@ -6,10 +6,10 @@ import { useTranslation } from "@/app/components/LocaleProvider";
 export default function Footer() {
   const { t } = useTranslation();
   return (
-    <footer className="relative bg-gradient-to-b from-white via-amber-50/20 to-amber-50/40 text-gray-600 mt-32 overflow-hidden border-t border-amber-200/50">
+    <footer className="relative bg-gradient-to-b from-white via-gold-50/20 to-gold-50/40 text-gray-600 mt-32 overflow-hidden border-t border-gold-200/50">
       {/* Decorative Elements */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(251,191,36,0.08),transparent_60%)]" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(212,175,55,0.08),transparent_60%)]" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent" />
 
       {/* Main Content */}
       <div className="relative container mx-auto px-6 lg:px-16 py-20">
@@ -19,14 +19,14 @@ export default function Footer() {
 
           {/* Store */}
           <div className="text-center space-y-6">
-            <h3 className="text-lg font-light text-amber-700 mb-8 tracking-wide">
+            <h3 className="text-lg font-light text-gold-700 mb-8 tracking-wide">
               {t.footer.store}
             </h3>
             <ul className="space-y-4">
               <li>
                 <Link
                   href="/"
-                  className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
+                  className="text-gray-600 hover:text-gold-700 transition-all duration-300 text-sm font-light inline-block"
                 >
                   {t.footer.home}
                 </Link>
@@ -34,7 +34,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/categories/femme"
-                  className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
+                  className="text-gray-600 hover:text-gold-700 transition-all duration-300 text-sm font-light inline-block"
                 >
                   {t.footer.womenPerfumes}
                 </Link>
@@ -42,7 +42,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/categories/homme"
-                  className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
+                  className="text-gray-600 hover:text-gold-700 transition-all duration-300 text-sm font-light inline-block"
                 >
                   {t.footer.menPerfumes}
                 </Link>
@@ -52,14 +52,14 @@ export default function Footer() {
 
           {/* Company */}
           <div className="text-center space-y-6">
-            <h3 className="text-lg font-light text-amber-700 mb-8 tracking-wide">
+            <h3 className="text-lg font-light text-gold-700 mb-8 tracking-wide">
               {t.footer.company}
             </h3>
             <ul className="space-y-4">
               <li>
                 <Link
                   href="/about"
-                  className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
+                  className="text-gray-600 hover:text-gold-700 transition-all duration-300 text-sm font-light inline-block"
                 >
                   {t.footer.about}
                 </Link>
@@ -67,7 +67,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
+                  className="text-gray-600 hover:text-gold-700 transition-all duration-300 text-sm font-light inline-block"
                 >
                   {t.footer.contact}
                 </Link>
@@ -75,7 +75,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="#"
-                  className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
+                  className="text-gray-600 hover:text-gold-700 transition-all duration-300 text-sm font-light inline-block"
                 >
                   {t.footer.privacy}
                 </Link>
@@ -83,7 +83,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="#"
-                  className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
+                  className="text-gray-600 hover:text-gold-700 transition-all duration-300 text-sm font-light inline-block"
                 >
                   {t.footer.terms}
                 </Link>
@@ -93,14 +93,14 @@ export default function Footer() {
 
           {/* Follow Us */}
           <div className="text-center space-y-6">
-            <h3 className="text-lg font-light text-amber-700 mb-8 tracking-wide">
+            <h3 className="text-lg font-light text-gold-700 mb-8 tracking-wide">
               {t.footer.followUs}
             </h3>
             <ul className="space-y-4">
               <li>
                 <a
                   href="#"
-                  className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
+                  className="text-gray-600 hover:text-gold-700 transition-all duration-300 text-sm font-light inline-block"
                 >
                   {t.footer.instagram}
                 </a>
@@ -108,7 +108,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-gray-600 hover:text-amber-700 transition-all duration-300 text-sm font-light inline-block"
+                  className="text-gray-600 hover:text-gold-700 transition-all duration-300 text-sm font-light inline-block"
                 >
                   {t.footer.facebook}
                 </a>
@@ -116,7 +116,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/account#referral-section"
-                  className="inline-flex items-center gap-1.5 mt-2 px-4 py-2 rounded-full bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md"
+                  className="inline-flex items-center gap-1.5 mt-2 px-4 py-2 rounded-full bg-gold-500 hover:bg-gold-600 text-white text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md"
                 >
                   {t.footer.joinUs}
                 </Link>
@@ -127,7 +127,7 @@ export default function Footer() {
 
         {/* Decorative Line */}
         <div className="flex justify-center mb-10">
-          <div className="h-px w-full max-w-2xl bg-gradient-to-r from-transparent via-amber-300/50 to-transparent" />
+          <div className="h-px w-full max-w-2xl bg-gradient-to-r from-transparent via-gold-300/50 to-transparent" />
         </div>
 
         {/* Copyright */}

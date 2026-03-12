@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "./LocaleProvider";
@@ -64,7 +64,7 @@ export default function LanguageSwitcher() {
               }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-150 ${
                 locale === lang.code
-                  ? "bg-amber-50 text-amber-700"
+                  ? "bg-gold-50 text-gold-700"
                   : "text-gray-700 hover:bg-gray-50"
               }`}
             >
@@ -72,7 +72,7 @@ export default function LanguageSwitcher() {
               <span className="font-light flex-1 text-left">{lang.label}</span>
               {locale === lang.code && (
                 <svg
-                  className="w-4 h-4 text-amber-500 flex-shrink-0"
+                  className="w-4 h-4 text-gold-500 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

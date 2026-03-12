@@ -76,15 +76,15 @@ export default async function CategoryPage(props: CategoryPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-amber-50/20 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-white via-gold-50/20 to-white">
       {/* Header Section */}
       <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div className="text-right flex-1">
               <div className="flex items-center justify-end gap-4 mb-4">
-                <div className="h-px flex-1 max-w-[100px] bg-gradient-to-l from-amber-500/50 to-transparent"></div>
-                <div className="w-2 h-2 rounded-full bg-amber-500/50"></div>
+                <div className="h-px flex-1 max-w-[100px] bg-gradient-to-l from-gold-500/50 to-transparent"></div>
+                <div className="w-2 h-2 rounded-full bg-gold-500/50"></div>
               </div>
               <h1 className="text-5xl md:text-6xl font-light mb-4 tracking-wide">
                 {categoryDisplay}
@@ -113,9 +113,9 @@ export default async function CategoryPage(props: CategoryPageProps) {
 
         {error === null && products.length === 0 && (
           <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-amber-50 to-amber-100 mb-8 shadow-xl">
+            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-gold-50 to-gold-100 mb-8 shadow-xl">
               <svg
-                className="w-12 h-12 text-amber-600"
+                className="w-12 h-12 text-gold-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -135,7 +135,7 @@ export default async function CategoryPage(props: CategoryPageProps) {
               {t.productGrid.noProducts}. {t.productGrid.checkLater}
             </p>
             <Link href="/">
-              <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 font-light text-lg px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <Button className="bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 font-light text-lg px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
                 {t.categoryPage.backHome}
               </Button>
             </Link>
@@ -167,10 +167,10 @@ function ProductCard({ product, t }: { product: AppwritePerfume; t: any }) {
   return (
     <a 
       href={`/products/${product.$id}`}
-      className="block bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group border border-amber-200/30 hover:border-amber-300/50 transform hover:-translate-y-2"
+      className="block bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group border border-gold-200/30 hover:border-gold-300/50 transform hover:-translate-y-2"
     >
       {/* Product Image */}
-      <div className="aspect-square relative bg-gradient-to-br from-amber-50/30 to-stone-50">
+      <div className="aspect-square relative bg-gradient-to-br from-gold-50/30 to-stone-50">
         <img
           src={imageUrl}
           alt={product.name}
@@ -190,14 +190,14 @@ function ProductCard({ product, t }: { product: AppwritePerfume; t: any }) {
       <div className="p-6 text-right">
         {/* Decorative line */}
         <div className="flex items-center justify-end gap-2 mb-4">
-          <div className="h-px w-12 bg-gradient-to-l from-amber-500/50 to-transparent"></div>
-          <div className="w-1.5 h-1.5 rounded-full bg-amber-500/50"></div>
+          <div className="h-px w-12 bg-gradient-to-l from-gold-500/50 to-transparent"></div>
+          <div className="w-1.5 h-1.5 rounded-full bg-gold-500/50"></div>
         </div>
 
-        <h3 className="text-xl font-light text-stone-900 mb-2 line-clamp-1 group-hover:text-amber-600 transition-colors tracking-wide">
+        <h3 className="text-xl font-light text-stone-900 mb-2 line-clamp-1 group-hover:text-gold-600 transition-colors tracking-wide">
           {product.name}
         </h3>
-        <p className="text-sm text-amber-500 mb-4 uppercase tracking-wider font-light italic">{product.brand}</p>
+        <p className="text-sm text-gold-500 mb-4 uppercase tracking-wider font-light italic">{product.brand}</p>
         
         {/* Sizes */}
         {product.sizes && product.sizes.length > 0 && (
@@ -205,7 +205,7 @@ function ProductCard({ product, t }: { product: AppwritePerfume; t: any }) {
             {product.sizes.map((size: string, index: number) => (
               <span
                 key={index}
-                className="text-xs bg-amber-50 text-amber-700 px-3 py-1.5 rounded-lg border border-amber-200/50 font-light"
+                className="text-xs bg-gold-50 text-gold-700 px-3 py-1.5 rounded-lg border border-gold-200/50 font-light"
               >
                 {size}
               </span>
@@ -215,7 +215,7 @@ function ProductCard({ product, t }: { product: AppwritePerfume; t: any }) {
 
         {/* Price */}
         <div className="flex items-center justify-between pt-4 border-t border-stone-100">
-          <span className="text-amber-600 text-sm font-light group-hover:-translate-x-1 transition-transform duration-300 inline-block tracking-wide">
+          <span className="text-gold-600 text-sm font-light group-hover:-translate-x-1 transition-transform duration-300 inline-block tracking-wide">
             {t.categoryPage.viewProduct}
           </span>
           <p className="text-2xl font-light text-stone-900">

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -61,7 +61,7 @@ const MyOrdersPage = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+        return 'bg-gold-100 text-yellow-800 border-yellow-300';
       case 'confirmed':
         return 'bg-blue-100 text-blue-800 border-blue-300';
       case 'delivered':
@@ -135,7 +135,7 @@ const MyOrdersPage = () => {
           {/* Header */}
           <div className="text-center mb-16">
             <div className="inline-block mb-6">
-              <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto" />
+              <div className="h-px w-20 bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto" />
             </div>
             <h1 className="text-4xl md:text-5xl font-light text-gray-900 tracking-tight">
               {t.myOrders.title}
@@ -148,18 +148,18 @@ const MyOrdersPage = () => {
           {loadingOrders ? (
             <div className="flex items-center justify-center min-h-[40vh]">
               <div className="text-center space-y-4">
-                <div className="w-12 h-12 border-2 border-amber-300 border-t-amber-600 rounded-full animate-spin mx-auto"></div>
+                <div className="w-12 h-12 border-2 border-gold-300 border-t-gold-600 rounded-full animate-spin mx-auto"></div>
                 <p className="text-gray-500 font-light">{t.myOrders.loading}</p>
               </div>
             </div>
           ) : orders.length === 0 ? (
             <div className="flex items-center justify-center min-h-[40vh] px-4">
-              <div className="max-w-md w-full bg-gradient-to-br from-white via-amber-50/30 to-amber-50/20 backdrop-blur-sm rounded-3xl p-12 md:p-14 shadow-2xl border border-amber-100/50 text-center">
+              <div className="max-w-md w-full bg-gradient-to-br from-white via-gold-50/30 to-gold-50/20 backdrop-blur-sm rounded-3xl p-12 md:p-14 shadow-2xl border border-gold-100/50 text-center">
                 <div className="relative mx-auto w-32 h-32 mb-10">
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-100/50 to-amber-200/30 rounded-full animate-pulse"></div>
-                  <div className="relative w-full h-full rounded-full bg-gradient-to-br from-amber-50 to-amber-100/40 flex items-center justify-center shadow-inner">
+                  <div className="absolute inset-0 bg-gradient-to-br from-gold-100/50 to-gold-200/30 rounded-full animate-pulse"></div>
+                  <div className="relative w-full h-full rounded-full bg-gradient-to-br from-gold-50 to-gold-100/40 flex items-center justify-center shadow-inner">
                     <svg
-                      className="w-16 h-16 text-amber-500"
+                      className="w-16 h-16 text-gold-500"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -183,7 +183,7 @@ const MyOrdersPage = () => {
 
                 <Link
                   href="/"
-                  className="group inline-flex items-center justify-center px-10 py-5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-2xl font-light tracking-wide transition-all duration-500 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
+                  className="group inline-flex items-center justify-center px-10 py-5 bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white rounded-2xl font-light tracking-wide transition-all duration-500 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
                 >
                   <span>{t.myOrders.discoverBtn}</span>
                 </Link>
@@ -203,7 +203,7 @@ const MyOrdersPage = () => {
                 return (
                   <div
                     key={order.$id}
-                    className="bg-white rounded-3xl border border-amber-200/50 shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300"
+                    className="bg-white rounded-3xl border border-gold-200/50 shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300"
                   >
                     <div className="p-6 md:p-8">
                       {/* Order Header */}
@@ -241,7 +241,7 @@ const MyOrdersPage = () => {
                           <p className="text-sm text-stone-500 font-light mb-1">
                             {t.myOrders.total}
                           </p>
-                          <p className="text-2xl font-light text-amber-600">
+                          <p className="text-2xl font-light text-gold-600">
                             {order.totalPrice.toFixed(2)} TND
                           </p>
                         </div>
@@ -256,7 +256,7 @@ const MyOrdersPage = () => {
                           {orderItems.map((item: any, idx: number) => (
                             <div
                               key={idx}
-                              className="flex items-center justify-between gap-4 p-3 bg-amber-50/30 rounded-xl"
+                              className="flex items-center justify-between gap-4 p-3 bg-gold-50/30 rounded-xl"
                             >
                               <div className="flex items-center gap-3 flex-row-reverse">
                                 {item.Image && (
@@ -281,7 +281,7 @@ const MyOrdersPage = () => {
                                 <p className="text-sm text-stone-700">
                                   {t.myOrders.qty}: {item.qty}
                                 </p>
-                                <p className="text-sm font-medium text-amber-600">
+                                <p className="text-sm font-medium text-gold-600">
                                   {(item.Price * item.qty).toFixed(2)} TND
                                 </p>
                               </div>

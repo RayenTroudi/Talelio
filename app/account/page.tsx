@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
@@ -171,12 +171,12 @@ function AccountPageContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-white via-amber-50/20 to-white">
+      <div className="min-h-screen bg-gradient-to-br from-white via-gold-50/20 to-white">
         {/* Header */}
-        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-amber-500/30 shadow-xl">
+        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-gold-500/30 shadow-xl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="h-9 w-48 bg-amber-200/30 rounded animate-pulse mb-4 mx-auto"></div>
-            <div className="h-5 w-96 bg-amber-200/20 rounded animate-pulse mx-auto"></div>
+            <div className="h-9 w-48 bg-gold-200/30 rounded animate-pulse mb-4 mx-auto"></div>
+            <div className="h-5 w-96 bg-gold-200/20 rounded animate-pulse mx-auto"></div>
           </div>
         </div>
 
@@ -184,11 +184,11 @@ function AccountPageContent() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Profile skeleton */}
             <div className="lg:col-span-1">
-              <div className="bg-gradient-to-br from-white to-amber-50/20 rounded-3xl p-8 shadow-xl border border-amber-200/30">
-                <div className="h-6 w-32 bg-amber-200/30 rounded animate-pulse mb-6"></div>
+              <div className="bg-gradient-to-br from-white to-gold-50/20 rounded-3xl p-8 shadow-xl border border-gold-200/30">
+                <div className="h-6 w-32 bg-gold-200/30 rounded animate-pulse mb-6"></div>
                 <div className="space-y-4">
-                  <div className="h-4 w-full bg-amber-200/20 rounded animate-pulse"></div>
-                  <div className="h-4 w-3/4 bg-amber-200/20 rounded animate-pulse"></div>
+                  <div className="h-4 w-full bg-gold-200/20 rounded animate-pulse"></div>
+                  <div className="h-4 w-3/4 bg-gold-200/20 rounded animate-pulse"></div>
                 </div>
               </div>
             </div>
@@ -196,13 +196,13 @@ function AccountPageContent() {
             {/* Orders skeleton */}
             <div className="lg:col-span-2">
               <div className="space-y-6">
-                <div className="h-6 w-48 bg-amber-200/30 rounded animate-pulse mb-6"></div>
+                <div className="h-6 w-48 bg-gold-200/30 rounded animate-pulse mb-6"></div>
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-gradient-to-br from-white to-amber-50/20 rounded-3xl p-8 shadow-xl border border-amber-200/30">
-                    <div className="h-5 w-32 bg-amber-200/30 rounded animate-pulse mb-4"></div>
+                  <div key={i} className="bg-gradient-to-br from-white to-gold-50/20 rounded-3xl p-8 shadow-xl border border-gold-200/30">
+                    <div className="h-5 w-32 bg-gold-200/30 rounded animate-pulse mb-4"></div>
                     <div className="space-y-3">
-                      <div className="h-4 w-full bg-amber-200/20 rounded animate-pulse"></div>
-                      <div className="h-4 w-2/3 bg-amber-200/20 rounded animate-pulse"></div>
+                      <div className="h-4 w-full bg-gold-200/20 rounded animate-pulse"></div>
+                      <div className="h-4 w-2/3 bg-gold-200/20 rounded animate-pulse"></div>
                     </div>
                   </div>
                 ))}
@@ -219,8 +219,8 @@ function AccountPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-amber-50/20 to-white">
-      {/* Toast Container */}
+    <div className="min-h-screen bg-gradient-to-br from-white via-gold-50/20 to-white">
+      {/* Toast Container */}}
       {toasts.map((toast) => (
         <Toast
           key={toast.id}
@@ -233,14 +233,14 @@ function AccountPageContent() {
       ))}
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-amber-500/30 shadow-xl">
+      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-gold-500/30 shadow-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-6">
             <div className="text-right flex-1">
               <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
-                <div className="w-2 h-2 rounded-full bg-amber-500/50"></div>
-                <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
+                <div className="h-px w-20 bg-gradient-to-r from-transparent via-gold-500/50 to-transparent"></div>
+                <div className="w-2 h-2 rounded-full bg-gold-500/50"></div>
+                <div className="h-px w-20 bg-gradient-to-r from-transparent via-gold-500/50 to-transparent"></div>
               </div>
               <h1 className="text-4xl font-light text-white text-center tracking-wide">{t.account.title}</h1>
               <p className="mt-3 text-gray-300 font-light text-center tracking-wide">{t.account.subtitle}</p>
@@ -258,7 +258,7 @@ function AccountPageContent() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Personal Information Section */}
           <div className="lg:col-span-1 space-y-6">
-            <Card className="p-8 bg-gradient-to-br from-white to-amber-50/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-amber-200/30">
+            <Card className="p-8 bg-gradient-to-br from-white to-gold-50/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gold-200/30">
               <h2 className="text-2xl font-light text-stone-900 mb-8 text-right tracking-wide">{t.account.personalInfo}</h2>
 
               <div className="space-y-6">
@@ -277,24 +277,24 @@ function AccountPageContent() {
             </Card>
 
             {/* Promo Code Card */}
-            <Card id="referral-section" className="p-8 bg-gradient-to-br from-white to-amber-50/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-amber-200/30">
+            <Card id="referral-section" className="p-8 bg-gradient-to-br from-white to-gold-50/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gold-200/30">
               <h2 className="text-2xl font-light text-stone-900 mb-6 text-right tracking-wide">{t.account.referralCode}</h2>
               {promoRequestLoading ? (
-                <div className="h-12 bg-amber-100/40 rounded-xl animate-pulse" />
+                <div className="h-12 bg-gold-100/40 rounded-xl animate-pulse" />
               ) : !promoRequest ? (
                 <div className="text-right space-y-4">
                   <p className="text-stone-600 font-light text-sm">{t.account.referralDesc}</p>
                   <button
                     onClick={handleRequestPromoCode}
                     disabled={promoLoading}
-                    className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:bg-stone-300 text-white font-light tracking-wide transition-colors"
+                    className="w-full py-3 rounded-xl bg-gold-500 hover:bg-gold-600 disabled:bg-stone-300 text-white font-light tracking-wide transition-colors"
                   >
                     {promoLoading ? t.account.sending : t.account.requestPromoBtn}
                   </button>
                 </div>
               ) : promoRequest.status === 'PENDING' ? (
                 <div className="text-right space-y-2">
-                  <span className="inline-block px-3 py-1 rounded-full text-xs font-light bg-yellow-100 text-yellow-800">
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-light bg-gold-100 text-yellow-800">
                     {t.account.pendingStatus}
                   </span>
                   <p className="text-stone-600 font-light text-sm">{t.account.pendingDesc}</p>
@@ -304,7 +304,7 @@ function AccountPageContent() {
                   <span className="inline-block px-3 py-1 rounded-full text-xs font-light bg-green-100 text-green-800">
                     {t.account.approvedStatus}
                   </span>
-                  <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-2xl p-5 border border-amber-200/60 text-center">
+                  <div className="bg-gradient-to-br from-gold-50 to-gold-100/50 rounded-2xl p-5 border border-gold-200/60 text-center">
                     <p className="text-xs text-stone-500 font-light mb-2">{t.account.yourCode}</p>
                     <p className="text-3xl font-mono font-bold tracking-widest text-stone-900 select-all">
                       {promoRequest.promoCode}
@@ -320,7 +320,7 @@ function AccountPageContent() {
                   <button
                     onClick={handleRequestPromoCode}
                     disabled={promoLoading}
-                    className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:bg-stone-300 text-white font-light tracking-wide transition-colors"
+                    className="w-full py-3 rounded-xl bg-gold-500 hover:bg-gold-600 disabled:bg-stone-300 text-white font-light tracking-wide transition-colors"
                   >
                     {promoLoading ? t.account.sending : t.account.reRequestBtn}
                   </button>
@@ -331,13 +331,13 @@ function AccountPageContent() {
 
           {/* Orders Section */}
           <div className="lg:col-span-2">
-            <Card className="p-8 bg-gradient-to-br from-white to-amber-50/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-amber-200/30">
+            <Card className="p-8 bg-gradient-to-br from-white to-gold-50/20 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gold-200/30">
               <h2 className="text-2xl font-light text-stone-900 mb-8 text-right tracking-wide">{t.account.orderHistory}</h2>
 
               {orders.length === 0 ? (
                 <div className="text-center py-16">
-                  <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center shadow-xl">
-                    <svg className="w-12 h-12 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-gradient-to-br from-gold-50 to-gold-100 flex items-center justify-center shadow-xl">
+                    <svg className="w-12 h-12 text-gold-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                   </div>
@@ -345,7 +345,7 @@ function AccountPageContent() {
                   <p className="text-stone-600 mb-8 font-light tracking-wide">{t.account.noOrdersDesc}</p>
                   <button
                     onClick={() => router.push("/")}
-                    className="inline-flex items-center gap-2 px-8 py-4 text-base font-light rounded-2xl text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    className="inline-flex items-center gap-2 px-8 py-4 text-base font-light rounded-2xl text-white bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500 transition-all duration-300 shadow-lg hover:shadow-xl"
                   >
                     {t.account.browseBtn}
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -356,7 +356,7 @@ function AccountPageContent() {
               ) : (
                 <div className="space-y-6">
                   {orders.map((order) => (
-                    <div key={order.$id} className="border border-amber-200/50 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 bg-white/50">
+                    <div key={order.$id} className="border border-gold-200/50 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 bg-white/50">
                       {/* Order Header */}
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 text-right">
                         <div>
@@ -381,7 +381,7 @@ function AccountPageContent() {
                           <p className="text-sm font-light text-stone-500 mb-2">{t.account.status}</p>
                           <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-light ${
                             order.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                            order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            order.status === 'pending' ? 'bg-gold-100 text-yellow-800' :
                             order.status === 'delivered' ? 'bg-blue-100 text-blue-800' :
                             'bg-red-100 text-red-800'
                           }`}>
@@ -396,7 +396,7 @@ function AccountPageContent() {
 
                         <div>
                           <p className="text-sm font-light text-stone-500 mb-2">{t.account.total}</p>
-                          <p className="text-xl font-light text-amber-600">{order.totalPrice.toFixed(2)} {t.productDetail.currency}</p>
+                          <p className="text-xl font-light text-gold-600">{order.totalPrice.toFixed(2)} {t.productDetail.currency}</p>
                         </div>
 
                         <div className="col-span-2">
@@ -438,7 +438,7 @@ function AccountPageContent() {
                       {/* Delivery Address */}
                       <div className="text-right">
                         <p className="text-sm font-light text-stone-700 tracking-wide mb-3">{t.account.deliveryAddress}</p>
-                        <div className="bg-gradient-to-br from-amber-50/50 to-stone-50 rounded-2xl p-5 border border-amber-200/30">
+                        <div className="bg-gradient-to-br from-gold-50/50 to-stone-50 rounded-2xl p-5 border border-gold-200/30">
                           <p className="font-light text-stone-900 text-lg mb-1">{order.deliveryAddress.fullName}</p>
                           <p className="text-stone-700 font-light">{order.deliveryAddress.address}</p>
                           <p className="text-stone-700 font-light">

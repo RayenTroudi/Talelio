@@ -77,32 +77,32 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Menu - Center */}
-        <ul className="hidden md:flex items-center gap-12 text-gray-700 font-light tracking-wide order-2">
+        <ul className="hidden md:flex items-center gap-12 text-black font-light tracking-wide order-2">
           <li>
             <Link
               href="/"
-              className="relative text-base hover:text-gray-900 transition-all duration-300 group py-1"
+              className="relative text-base hover:text-black transition-all duration-300 group py-1"
             >
               {t.nav.home}
-              <span className="absolute bottom-0 right-0 w-0 h-[1.5px] bg-gradient-to-l from-amber-400 to-amber-600 group-hover:w-full transition-all duration-300"></span>
+              <span className="absolute bottom-0 right-0 w-0 h-[1.5px] bg-gradient-to-l from-gold-400 to-gold-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
           </li>
           <li>
             <Link
               href="/categories/femme"
-              className="relative text-base hover:text-gray-900 transition-all duration-300 group py-1"
+              className="relative text-base hover:text-black transition-all duration-300 group py-1"
             >
               {t.nav.womenPerfumes}
-              <span className="absolute bottom-0 right-0 w-0 h-[1.5px] bg-gradient-to-l from-amber-400 to-amber-600 group-hover:w-full transition-all duration-300"></span>
+              <span className="absolute bottom-0 right-0 w-0 h-[1.5px] bg-gradient-to-l from-gold-400 to-gold-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
           </li>
           <li>
             <Link
               href="/categories/homme"
-              className="relative text-base hover:text-gray-900 transition-all duration-300 group py-1"
+              className="relative text-base hover:text-black transition-all duration-300 group py-1"
             >
               {t.nav.menPerfumes}
-              <span className="absolute bottom-0 right-0 w-0 h-[1.5px] bg-gradient-to-l from-amber-400 to-amber-600 group-hover:w-full transition-all duration-300"></span>
+              <span className="absolute bottom-0 right-0 w-0 h-[1.5px] bg-gradient-to-l from-gold-400 to-gold-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
           </li>
         </ul>
@@ -124,13 +124,13 @@ const Navbar = () => {
             <>
               <Link
                 href="/SignIn"
-                className="text-sm font-light text-gray-700 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 px-7 py-2.5 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md"
+                className="text-sm font-light text-black bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 px-7 py-2.5 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md"
               >
                 {t.nav.signIn}
               </Link>
               <Link
                 href="/Register"
-                className="text-sm font-light text-gray-600 hover:text-gray-900 transition-colors duration-200"
+                className="text-sm font-light text-black hover:text-black transition-colors duration-200"
               >
                 {t.nav.register}
               </Link>
@@ -141,7 +141,7 @@ const Navbar = () => {
                 <>
                   <Link
                     href="/"
-                    className="text-sm font-light text-gray-600 hover:text-gray-900 transition-colors duration-200"
+                    className="text-sm font-light text-black hover:text-black transition-colors duration-200"
                   >
                     {t.nav.backToStore}
                   </Link>
@@ -154,7 +154,7 @@ const Navbar = () => {
                     >
                       <HiOutlineUser
                         size="24px"
-                        className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200"
+                        className="text-black group-hover:text-black transition-colors duration-200"
                       />
                     </button>
 
@@ -164,7 +164,7 @@ const Navbar = () => {
                           <Link
                             href="/account"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                            className="block px-4 py-2.5 text-sm text-black hover:bg-gray-50 transition-colors duration-200"
                           >
                             {t.nav.myAccount}
                           </Link>
@@ -190,7 +190,7 @@ const Navbar = () => {
                     >
                       <HiOutlineUser
                         size="24px"
-                        className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200"
+                        className="text-black group-hover:text-black transition-colors duration-200"
                       />
                     </button>
 
@@ -201,7 +201,7 @@ const Navbar = () => {
                             <Link
                               href="/admin"
                               onClick={() => setUserDropdownOpen(false)}
-                              className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                              className="block px-4 py-2.5 text-sm text-black hover:bg-gray-50 transition-colors duration-200"
                             >
                               {t.nav.adminPanel}
                             </Link>
@@ -209,7 +209,7 @@ const Navbar = () => {
                           <Link
                             href="/account"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                            className="block px-4 py-2.5 text-sm text-black hover:bg-gray-50 transition-colors duration-200"
                           >
                             {t.nav.myAccount}
                           </Link>
@@ -249,7 +249,7 @@ const Navbar = () => {
             >
               <HiOutlineClipboardDocumentList
                 size="24px"
-                className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200"
+                className="text-black group-hover:text-black transition-colors duration-200"
               />
             </Link>
           )}
@@ -261,10 +261,10 @@ const Navbar = () => {
           >
             <CiShoppingCart
               size="26px"
-              className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200"
+              className="text-black group-hover:text-black transition-colors duration-200"
             />
             {isClient && CartItems.length > 0 && (
-              <span className="absolute top-0 right-0 bg-gradient-to-br from-amber-500 to-amber-600 text-white text-[10px] font-semibold rounded-full w-5 h-5 flex items-center justify-center shadow-lg animate-in zoom-in-50 duration-200">
+              <span className="absolute top-0 right-0 bg-gradient-to-br from-gold-500 to-gold-600 text-white text-[10px] font-semibold rounded-full w-5 h-5 flex items-center justify-center shadow-lg animate-in zoom-in-50 duration-200">
                 {loading ? CartItems.length : CartItems.reduce((a: any, c: any) => a + c.qty, 0)}
               </span>
             )}
@@ -280,7 +280,7 @@ const Navbar = () => {
           >
             <HiOutlineClipboardDocumentList
               size="22px"
-              className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200"
+              className="text-black group-hover:text-black transition-colors duration-200"
             />
           </Link>
         )}
@@ -294,7 +294,7 @@ const Navbar = () => {
           >
             <HiOutlineUser
               size="22px"
-              className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200"
+              className="text-black group-hover:text-black transition-colors duration-200"
             />
           </Link>
         )}
@@ -319,10 +319,10 @@ const Navbar = () => {
         >
           <CiShoppingCart
             size="24px"
-            className="text-gray-700 group-hover:text-gray-900 transition-colors duration-200"
+            className="text-black group-hover:text-black transition-colors duration-200"
           />
           {isClient && CartItems.length > 0 && (
-            <span className="absolute top-0 right-0 bg-gradient-to-br from-amber-500 to-amber-600 text-white text-[9px] font-semibold rounded-full w-4 h-4 flex items-center justify-center shadow-lg">
+            <span className="absolute top-0 right-0 bg-gradient-to-br from-gold-500 to-gold-600 text-white text-[9px] font-semibold rounded-full w-4 h-4 flex items-center justify-center shadow-lg">
               {loading ? CartItems.length : CartItems.reduce((a: any, c: any) => a + c.qty, 0)}
             </span>
           )}
@@ -330,7 +330,7 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         <div className={`md:hidden fixed top-[72px] left-0 w-full bg-white/98 backdrop-blur-lg border-t border-gray-100 shadow-xl transition-all duration-300 ${open ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
-          <ul className="flex flex-col p-6 gap-1 text-gray-700 font-light">
+          <ul className="flex flex-col p-6 gap-1 text-black font-light">
             <li>
               <Link
                 href="/"
@@ -367,7 +367,7 @@ const Navbar = () => {
                   <Link
                     href="/SignIn"
                     onClick={() => setOpen(false)}
-                    className="block py-3.5 px-5 bg-white text-gray-700 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 rounded-xl transition-all duration-200 text-sm text-center font-medium shadow-sm hover:shadow-md"
+                    className="block py-3.5 px-5 bg-white text-black border border-gray-200 hover:border-gray-300 hover:bg-gray-50 rounded-xl transition-all duration-200 text-sm text-center font-medium shadow-sm hover:shadow-md"
                   >
                     {t.nav.signIn}
                   </Link>

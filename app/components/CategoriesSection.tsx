@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -28,17 +28,17 @@ export default function CategoriesSection() {
   return (
     <section id="categories" className="py-28 bg-white relative overflow-hidden">
       {/* Decorative background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(251,191,36,0.04),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(251,191,36,0.04),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(212,175,55,0.04),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(212,175,55,0.04),transparent_50%)]" />
 
       <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}
         <header className="mb-20 text-center">
           <div className="inline-block mb-6">
-            <div className="h-px w-20 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto" />
+            <div className="h-px w-20 bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto" />
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-6 tracking-tight">
-            {t.categories.sectionTitle} <span className="font-serif italic text-amber-600">{t.categories.sectionTitleHighlight}</span>
+            {t.categories.sectionTitle} <span className="font-serif italic text-gold-600">{t.categories.sectionTitleHighlight}</span>
           </h2>
           <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed font-light">
             {t.categories.sectionSubtitle}

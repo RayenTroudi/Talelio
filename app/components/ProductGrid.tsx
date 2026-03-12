@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { ProductCard } from "@/app/components/product/ProductCard";
@@ -113,7 +113,7 @@ export function ProductGrid({
       <div className="container mx-auto px-4 py-12">
         <div className="flex justify-center items-center min-h-[400px]">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-amber-500 mx-auto"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gold-500 mx-auto"></div>
             <p className="mt-6 text-stone-600 font-light tracking-wide">{t.productGrid.loading}</p>
           </div>
         </div>
@@ -142,12 +142,12 @@ export function ProductGrid({
     <div className="container mx-auto px-4 py-8">
       {/* Search Bar */}
       <div className="mb-12 max-w-2xl mx-auto">
-        <InputGroup className="bg-white shadow-xl shadow-amber-200/20 rounded-2xl overflow-hidden border border-amber-200/30">
+        <InputGroup className="bg-white shadow-xl shadow-gold-200/20 rounded-2xl overflow-hidden border border-gold-200/30">
           <InputGroupInput
             placeholder={t.productGrid.searchPlaceholder}
             onChange={(e) => handleSearch(e.target.value)}
             defaultValue={searchParams.get("query")?.toString()}
-            className="border-0 focus:ring-2 focus:ring-amber-500 font-light py-5 px-6 text-right placeholder:text-stone-400"
+            className="border-0 focus:ring-2 focus:ring-gold-500 font-light py-5 px-6 text-right placeholder:text-stone-400"
           />
         </InputGroup>
       </div>
@@ -156,7 +156,7 @@ export function ProductGrid({
       {searchQuery && (
         <div className="mb-8 text-center">
           <p className="text-stone-600 font-light tracking-wide">
-            {t.productGrid.resultsFor} {filteredProducts.length} {t.productGrid.resultsCount} <span className="font-normal text-amber-600">"{searchQuery}"</span>
+            {t.productGrid.resultsFor} {filteredProducts.length} {t.productGrid.resultsCount} <span className="font-normal text-gold-600">"{searchQuery}"</span>
           </p>
         </div>
       )}
@@ -165,9 +165,9 @@ export function ProductGrid({
       {filteredProducts.length === 0 ? (
         <div className="text-center py-20">
           <div className="max-w-md mx-auto">
-            <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center shadow-xl">
+            <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-gradient-to-br from-gold-50 to-gold-100 flex items-center justify-center shadow-xl">
               <svg
-                className="w-12 h-12 text-amber-600"
+                className="w-12 h-12 text-gold-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

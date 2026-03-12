@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+﻿import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
  */
 export function ProductDetailSkeleton() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/20 to-rose-50/10 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-gold-50/20 to-rose-50/10 py-12">
       <div className="container mx-auto px-4">
         {/* Breadcrumb skeleton */}
         <div className="mb-8 flex items-center gap-2">

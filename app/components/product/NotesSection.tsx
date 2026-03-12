@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 interface Note {
   name: string;
@@ -34,8 +34,8 @@ export function NotesSection({
       name: "Middle Notes",
       notes: middleNotes,
       description: "Heart of the fragrance, floral and rich",
-      gradient: "from-amber-50 to-yellow-50",
-      borderColor: "border-amber-200",
+      gradient: "from-gold-50 to-gold-50",
+      borderColor: "border-gold-200",
     },
     {
       name: "Base Notes",
@@ -114,7 +114,7 @@ export function NotesSection({
             </div>
             <div className="w-8 h-px bg-gray-400"></div>
             <div className="flex flex-col items-center">
-              <div className="w-3 h-3 bg-amber-400 rounded-full mb-2"></div>
+              <div className="w-3 h-3 bg-gold-400 rounded-full mb-2"></div>
               <span className="font-medium">15 min - 3 hrs</span>
               <span className="text-gray-300">Middle Notes</span>
             </div>
