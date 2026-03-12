@@ -220,7 +220,7 @@ function AccountPageContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-gold-50/20 to-white">
-      {/* Toast Container */}}
+      {/* Toast Container */}
       {toasts.map((toast) => (
         <Toast
           key={toast.id}
