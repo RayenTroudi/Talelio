@@ -1,89 +1,29 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { useTranslation } from "@/app/components/LocaleProvider";
 
-// Declare global types for Vanta and THREE
-declare global {
-  interface Window {
-    VANTA: any;
-    THREE: any;
-  }
-}
-
 const Hero = () => {
-  const vantaRef = useRef<HTMLDivElement>(null);
-  const [vantaEffect, setVantaEffect] = useState<any>(null);
-  const [mounted, setMounted] = useState(false);
   const { t } = useTranslation();
 
-  // Ensure client-side only rendering to prevent hydration errors
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-
-    if (!vantaEffect && vantaRef.current) {
-      // Wait for both libraries to be loaded
-      const checkAndInit = () => {
-        if (window.VANTA && window.THREE && vantaRef.current) {
-          try {
-            const effect = window.VANTA.BIRDS({
-              el: vantaRef.current,
-              THREE: window.THREE,
-              mouseControls: true,
-              touchControls: true,
-              gyroControls: false,
-              minHeight: 200.00,
-              minWidth: 200.00,
-              scale: 1.00,
-              scaleMobile: 1.00,
-              backgroundColor: 0xffffff,
-              color1: 0xf59e0b,
-              color2: 0xfbbf24,
-              quantity: 4.00,
-              birdSize: 1.30,
-              wingSpan: 25.00,
-              speedLimit: 4.00,
-              separation: 50.00,
-              alignment: 35.00,
-              cohesion: 25.00
-            });
-            setVantaEffect(effect);
-          } catch (error) {
-            console.error('Error initializing Vanta:', error);
-          }
-        } else {
-          // Retry after a short delay
-          setTimeout(checkAndInit, 100);
-        }
-      };
-
-      checkAndInit();
-    }
-
-    return () => {
-      if (vantaEffect) {
-        try {
-          vantaEffect.destroy();
-        } catch (error) {
-          console.error('Error destroying Vanta:', error);
-        }
-      }
-    };
-  }, [vantaEffect, mounted]);
-
   return (
-    <div
-      ref={vantaRef}
-      className="relative w-full min-h-[90vh] flex items-center overflow-hidden"
-      suppressHydrationWarning
-    >
-      {/* Overlay for better text readability */}
-      <div className="absolute inset-0 bg-white/60 backdrop-blur-sm" suppressHydrationWarning />
+    <div className="relative w-full min-h-[90vh] flex items-center overflow-hidden">
+      {/* Video Background */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        src="/talelparfume.mp4"
+      />
+
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/55" />
+
+      {/* Subtle gradient vignette for extra depth */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50" />
 
       {/* Content Container */}
       <div className="relative z-20 w-full max-w-[1200px] mx-auto px-6 lg:px-16 py-24">
@@ -101,16 +41,16 @@ const Hero = () => {
 
             {/* Headline */}
             <h1
-              className="text-4xl md:text-6xl lg:text-7xl font-light text-gray-900 leading-[1.15] animate-fade-in-up"
+              className="text-4xl md:text-6xl lg:text-7xl font-light text-white leading-[1.15] animate-fade-in-up drop-shadow-lg"
               style={{ animationDelay: "0.2s", animationFillMode: "both" }}
             >
               {t.hero.title} <br />
-              <span className="font-serif italic text-amber-600">{t.hero.titleHighlight}</span>
+              <span className="font-serif italic text-amber-400">{t.hero.titleHighlight}</span>
             </h1>
 
             {/* Subheadline */}
             <p
-              className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto animate-fade-in-up"
+              className="text-lg md:text-xl text-gray-200 leading-relaxed max-w-2xl mx-auto animate-fade-in-up drop-shadow"
               style={{ animationDelay: "0.3s", animationFillMode: "both" }}
             >
               {t.hero.subtitle}
