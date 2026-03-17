@@ -23,8 +23,7 @@ const recalcPrices = (state: any) => {
     state.itemsPrice = addDecimals(
         state.CartItems.reduce((acc:any, item:any) => acc + item.Price * item.qty, 0)
     )
-    const gouvernorat = state.shippingAddress?.gouvernorat || ''
-    state.shippingPrice = gouvernorat === 'Nabeul' ? 0 : (gouvernorat ? 8 : 0)
+    state.shippingPrice = 0
     state.totalPrice = addDecimals(
         Number(state.itemsPrice) + Number(state.shippingPrice)
     )
@@ -66,9 +65,8 @@ const CartSlice = createSlice({
         saveShippingAddress:(state:any, action:any) => {
             state.shippingAddress = action.payload
             
-            // Recalculate delivery fee when gouvernorat changes
-            const gouvernorat = action.payload.gouvernorat || ''
-            state.shippingPrice = gouvernorat === 'Nabeul' ? 0 : (gouvernorat ? 8 : 0)
+            // Shipping is always free
+            state.shippingPrice = 0
             
             // Recalculate total with new shipping price
             if(state.itemsPrice) {
