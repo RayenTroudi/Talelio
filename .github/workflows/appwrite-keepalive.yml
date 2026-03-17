@@ -1,0 +1,34 @@
+name: Appwrite Keepalive
+
+on:
+  schedule:
+    # Every 6 hours (UTC)
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call keepalive endpoint
+        env:
+          KEEPALIVE_URL: ${{ secrets.KEEPALIVE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$KEEPALIVE_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "Missing required secrets: KEEPALIVE_URL and/or CRON_SECRET"
+            exit 1
+          fi
+
+          echo "Pinging $KEEPALIVE_URL"
+          HTTP_CODE=$(curl -sS -o response.json -w "%{http_code}" \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "$KEEPALIVE_URL")
+
+          echo "HTTP status: $HTTP_CODE"
+          cat response.json
+
+          if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+            echo "Keepalive request failed"
+            exit 1
+          fi
