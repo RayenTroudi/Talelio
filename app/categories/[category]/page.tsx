@@ -81,17 +81,14 @@ export default async function CategoryPage(props: CategoryPageProps) {
       <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div className="text-right flex-1">
-              <div className="flex items-center justify-end gap-4 mb-4">
-                <div className="h-px flex-1 max-w-[100px] bg-gradient-to-l from-gold-500/50 to-transparent"></div>
+            <div className="flex-1 text-start">
+              <div className="flex items-center ltr:justify-start rtl:justify-end gap-4 mb-4">
                 <div className="w-2 h-2 rounded-full bg-gold-500/50"></div>
+                <div className="h-px flex-1 max-w-[100px] ltr:bg-gradient-to-r rtl:bg-gradient-to-l ltr:from-gold-500/50 rtl:from-gold-500/50 to-transparent"></div>
               </div>
-              <h1 className="text-5xl md:text-6xl font-light mb-4 tracking-wide">
+              <h1 className="text-5xl md:text-6xl font-light mb-4 tracking-wide text-white">
                 {categoryDisplay}
               </h1>
-              <p className="text-gray-300 text-lg font-light tracking-wide">
-                {products.length}
-              </p>
             </div>
             <Link href="/">
               <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 font-light tracking-wide rounded-xl px-6 py-3">
@@ -187,11 +184,11 @@ function ProductCard({ product, t }: { product: AppwritePerfume; t: any }) {
       </div>
 
       {/* Product Info */}
-      <div className="p-6 text-right">
+      <div className="p-6 text-start">
         {/* Decorative line */}
-        <div className="flex items-center justify-end gap-2 mb-4">
-          <div className="h-px w-12 bg-gradient-to-l from-gold-500/50 to-transparent"></div>
+        <div className="flex items-center ltr:justify-start rtl:justify-end gap-2 mb-4">
           <div className="w-1.5 h-1.5 rounded-full bg-gold-500/50"></div>
+          <div className="h-px w-12 ltr:bg-gradient-to-r rtl:bg-gradient-to-l ltr:from-gold-500/50 rtl:from-gold-500/50 to-transparent"></div>
         </div>
 
         <h3 className="text-xl font-light text-stone-900 mb-2 line-clamp-1 group-hover:text-gold-600 transition-colors tracking-wide">
@@ -201,7 +198,7 @@ function ProductCard({ product, t }: { product: AppwritePerfume; t: any }) {
         
         {/* Sizes */}
         {product.sizes && product.sizes.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-5 justify-end">
+          <div className="flex flex-wrap gap-2 mb-5 ltr:justify-start rtl:justify-end">
             {product.sizes.map((size: string, index: number) => (
               <span
                 key={index}
@@ -215,7 +212,7 @@ function ProductCard({ product, t }: { product: AppwritePerfume; t: any }) {
 
         {/* Price */}
         <div className="flex items-center justify-between pt-4 border-t border-stone-100">
-          <span className="text-gold-600 text-sm font-light group-hover:-translate-x-1 transition-transform duration-300 inline-block tracking-wide">
+          <span className="text-gold-600 text-sm font-light ltr:group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform duration-300 inline-block tracking-wide">
             {t.categoryPage.viewProduct}
           </span>
           <p className="text-2xl font-light text-stone-900">
