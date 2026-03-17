@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cairo, Tajawal, Playfair_Display, Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "./Providers";
 import { StoreProvider } from "./Redux/StoreProvider";
@@ -58,6 +59,18 @@ export default async function RootLayout({
         className={`${cairo.variable} ${tajawal.variable} ${playfair.variable} ${inter.variable} antialiased`}
         suppressHydrationWarning
       >
+        <Script id="strip-bis-attrs" strategy="beforeInteractive">
+          {`(function(){
+            try {
+              var nodes = document.querySelectorAll('[bis_skin_checked]');
+              for (var i = 0; i < nodes.length; i++) {
+                nodes[i].removeAttribute('bis_skin_checked');
+              }
+            } catch (e) {
+              // no-op
+            }
+          })();`}
+        </Script>
         <AuthProvider>
         <StoreProvider>
         <LocaleProvider initialLocale={locale}>
