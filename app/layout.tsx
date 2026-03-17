@@ -34,7 +34,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "متجر العطور الفاخرة",
+  title: "talelio",
   description: "اكتشف تشكيلة حصرية من العطور الفاخرة للرجال والنساء",
   icons: {
     icon: "/logo-removebg-preview.png",
