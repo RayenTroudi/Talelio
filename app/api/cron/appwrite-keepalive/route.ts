@@ -5,10 +5,17 @@ export const dynamic = 'force-dynamic';
 
 function isAuthorized(request: NextRequest): boolean {
   const cronSecret = process.env.CRON_SECRET;
+  const requireCronSecret = process.env.REQUIRE_CRON_SECRET === 'true';
 
-  // If no secret is configured, allow local/manual calls only.
+  // By default, keepalive does not require auth so scheduled jobs do not fail.
+  // Set REQUIRE_CRON_SECRET=true to enforce bearer auth in all environments.
+  if (!requireCronSecret) {
+    return true;
+  }
+
+  // Auth is required, but no secret is configured.
   if (!cronSecret) {
-    return process.env.NODE_ENV !== 'production';
+    return false;
   }
 
   const authHeader = request.headers.get('authorization');

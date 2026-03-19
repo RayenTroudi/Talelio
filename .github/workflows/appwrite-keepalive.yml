@@ -5,6 +5,11 @@ on:
     # Every 6 hours (UTC)
     - cron: "0 */6 * * *"
   workflow_dispatch:
+    inputs:
+      keepalive_url:
+        description: "Optional full keepalive URL override"
+        required: false
+        type: string
 
 jobs:
   ping:
@@ -12,18 +17,45 @@ jobs:
     steps:
       - name: Call keepalive endpoint
         env:
-          KEEPALIVE_URL: ${{ secrets.KEEPALIVE_URL }}
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          KEEPALIVE_URL: ${{ github.event.inputs.keepalive_url || secrets['KEEPALIVE_URL'] || vars['KEEPALIVE_URL'] || secrets['NEXTAUTH_URL'] || vars['NEXTAUTH_URL'] }}
+          CRON_SECRET: ${{ secrets['CRON_SECRET'] }}
         run: |
-          if [ -z "$KEEPALIVE_URL" ] || [ -z "$CRON_SECRET" ]; then
-            echo "Missing required secrets: KEEPALIVE_URL and/or CRON_SECRET"
+          if [ -z "$KEEPALIVE_URL" ]; then
+            echo "Missing keepalive URL. Set one of:"
+            echo "- workflow_dispatch input: keepalive_url"
+            echo "- GitHub secret: KEEPALIVE_URL"
+            echo "- GitHub variable: KEEPALIVE_URL"
+            echo "- GitHub secret/variable: NEXTAUTH_URL"
             exit 1
           fi
 
+          # If a base URL is provided, append the keepalive route path.
+          case "$KEEPALIVE_URL" in
+            */api/cron/appwrite-keepalive)
+              ;;
+            */)
+              KEEPALIVE_URL="${KEEPALIVE_URL}api/cron/appwrite-keepalive"
+              ;;
+            *)
+              KEEPALIVE_URL="${KEEPALIVE_URL}/api/cron/appwrite-keepalive"
+              ;;
+          esac
+
           echo "Pinging $KEEPALIVE_URL"
-          HTTP_CODE=$(curl -sS -o response.json -w "%{http_code}" \
-            -H "Authorization: Bearer $CRON_SECRET" \
-            "$KEEPALIVE_URL")
+          CURL_ARGS=(
+            -sS
+            -o response.json
+            -w "%{http_code}"
+          )
+
+          if [ -n "$CRON_SECRET" ]; then
+            CURL_ARGS+=( -H "Authorization: Bearer $CRON_SECRET" )
+          else
+            echo "CRON_SECRET is not set, calling keepalive endpoint without auth header"
+          fi
+
+          CURL_ARGS+=( "$KEEPALIVE_URL" )
+          HTTP_CODE=$(curl "${CURL_ARGS[@]}")
 
           echo "HTTP status: $HTTP_CODE"
           cat response.json
