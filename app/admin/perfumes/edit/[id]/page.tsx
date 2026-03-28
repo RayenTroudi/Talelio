@@ -73,7 +73,7 @@ export default function EditPerfumePage({ params }: { params: Promise<{ id: stri
       console.log('📝 Submitting edit form:', formData);
       
       // Step 1: Upload new images if provided via server-side API
-      let finalImages: string | undefined = undefined;
+      let finalImages: string[] | undefined = undefined;
       
       if (formData.productImages && formData.productImages.length > 0) {
         console.log(`📤 Uploading ${formData.productImages.length} new images via server API...`);
@@ -108,7 +108,7 @@ export default function EditPerfumePage({ params }: { params: Promise<{ id: stri
         const uploadedImageIds = await Promise.all(uploadPromises);
         console.log('✅ All images uploaded. File IDs:', uploadedImageIds);
         // Store as string (single ID or comma-separated for multiple)
-        finalImages = uploadedImageIds.join(',');
+        finalImages = uploadedImageIds;
       }
 
       // Step 2: Transform form data for API

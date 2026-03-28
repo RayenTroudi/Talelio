@@ -63,9 +63,16 @@ export async function PUT(
       baseNotes: Array.isArray(data.baseNotes) ? data.baseNotes : [],
     };
     
-    // Handle image updates if provided (string format for Appwrite)
+    // Handle image updates if provided
     if (data.images !== undefined) {
-      documentData.images = data.images; // Direct string assignment
+      if (Array.isArray(data.images)) {
+        documentData.images = data.images;
+      } else if (typeof data.images === 'string') {
+        documentData.images = data.images
+          .split(',')
+          .map((img: string) => img.trim())
+          .filter((img: string) => img.length > 0);
+      }
     } else if (data.productImages && Array.isArray(data.productImages)) {
       // Legacy support for array format
       documentData.images = data.productImages.map((img: any) => {
@@ -73,7 +80,7 @@ export async function PUT(
         if (img.url && !img.url.startsWith('/')) return img.url;
         if (img.id && !img.id.startsWith('/')) return img.id;
         return null;
-      }).filter((img: string | null): img is string => img !== null).join(',');
+      }).filter((img: string | null): img is string => img !== null);
     }
     
     console.log('Document data for Appwrite:', documentData);
