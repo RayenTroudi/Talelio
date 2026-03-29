@@ -48,6 +48,7 @@ const fr = {
     facebook: "Facebook",
     joinUs: "Rejoignez-nous",
     copyright: "Boutique de Parfums de Luxe • Tous droits réservés",
+    developedBy: "Développé par Rayen Troudi",
   },
   hero: {
     title: "Un voyage dans",

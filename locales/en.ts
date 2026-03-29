@@ -48,6 +48,7 @@ const en = {
     facebook: "Facebook",
     joinUs: "Join Us",
     copyright: "Luxury Perfume Store • All Rights Reserved",
+    developedBy: "Developed by Rayen Troudi",
   },
   hero: {
     title: "A Journey Into",
