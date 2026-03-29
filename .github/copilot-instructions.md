@@ -32,7 +32,9 @@ dispatch(addToCart({...item, qty}))
 // CartSlice automatically: calculates prices → updates state → saves to Cookies
 ```
 
-**Important**: Cart calculations include `itemsPrice` and `shippingPrice` (always free). All use `addDecimals()` helper for consistent formatting. Promo/referral codes are tracked in Redux state (`appliedPromoCode`, `promoCodeId`) but do **not** give the buyer a discount — they only record which referral was used.
+**Important**:
+- Cart calculations include `itemsPrice` and `shippingPrice` (always free). All use `addDecimals()` for consistent 2-decimal formatting.
+- Promo/referral codes (`appliedPromoCode`, `promoCodeId` in Redux) implement a **referral-tracking system**: they record which affiliate referred the buyer and the referral earner may be credited separately in Appwrite. Currently **no buyer-side discount is applied**. Do not introduce buyer discounts unless the pricing logic in `CartSlice.ts` is explicitly updated.
 
 Cart actions: `addToCart`, `removeFromCart`, `saveShippingAddress`, `toggleCartSidebar`, `setPromoCode`, `clearPromoCode`, `clearCart`, `hideloading`.
 
@@ -163,7 +165,8 @@ Required `.env.local` variables (see `.env.example` for the full template):
 ### Type Definitions
 Central types in `types.ts`:
 ```tsx
-// Legacy static product type (kept for compatibility)
+// Static product type — defined in types.ts but not currently imported by Appwrite-based components.
+// If you find it unused in a cleanup pass, it can be safely removed; prefer AppwritePerfumeDocument for all new code.
 type products = { id, Name, Brand, Year, rating, Country, Image, Gender, Price, countInStock }
 
 // Appwrite product type (used for dynamic products)
@@ -189,7 +192,7 @@ npm test
 ```
 
 ### Key TypeScript Notes
-- `next.config.ts` has `ignoreBuildErrors: true` — fix types properly before deploying to production
+- `next.config.ts` currently has `ignoreBuildErrors: true` — this suppresses TypeScript build errors. To find all outstanding type errors, temporarily set it to `false` and run `npm run build` locally before deploying to production
 - `@/*` path alias resolves to project root
 - Missing `.d.ts` imports? Check `app/css.d.ts` for CSS module types
 
