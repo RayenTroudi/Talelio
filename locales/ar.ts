@@ -47,6 +47,7 @@ const ar = {
     instagram: "انستغرام",
     facebook: "فيسبوك",
     joinUs: "إنضم ألينا",
+    developedBy: "تم التطوير بواسطة Rayen Troudi",
     copyright: "متجر العطور الفاخرة • جميع الحقوق محفوظة",
   },
   hero: {

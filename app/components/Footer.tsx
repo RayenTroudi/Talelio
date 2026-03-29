@@ -135,6 +135,9 @@ export default function Footer() {
           <p className="text-gray-500 text-sm tracking-wide font-light">
             &copy; {new Date().getFullYear()} {t.footer.copyright}
           </p>
+          <p className="mt-2 text-gray-500 text-sm tracking-wide font-light">
+            {t.footer.developedBy}
+          </p>
         </div>
       </div>
     </footer>

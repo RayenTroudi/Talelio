@@ -47,6 +47,7 @@ const fr = {
     instagram: "Instagram",
     facebook: "Facebook",
     joinUs: "Rejoignez-nous",
+    developedBy: "Développé par Rayen Troudi",
     copyright: "Boutique de Parfums de Luxe • Tous droits réservés",
   },
   hero: {

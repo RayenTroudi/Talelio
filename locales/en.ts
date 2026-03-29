@@ -47,6 +47,7 @@ const en = {
     instagram: "Instagram",
     facebook: "Facebook",
     joinUs: "Join Us",
+    developedBy: "Developed by Rayen Troudi",
     copyright: "Luxury Perfume Store • All Rights Reserved",
   },
   hero: {
