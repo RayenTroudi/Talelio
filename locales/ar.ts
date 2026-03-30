@@ -274,7 +274,7 @@ const ar = {
   account: {
     title: "حسابي",
     subtitle: "إدارة معلوماتك وعرض سجل طلباتك",
-    backHome: "العودة للرئيسية ←",
+    backHome: "العودة للرئيسية",
     personalInfo: "المعلومات الشخصية",
     fullName: "الاسم الكامل",
     email: "البريد الإلكتروني",

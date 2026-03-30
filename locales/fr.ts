@@ -274,7 +274,7 @@ const fr = {
   account: {
     title: "Mon Compte",
     subtitle: "Gérez vos informations et consultez votre historique de commandes",
-    backHome: "Retour à l'accueil →",
+    backHome: "Retour à l'accueil",
     personalInfo: "Informations personnelles",
     fullName: "Nom complet",
     email: "Adresse e-mail",

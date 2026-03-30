@@ -274,7 +274,7 @@ const en = {
   account: {
     title: "My Account",
     subtitle: "Manage your information and view your order history",
-    backHome: "Back to Home →",
+    backHome: "Back to Home",
     personalInfo: "Personal Information",
     fullName: "Full Name",
     email: "Email Address",

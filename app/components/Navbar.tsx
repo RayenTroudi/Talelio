@@ -19,414 +19,402 @@ const Navbar = () => {
   const { loading, CartItems } = useSelector((state: any) => state.Cart);
   const dispatch = useDispatch();
   const { t } = useTranslation();
-
-  const { user, isAuthenticated, isAdmin, isLoading } = useAuth();
-
+  const { user, isAuthenticated, isAdmin } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-
-  const isInAdminArea = pathname?.startsWith('/admin');
+  const isInAdminArea = pathname?.startsWith("/admin");
 
   const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      dispatch(clearCart());
-      await logout();
-    } catch (error) {
-      console.error('Logout failed:', error);
-      router.push('/');
-    }
-  };
-
   const [open, setOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => { setIsClient(true); }, []);
+
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setUserDropdownOpen(false);
       }
     };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  return (
-    <header className={`w-full bg-white/98 backdrop-blur-lg fixed top-0 left-0 z-50 transition-all duration-300 ${scrolled ? 'shadow-md shadow-black/5 border-b border-gray-100/80' : 'border-b border-transparent shadow-none'}`}>
-      <nav className="w-full px-6 lg:px-16 py-3 flex items-center justify-between max-w-[1600px] mx-auto">
+  // Close mobile menu on route change
+  useEffect(() => { setOpen(false); }, [pathname]);
 
-        {/* Logo - Right Side */}
-        <Link href="/" className="flex items-center gap-3 group order-3 md:order-1">
-          <div className="relative transition-transform duration-500 group-hover:scale-105">
-            <Image
-              src="/logo-removebg-preview.png"
-              width={140}
-              height={140}
-              alt={t.nav.logoAlt}
-              className="drop-shadow-lg"
-              priority
-            />
-          </div>
+  const handleLogout = async () => {
+    try {
+      dispatch(clearCart());
+      await logout();
+    } catch {
+      router.push("/");
+    }
+  };
+
+  const cartCount = isClient
+    ? loading
+      ? CartItems.length
+      : CartItems.reduce((a: any, c: any) => a + c.qty, 0)
+    : 0;
+
+  const isActive = (path: string) =>
+    path === "/" ? pathname === "/" : pathname?.startsWith(path);
+
+  return (
+    <header
+      className={`w-full fixed top-0 left-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-white shadow-[0_1px_12px_rgba(0,0,0,0.07)]"
+          : "bg-white/96 backdrop-blur-lg"
+      }`}
+    >
+      <nav className="relative w-full px-5 sm:px-8 lg:px-16 flex items-center justify-between max-w-[1600px] mx-auto h-[68px]">
+
+        {/* ── Logo: absolute-centered on mobile, normal on desktop ── */}
+        <Link
+          href="/"
+          className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 md:order-1 group flex-shrink-0"
+        >
+          <Image
+            src="/logo-removebg-preview.png"
+            width={108}
+            height={108}
+            alt={t.nav.logoAlt}
+            className="transition-opacity duration-300 group-hover:opacity-75"
+            priority
+          />
         </Link>
 
-        {/* Desktop Menu - Center */}
-        <ul className="hidden md:flex items-center gap-12 text-black font-light tracking-wide order-2">
-          <li>
-            <Link
-              href="/"
-              className="relative text-base hover:text-black transition-all duration-300 group py-1"
-            >
-              {t.nav.home}
-              <span className="absolute bottom-0 right-0 w-0 h-[1.5px] bg-gradient-to-l from-gold-400 to-gold-600 group-hover:w-full transition-all duration-300"></span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/categories/femme"
-              className="relative text-base hover:text-black transition-all duration-300 group py-1"
-            >
-              {t.nav.womenPerfumes}
-              <span className="absolute bottom-0 right-0 w-0 h-[1.5px] bg-gradient-to-l from-gold-400 to-gold-600 group-hover:w-full transition-all duration-300"></span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/categories/homme"
-              className="relative text-base hover:text-black transition-all duration-300 group py-1"
-            >
-              {t.nav.menPerfumes}
-              <span className="absolute bottom-0 right-0 w-0 h-[1.5px] bg-gradient-to-l from-gold-400 to-gold-600 group-hover:w-full transition-all duration-300"></span>
-            </Link>
-          </li>
+        {/* ── Desktop nav links ── */}
+        <ul className="hidden md:flex items-center gap-10 order-2">
+          {(
+            [
+              { href: "/", label: t.nav.home },
+              { href: "/categories/femme", label: t.nav.womenPerfumes },
+              { href: "/categories/homme", label: t.nav.menPerfumes },
+            ] as const
+          ).map(({ href, label }) => (
+            <li key={href}>
+              <Link
+                href={href}
+                className={`relative text-[12.5px] tracking-[0.14em] uppercase font-light py-1 transition-colors duration-300 group ${
+                  isActive(href)
+                    ? "text-gold-600"
+                    : "text-stone-500 hover:text-stone-900"
+                }`}
+              >
+                {label}
+                {/* Center-expanding underline */}
+                <span
+                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-px bg-gold-400 transition-all duration-300 ${
+                    isActive(href) ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
+                />
+              </Link>
+            </li>
+          ))}
         </ul>
 
-        {/* Hamburger Menu Button (Mobile) */}
-        <button
-          className="md:hidden flex flex-col gap-1.5 z-50 p-2 hover:bg-gray-50 rounded-lg transition-colors duration-200 order-1"
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
-        >
-          <span className={`block w-6 h-0.5 bg-gray-700 transition-all duration-300 ${open ? 'rotate-45 translate-y-2' : ''}`}></span>
-          <span className={`block w-6 h-0.5 bg-gray-700 transition-all duration-300 ${open ? 'opacity-0' : ''}`}></span>
-          <span className={`block w-6 h-0.5 bg-gray-700 transition-all duration-300 ${open ? '-rotate-45 -translate-y-2' : ''}`}></span>
-        </button>
+        {/* ── Desktop right actions ── */}
+        <div className="hidden md:flex items-center gap-2.5 order-3">
 
-        {/* Auth & Cart (desktop) - Left Side */}
-        <div className="hidden md:flex items-center gap-5 order-3">
           {!isAuthenticated ? (
             <>
               <Link
-                href="/SignIn"
-                className="text-sm font-light text-black bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 px-7 py-2.5 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md"
-              >
-                {t.nav.signIn}
-              </Link>
-              <Link
                 href="/Register"
-                className="text-sm font-light text-black hover:text-black transition-colors duration-200"
+                className="text-[12.5px] font-light text-stone-400 hover:text-stone-700 tracking-wide transition-colors duration-200 px-2"
               >
                 {t.nav.register}
+              </Link>
+              <Link
+                href="/SignIn"
+                className="text-[12px] font-light text-white bg-stone-900 hover:bg-gold-600 px-5 py-2 tracking-[0.1em] uppercase transition-all duration-300"
+              >
+                {t.nav.signIn}
               </Link>
             </>
           ) : (
             <>
-              {isInAdminArea ? (
-                <>
-                  <Link
-                    href="/"
-                    className="text-sm font-light text-black hover:text-black transition-colors duration-200"
-                  >
-                    {t.nav.backToStore}
-                  </Link>
-
-                  <div className="relative" ref={dropdownRef}>
-                    <button
-                      onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                      className="relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200"
-                      aria-label={t.nav.myAccount}
-                    >
-                      <HiOutlineUser
-                        size="24px"
-                        className="text-black group-hover:text-black transition-colors duration-200"
-                      />
-                    </button>
-
-                    {userDropdownOpen && (
-                      <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50">
-                        <div className="py-1">
-                          <Link
-                            href="/account"
-                            onClick={() => setUserDropdownOpen(false)}
-                            className="block px-4 py-2.5 text-sm text-black hover:bg-gray-50 transition-colors duration-200"
-                          >
-                            {t.nav.myAccount}
-                          </Link>
-                          <button
-                            onClick={() => { setUserDropdownOpen(false); handleLogout(); }}
-                            className="w-full text-right px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200 flex items-center gap-2"
-                          >
-                            <TbLogout className="w-4 h-4" />
-                            <span>{t.nav.logout}</span>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="relative" ref={dropdownRef}>
-                    <button
-                      onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                      className="relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200"
-                      aria-label={t.nav.myAccount}
-                    >
-                      <HiOutlineUser
-                        size="24px"
-                        className="text-black group-hover:text-black transition-colors duration-200"
-                      />
-                    </button>
-
-                    {userDropdownOpen && (
-                      <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50">
-                        <div className="py-1">
-                          {isAdmin && (
-                            <Link
-                              href="/admin"
-                              onClick={() => setUserDropdownOpen(false)}
-                              className="block px-4 py-2.5 text-sm text-black hover:bg-gray-50 transition-colors duration-200"
-                            >
-                              {t.nav.adminPanel}
-                            </Link>
-                          )}
-                          <Link
-                            href="/account"
-                            onClick={() => setUserDropdownOpen(false)}
-                            className="block px-4 py-2.5 text-sm text-black hover:bg-gray-50 transition-colors duration-200"
-                          >
-                            {t.nav.myAccount}
-                          </Link>
-                          <button
-                            onClick={() => { setUserDropdownOpen(false); handleLogout(); }}
-                            className="w-full text-right px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200 flex items-center gap-2"
-                          >
-                            <TbLogout className="w-4 h-4" />
-                            <span>{t.nav.logout}</span>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </>
+              {isInAdminArea && (
+                <Link
+                  href="/"
+                  className="text-[12.5px] font-light text-stone-400 hover:text-stone-700 tracking-wide transition-colors duration-200 px-2"
+                >
+                  {t.nav.backToStore}
+                </Link>
               )}
+
+              {/* User dropdown */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  className="flex items-center gap-1.5 group pl-1"
+                  aria-label={t.nav.myAccount}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-200 ${
+                      userDropdownOpen
+                        ? "border-gold-400 bg-gold-50"
+                        : "border-stone-200 bg-stone-50 group-hover:border-gold-300 group-hover:bg-gold-50/50"
+                    }`}
+                  >
+                    <HiOutlineUser
+                      size="15px"
+                      className={`transition-colors duration-200 ${
+                        userDropdownOpen ? "text-gold-600" : "text-stone-500 group-hover:text-gold-600"
+                      }`}
+                    />
+                  </div>
+                  <svg
+                    className={`w-2.5 h-2.5 text-stone-300 transition-transform duration-200 ${
+                      userDropdownOpen ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Dropdown panel */}
+                {userDropdownOpen && (
+                  <div className="absolute right-0 mt-2.5 w-52 bg-white border border-stone-100 shadow-2xl shadow-stone-200/40 overflow-hidden z-50">
+                    {/* Label row */}
+                    <div className="px-4 py-2.5 bg-stone-50 border-b border-stone-100">
+                      <p className="text-[10px] tracking-[0.18em] uppercase text-stone-400 font-light">
+                        {t.nav.myAccount}
+                      </p>
+                    </div>
+
+                    <div className="py-1">
+                      {isAdmin && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-[12.5px] text-stone-600 hover:text-gold-700 hover:bg-gold-50/60 transition-colors duration-150"
+                        >
+                          <svg className="w-3.5 h-3.5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          {t.nav.adminPanel}
+                        </Link>
+                      )}
+                      <Link
+                        href="/account"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-[12.5px] text-stone-600 hover:text-gold-700 hover:bg-gold-50/60 transition-colors duration-150"
+                      >
+                        <HiOutlineUser size="14px" className="text-stone-400" />
+                        {t.nav.myAccount}
+                      </Link>
+                      <Link
+                        href="/my-orders"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-[12.5px] text-stone-600 hover:text-gold-700 hover:bg-gold-50/60 transition-colors duration-150"
+                      >
+                        <HiOutlineClipboardDocumentList size="14px" className="text-stone-400" />
+                        {t.nav.myOrders}
+                      </Link>
+
+                      <div className="h-px bg-stone-100 my-1 mx-3" />
+
+                      <button
+                        onClick={() => { setUserDropdownOpen(false); handleLogout(); }}
+                        className="flex items-center gap-3 w-full px-4 py-2.5 text-[12.5px] text-red-400 hover:text-red-600 hover:bg-red-50/60 transition-colors duration-150"
+                      >
+                        <TbLogout className="w-3.5 h-3.5" />
+                        {t.nav.logout}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </>
           )}
 
-          {/* Commissions panel — only for non-admin approved referral users */}
+          {/* Commissions */}
           {isAuthenticated && !isAdmin && !isInAdminArea && (
             <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
           )}
 
-          <div className="w-px h-6 bg-gray-200"></div>
+          {/* Divider */}
+          <div className="w-px h-4 bg-stone-200 mx-1" />
 
           <LanguageSwitcher />
 
-          <div className="w-px h-6 bg-gray-200"></div>
+          {/* Divider */}
+          <div className="w-px h-4 bg-stone-200 mx-1" />
 
-          {isAuthenticated && (
-            <Link
-              href="/my-orders"
-              className="relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200"
-              aria-label={t.nav.myOrders}
-              title={t.nav.myOrders}
-            >
-              <HiOutlineClipboardDocumentList
-                size="24px"
-                className="text-black group-hover:text-black transition-colors duration-200"
-              />
-            </Link>
-          )}
-
+          {/* Cart icon */}
           <Link
             href="/Cart"
-            className="relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200"
             aria-label={t.nav.cart}
+            className="relative group p-2"
           >
             <CiShoppingCart
-              size="26px"
-              className="text-black group-hover:text-black transition-colors duration-200"
+              size="22px"
+              className="text-stone-600 group-hover:text-gold-600 transition-colors duration-300"
             />
-            {isClient && CartItems.length > 0 && (
-              <span className="absolute top-0 right-0 bg-gradient-to-br from-gold-500 to-gold-600 text-white text-[10px] font-semibold rounded-full w-5 h-5 flex items-center justify-center shadow-lg animate-in zoom-in-50 duration-200">
-                {loading ? CartItems.length : CartItems.reduce((a: any, c: any) => a + c.qty, 0)}
+            {isClient && cartCount > 0 && (
+              <span className="absolute top-0.5 right-0.5 bg-gold-500 text-white text-[8px] font-semibold rounded-full min-w-[15px] h-[15px] flex items-center justify-center px-0.5 leading-none">
+                {cartCount}
               </span>
             )}
           </Link>
         </div>
 
-        {/* Mobile: Language + Cart only in top bar */}
-        <div className="md:hidden flex items-center gap-1 order-2">
-          <LanguageSwitcher />
-          <Link
-            href="/Cart"
-            className="relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200"
-            aria-label={t.nav.cart}
-          >
-            <CiShoppingCart
-              size="24px"
-              className="text-black"
+        {/* ── Mobile: Hamburger (left) ── */}
+        <button
+          className="md:hidden relative z-10 p-2 order-1"
+          onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
+        >
+          <div className="w-5 flex flex-col gap-[5px]">
+            <span
+              className={`block h-[1.5px] bg-stone-800 transition-all duration-300 origin-center ${
+                open ? "rotate-45 translate-y-[6.5px] w-5" : "w-5"
+              }`}
             />
-            {isClient && CartItems.length > 0 && (
-              <span className="absolute top-0 right-0 bg-gradient-to-br from-gold-500 to-gold-600 text-white text-[9px] font-semibold rounded-full w-4 h-4 flex items-center justify-center shadow-lg">
-                {loading ? CartItems.length : CartItems.reduce((a: any, c: any) => a + c.qty, 0)}
+            <span
+              className={`block h-[1.5px] bg-stone-800 transition-all duration-300 ml-auto ${
+                open ? "opacity-0 w-0" : "w-3"
+              }`}
+            />
+            <span
+              className={`block h-[1.5px] bg-stone-800 transition-all duration-300 origin-center ${
+                open ? "-rotate-45 -translate-y-[6.5px] w-5" : "w-5"
+              }`}
+            />
+          </div>
+        </button>
+
+        {/* ── Mobile: Language + Cart (right) ── */}
+        <div className="md:hidden flex items-center gap-0.5 order-3 relative z-10">
+          <LanguageSwitcher />
+          <Link href="/Cart" className="relative p-2.5" aria-label={t.nav.cart}>
+            <CiShoppingCart size="22px" className="text-stone-800" />
+            {isClient && cartCount > 0 && (
+              <span className="absolute top-1.5 right-1 bg-gold-500 text-white text-[8px] font-semibold rounded-full min-w-[14px] h-[14px] flex items-center justify-center px-0.5">
+                {cartCount}
               </span>
             )}
           </Link>
         </div>
 
-        {/* Mobile Menu */}
-        <div className={`md:hidden fixed top-[64px] left-0 w-full bg-white/98 backdrop-blur-lg border-t border-gray-100 shadow-xl transition-all duration-300 max-h-[calc(100vh-64px)] overflow-y-auto ${open ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
-          <ul className="flex flex-col p-4 gap-0.5 text-black font-light">
-            <li>
-              <Link
-                href="/"
-                onClick={() => setOpen(false)}
-                className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
-              >
-                {t.nav.home}
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/categories/femme"
-                onClick={() => setOpen(false)}
-                className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
-              >
-                {t.nav.womenPerfumes}
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/categories/homme"
-                onClick={() => setOpen(false)}
-                className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
-              >
-                {t.nav.menPerfumes}
-              </Link>
-            </li>
+        {/* ── Mobile drawer ── */}
+        <div
+          className={`md:hidden fixed inset-x-0 top-[68px] bg-white border-t border-stone-100 shadow-2xl transition-all duration-350 overflow-y-auto
+            ${open
+              ? "opacity-100 translate-y-0 max-h-[calc(100svh-68px)] pointer-events-auto"
+              : "opacity-0 -translate-y-2 max-h-0 pointer-events-none overflow-hidden"
+            }`}
+        >
+          {/* Nav links */}
+          <div className="px-5 pt-5 pb-2">
+            <ul className="space-y-0.5">
+              {[
+                { href: "/", label: t.nav.home },
+                { href: "/categories/femme", label: t.nav.womenPerfumes },
+                { href: "/categories/homme", label: t.nav.menPerfumes },
+              ].map(({ href, label }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    onClick={() => setOpen(false)}
+                    className={`flex items-center gap-3 py-3 px-3 text-[13px] tracking-wide transition-colors duration-200 rounded-lg ${
+                      isActive(href)
+                        ? "text-gold-600 bg-gold-50/60 font-light"
+                        : "text-stone-600 hover:bg-stone-50 font-light"
+                    }`}
+                  >
+                    {isActive(href) && (
+                      <div className="w-1 h-1 rounded-full bg-gold-500 flex-shrink-0" />
+                    )}
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-            <div className="h-px bg-gray-200 my-3"></div>
+          <div className="h-px bg-stone-100 mx-5 my-3" />
 
+          {/* Auth */}
+          <div className="px-5 pb-8">
             {!isAuthenticated ? (
-              <>
-                <li>
-                  <Link
-                    href="/SignIn"
-                    onClick={() => setOpen(false)}
-                    className="block py-3.5 px-5 bg-white text-black border border-gray-200 hover:border-gray-300 hover:bg-gray-50 rounded-xl transition-all duration-200 text-sm text-center font-medium shadow-sm hover:shadow-md"
-                  >
-                    {t.nav.signIn}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/Register"
-                    onClick={() => setOpen(false)}
-                    className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
-                  >
-                    {t.nav.register}
-                  </Link>
-                </li>
-              </>
+              <div className="space-y-2">
+                <Link
+                  href="/SignIn"
+                  onClick={() => setOpen(false)}
+                  className="block w-full text-center py-3 text-[12px] font-light tracking-[0.12em] uppercase bg-stone-900 text-white hover:bg-gold-600 transition-colors duration-300"
+                >
+                  {t.nav.signIn}
+                </Link>
+                <Link
+                  href="/Register"
+                  onClick={() => setOpen(false)}
+                  className="block w-full text-center py-3 text-[13px] font-light text-stone-400 hover:text-stone-700 transition-colors duration-200"
+                >
+                  {t.nav.register}
+                </Link>
+              </div>
             ) : (
-              <>
-                {isInAdminArea ? (
-                  <>
-                    <li>
-                      <Link
-                        href="/"
-                        onClick={() => setOpen(false)}
-                        className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
-                      >
-                        {t.nav.backToStore}
-                      </Link>
-                    </li>
-                    <li className="flex justify-center">
-                      <button
-                        className="p-3 hover:bg-red-50 text-red-600 rounded-xl transition-colors duration-200"
-                        onClick={() => { setOpen(false); handleLogout(); }}
-                        aria-label={t.nav.logout}
-                      >
-                        <TbLogout className="w-6 h-6" />
-                      </button>
-                    </li>
-                  </>
-                ) : (
-                  <>
-                    {isAdmin && (
-                      <li>
-                        <Link
-                          href="/admin"
-                          onClick={() => setOpen(false)}
-                          className="block py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
-                        >
-                          {t.nav.adminPanel}
-                        </Link>
-                      </li>
-                    )}
-                    <li>
-                      <Link
-                        href="/account"
-                        onClick={() => setOpen(false)}
-                        className="flex items-center gap-3 py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
-                      >
-                        <HiOutlineUser size="18px" className="text-gray-500" />
-                        {t.nav.myAccount}
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/my-orders"
-                        onClick={() => setOpen(false)}
-                        className="flex items-center gap-3 py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
-                      >
-                        <HiOutlineClipboardDocumentList size="18px" className="text-gray-500" />
-                        {t.nav.myOrders}
-                      </Link>
-                    </li>
-                    {!isAdmin && !isInAdminArea && (
-                      <li className="px-5">
-                        <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
-                      </li>
-                    )}
-                    <li>
-                      <button
-                        onClick={() => { setOpen(false); handleLogout(); }}
-                        className="flex items-center gap-3 w-full py-3.5 px-5 hover:bg-red-50 text-red-600 rounded-xl transition-colors duration-200 text-sm"
-                      >
-                        <TbLogout className="w-4 h-4" />
-                        {t.nav.logout}
-                      </button>
-                    </li>
-                  </>
+              <ul className="space-y-0.5">
+                {isInAdminArea && (
+                  <li>
+                    <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-3 py-3 px-3 text-[13px] text-stone-600 hover:bg-stone-50 rounded-lg transition-colors font-light">
+                      {t.nav.backToStore}
+                    </Link>
+                  </li>
                 )}
-              </>
+                {isAdmin && (
+                  <li>
+                    <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-3 py-3 px-3 text-[13px] text-stone-600 hover:bg-stone-50 rounded-lg transition-colors font-light">
+                      {t.nav.adminPanel}
+                    </Link>
+                  </li>
+                )}
+                <li>
+                  <Link href="/account" onClick={() => setOpen(false)} className="flex items-center gap-3 py-3 px-3 text-[13px] text-stone-600 hover:bg-stone-50 rounded-lg transition-colors font-light">
+                    <HiOutlineUser size="15px" className="text-stone-400" />
+                    {t.nav.myAccount}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/my-orders" onClick={() => setOpen(false)} className="flex items-center gap-3 py-3 px-3 text-[13px] text-stone-600 hover:bg-stone-50 rounded-lg transition-colors font-light">
+                    <HiOutlineClipboardDocumentList size="15px" className="text-stone-400" />
+                    {t.nav.myOrders}
+                  </Link>
+                </li>
+                {!isAdmin && !isInAdminArea && (
+                  <li className="px-3 py-2">
+                    <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
+                  </li>
+                )}
+                <div className="h-px bg-stone-100 my-2" />
+                <li>
+                  <button
+                    onClick={() => { setOpen(false); handleLogout(); }}
+                    className="flex items-center gap-3 w-full py-3 px-3 text-[13px] text-red-400 hover:bg-red-50 rounded-lg transition-colors font-light"
+                  >
+                    <TbLogout className="w-4 h-4" />
+                    {t.nav.logout}
+                  </button>
+                </li>
+              </ul>
             )}
-          </ul>
+          </div>
         </div>
       </nav>
     </header>
