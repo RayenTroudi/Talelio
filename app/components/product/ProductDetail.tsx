@@ -86,7 +86,7 @@ export function ProductDetail({
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-stone-50 via-gold-50/30 to-rose-50/20 ${className}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-stone-50 via-gold-50/30 to-rose-50/20 ${className}`} suppressHydrationWarning>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         
         {/* Back Button */}

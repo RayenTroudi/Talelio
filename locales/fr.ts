@@ -47,6 +47,7 @@ const fr = {
     instagram: "Instagram",
     facebook: "Facebook",
     joinUs: "Rejoignez-nous",
+    joinDesc: "Rejoignez notre communauté et soyez les premiers à découvrir les nouveautés et les offres exclusives.",
     developedBy: "Développé par Rayen Troudi",
     copyright: "Boutique de Parfums de Luxe • Tous droits réservés",
   },
@@ -55,18 +56,24 @@ const fr = {
     titleHighlight: "le Luxe & l'Élégance",
     subtitle: "Découvrez une collection exceptionnelle de parfums de luxe conçus avec le plus grand soin pour refléter votre personnalité et laisser une impression inoubliable",
     cta: "Explorer la Collection",
+    ctaSecondary: "Voir les Collections",
+    eyebrow: "Parfums de Luxe",
   },
   categories: {
     sectionTitle: "Découvrez",
     sectionTitleHighlight: "Votre Collection Idéale",
     sectionSubtitle: "Explorez des fragrances exclusives soigneusement sélectionnées pour incarner l'essence de l'élégance et du raffinement",
+    eyebrow: "Collections",
+    shopNow: "Acheter",
     women: {
       name: "Parfums Femme",
       description: "Fragrances élégantes et sophistiquées pour la femme moderne",
+      badge: "Pour Elle",
     },
     men: {
       name: "Parfums Homme",
       description: "Senteurs audacieuses et distinctives pour l'homme distingué",
+      badge: "Pour Lui",
     },
   },
   brand: {

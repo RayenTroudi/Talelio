@@ -47,6 +47,7 @@ const en = {
     instagram: "Instagram",
     facebook: "Facebook",
     joinUs: "Join Us",
+    joinDesc: "Join our community and be the first to discover new arrivals and exclusive offers.",
     developedBy: "Developed by Rayen Troudi",
     copyright: "Luxury Perfume Store • All Rights Reserved",
   },
@@ -55,18 +56,24 @@ const en = {
     titleHighlight: "Luxury & Elegance",
     subtitle: "Discover an exceptional collection of luxury perfumes crafted with utmost care to reflect your personality and leave an unforgettable impression",
     cta: "Explore the Collection",
+    ctaSecondary: "View Collections",
+    eyebrow: "Luxury Fragrances",
   },
   categories: {
     sectionTitle: "Discover",
     sectionTitleHighlight: "Your Perfect Collection",
     sectionSubtitle: "Explore exclusive fragrances carefully curated to embody the essence of elegance and refinement",
+    eyebrow: "Collections",
+    shopNow: "Shop Now",
     women: {
       name: "Women's Perfumes",
       description: "Elegant and sophisticated fragrances for the modern woman",
+      badge: "For Her",
     },
     men: {
       name: "Men's Perfumes",
       description: "Bold and distinctive scents for the distinguished man",
+      badge: "For Him",
     },
   },
   brand: {

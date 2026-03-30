@@ -62,13 +62,28 @@ export default async function RootLayout({
         <Script id="strip-bis-attrs" strategy="beforeInteractive">
           {`(function(){
             try {
-              var nodes = document.querySelectorAll('[bis_skin_checked]');
-              for (var i = 0; i < nodes.length; i++) {
-                nodes[i].removeAttribute('bis_skin_checked');
+              function removeBis(root) {
+                root.querySelectorAll('[bis_skin_checked]').forEach(function(el){
+                  el.removeAttribute('bis_skin_checked');
+                });
               }
-            } catch (e) {
-              // no-op
-            }
+              removeBis(document);
+              new MutationObserver(function(mutations){
+                var dirty = false;
+                mutations.forEach(function(m){
+                  if (m.type === 'attributes' && m.attributeName === 'bis_skin_checked') dirty = true;
+                  m.addedNodes.forEach(function(n){
+                    if (n.nodeType === 1 && n.hasAttribute('bis_skin_checked')) dirty = true;
+                  });
+                });
+                if (dirty) removeBis(document);
+              }).observe(document.documentElement, {
+                attributes: true,
+                childList: true,
+                subtree: true,
+                attributeFilter: ['bis_skin_checked']
+              });
+            } catch(e){}
           })();`}
         </Script>
         <AuthProvider>

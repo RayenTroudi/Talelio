@@ -357,8 +357,8 @@
 
 /* Custom scrollbar — gold luxury theme */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: #F8F8F8;
@@ -367,7 +367,7 @@
 ::-webkit-scrollbar-thumb {
   background: #D4AF37;
   border-radius: 999px;
-  border: 2px solid #F8F8F8;
+  border: 1px solid #F8F8F8;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #C49B28;
@@ -375,4 +375,39 @@
 * {
   scrollbar-width: thin;
   scrollbar-color: #D4AF37 #F8F8F8;
+}
+
+/* ── Global animation utilities ─────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0%   { transform: translateX(-200%); }
+  100% { transform: translateX(200%); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.7s ease both;
+}
+
+/* ── Section entrance helper ─────────────────────────── */
+.section-enter {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.section-enter.visible {
+  opacity: 1;
+  transform: none;
 }

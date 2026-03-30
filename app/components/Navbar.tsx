@@ -45,7 +45,14 @@ const Navbar = () => {
 
   const [open, setOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -59,7 +66,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <header className="w-full bg-white/98 backdrop-blur-lg shadow-sm border-b border-gray-100/80 fixed top-0 left-0 z-50">
+    <header className={`w-full bg-white/98 backdrop-blur-lg fixed top-0 left-0 z-50 transition-all duration-300 ${scrolled ? 'shadow-md shadow-black/5 border-b border-gray-100/80' : 'border-b border-transparent shadow-none'}`}>
       <nav className="w-full px-6 lg:px-16 py-3 flex items-center justify-between max-w-[1600px] mx-auto">
 
         {/* Logo - Right Side */}
@@ -271,66 +278,29 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Mobile Orders Icon */}
-        {isAuthenticated && (
-          <Link
-            href="/my-orders"
-            className="md:hidden relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200 order-2"
-            aria-label={t.nav.myOrders}
-          >
-            <HiOutlineClipboardDocumentList
-              size="22px"
-              className="text-black group-hover:text-black transition-colors duration-200"
-            />
-          </Link>
-        )}
-
-        {/* Mobile Profile Icon */}
-        {isAuthenticated && (
-          <Link
-            href="/account"
-            className="md:hidden relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200 order-2"
-            aria-label={t.nav.myAccount}
-          >
-            <HiOutlineUser
-              size="22px"
-              className="text-black group-hover:text-black transition-colors duration-200"
-            />
-          </Link>
-        )}
-
-        {/* Mobile Commissions icon */}
-        {isAuthenticated && !isAdmin && !isInAdminArea && (
-          <div className="md:hidden order-2">
-            <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
-          </div>
-        )}
-
-        {/* Mobile Language Switcher */}
-        <div className="md:hidden order-2">
+        {/* Mobile: Language + Cart only in top bar */}
+        <div className="md:hidden flex items-center gap-1 order-2">
           <LanguageSwitcher />
+          <Link
+            href="/Cart"
+            className="relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200"
+            aria-label={t.nav.cart}
+          >
+            <CiShoppingCart
+              size="24px"
+              className="text-black"
+            />
+            {isClient && CartItems.length > 0 && (
+              <span className="absolute top-0 right-0 bg-gradient-to-br from-gold-500 to-gold-600 text-white text-[9px] font-semibold rounded-full w-4 h-4 flex items-center justify-center shadow-lg">
+                {loading ? CartItems.length : CartItems.reduce((a: any, c: any) => a + c.qty, 0)}
+              </span>
+            )}
+          </Link>
         </div>
 
-        {/* Mobile Cart Icon */}
-        <Link
-          href="/Cart"
-          className="md:hidden relative group p-2 hover:bg-gray-50 rounded-xl transition-all duration-200 order-2"
-          aria-label={t.nav.cart}
-        >
-          <CiShoppingCart
-            size="24px"
-            className="text-black group-hover:text-black transition-colors duration-200"
-          />
-          {isClient && CartItems.length > 0 && (
-            <span className="absolute top-0 right-0 bg-gradient-to-br from-gold-500 to-gold-600 text-white text-[9px] font-semibold rounded-full w-4 h-4 flex items-center justify-center shadow-lg">
-              {loading ? CartItems.length : CartItems.reduce((a: any, c: any) => a + c.qty, 0)}
-            </span>
-          )}
-        </Link>
-
         {/* Mobile Menu */}
-        <div className={`md:hidden fixed top-[72px] left-0 w-full bg-white/98 backdrop-blur-lg border-t border-gray-100 shadow-xl transition-all duration-300 ${open ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
-          <ul className="flex flex-col p-6 gap-1 text-black font-light">
+        <div className={`md:hidden fixed top-[64px] left-0 w-full bg-white/98 backdrop-blur-lg border-t border-gray-100 shadow-xl transition-all duration-300 max-h-[calc(100vh-64px)] overflow-y-auto ${open ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
+          <ul className="flex flex-col p-4 gap-0.5 text-black font-light">
             <li>
               <Link
                 href="/"
@@ -418,13 +388,38 @@ const Navbar = () => {
                         </Link>
                       </li>
                     )}
-                    <li className="flex justify-center">
-                      <button
-                        className="p-3 hover:bg-red-50 text-red-600 rounded-xl transition-colors duration-200"
-                        onClick={() => { setOpen(false); handleLogout(); }}
-                        aria-label={t.nav.logout}
+                    <li>
+                      <Link
+                        href="/account"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-3 py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
                       >
-                        <TbLogout className="w-6 h-6" />
+                        <HiOutlineUser size="18px" className="text-gray-500" />
+                        {t.nav.myAccount}
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/my-orders"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-3 py-3.5 px-5 hover:bg-gray-50 rounded-xl transition-colors duration-200 text-sm"
+                      >
+                        <HiOutlineClipboardDocumentList size="18px" className="text-gray-500" />
+                        {t.nav.myOrders}
+                      </Link>
+                    </li>
+                    {!isAdmin && !isInAdminArea && (
+                      <li className="px-5">
+                        <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
+                      </li>
+                    )}
+                    <li>
+                      <button
+                        onClick={() => { setOpen(false); handleLogout(); }}
+                        className="flex items-center gap-3 w-full py-3.5 px-5 hover:bg-red-50 text-red-600 rounded-xl transition-colors duration-200 text-sm"
+                      >
+                        <TbLogout className="w-4 h-4" />
+                        {t.nav.logout}
                       </button>
                     </li>
                   </>
