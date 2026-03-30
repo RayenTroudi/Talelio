@@ -7,6 +7,7 @@ import { StoreProvider } from "./Redux/StoreProvider";
 import { Suspense } from "react";
 import CartSidebar from "./components/CartSidebar";
 import { LocaleProvider } from "./components/LocaleProvider";
+import PageLoader from "./components/PageLoader";
 import { getServerLocale } from "@/lib/get-locale";
 import { getDir, getTranslations } from "@/lib/i18n";
 
@@ -89,7 +90,7 @@ export default async function RootLayout({
         <AuthProvider>
         <StoreProvider>
         <LocaleProvider initialLocale={locale}>
-        <Suspense fallback={<div>{t.common.loading}</div>}>
+        <Suspense fallback={<PageLoader />}>
         {children}
         <CartSidebar />
         </Suspense>
