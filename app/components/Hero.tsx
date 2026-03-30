@@ -8,7 +8,7 @@ const Hero = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="relative w-full min-h-screen flex items-center overflow-hidden">
+    <div className="relative w-full min-h-screen flex items-center overflow-hidden bg-black">
       {/* Video Background */}
       <video
         autoPlay
