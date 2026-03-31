@@ -152,7 +152,16 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} {t.footer.copyright}
           </p>
           <p className="text-gray-700 tracking-wide">
-            {t.footer.developedBy}
+            {t.footer.developedBy.split("Rayen Troudi")[0]}
+            <a
+              href="https://www.rayentroudi.work/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-amber-400 hover:text-amber-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded transition-colors duration-200"
+            >
+              Rayen Troudi
+            </a>
+            {t.footer.developedBy.split("Rayen Troudi")[1]}
           </p>
         </div>
       </div>
