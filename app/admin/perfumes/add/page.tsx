@@ -149,15 +149,17 @@ export default function AddPerfumePage() {
   }
 
   return (
-    <div className="space-y-6" dir="rtl">
-      <div className="flex items-center justify-between">
+    <div className="space-y-5 sm:space-y-6" dir="rtl">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t.admin.addPerfume.title}</h1>
-          <p className="text-gray-600 mt-1">{t.admin.addPerfume.subtitle}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t.admin.addPerfume.title}</h1>
+          <p className="text-gray-600 mt-0.5 text-sm">{t.admin.addPerfume.subtitle}</p>
         </div>
         <Button
           variant="outline"
+          size="sm"
           onClick={() => router.back()}
+          className="self-start sm:self-auto flex-shrink-0"
         >
           {t.admin.addPerfume.backBtn}
         </Button>

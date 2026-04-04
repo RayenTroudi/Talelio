@@ -124,88 +124,88 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className="space-y-6" dir="rtl">
-      <div className="flex items-center justify-between">
+    <div className="space-y-5 sm:space-y-6" dir="rtl">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t.admin.orders.title}</h1>
-          <p className="text-gray-600 mt-1">{t.admin.orders.subtitle}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t.admin.orders.title}</h1>
+          <p className="text-gray-600 mt-0.5 text-sm">{t.admin.orders.subtitle}</p>
         </div>
-        <Button variant="outline" disabled>
-          <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <Button variant="outline" disabled size="sm" className="flex-shrink-0 self-start sm:self-auto">
+          <svg className="w-4 h-4 ltr:mr-1.5 rtl:ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          {t.admin.orders.export}
+          <span className="hidden sm:inline">{t.admin.orders.export}</span>
         </Button>
       </div>
 
       {/* Order Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card className="p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        <Card className="p-3 sm:p-5">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
+              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
             </div>
-            <div className="mr-4">
-              <p className="text-sm font-medium text-gray-500">{t.admin.orders.totalStat}</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-gray-500 truncate">{t.admin.orders.totalStat}</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.total}</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-gold-100 rounded-lg">
-              <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <Card className="p-3 sm:p-5">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gold-100 rounded-lg flex-shrink-0">
+              <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <div className="mr-4">
-              <p className="text-sm font-medium text-gray-500">{t.admin.orders.statuses.pending}</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-gray-500 truncate">{t.admin.orders.statuses.pending}</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.pending}</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <Card className="p-3 sm:p-5">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
+              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <div className="mr-4">
-              <p className="text-sm font-medium text-gray-500">{t.admin.orders.statuses.confirmed}</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.confirmed}</p>
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-gray-500 truncate">{t.admin.orders.statuses.confirmed}</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.confirmed}</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <Card className="p-3 sm:p-5">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
+              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <div className="mr-4">
-              <p className="text-sm font-medium text-gray-500">{t.admin.orders.statuses.delivered}</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.delivered}</p>
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-gray-500 truncate">{t.admin.orders.statuses.delivered}</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.delivered}</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <Card className="p-3 sm:p-5 col-span-2 md:col-span-1">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
+              <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
               </svg>
             </div>
-            <div className="mr-4">
-              <p className="text-sm font-medium text-gray-500">{t.admin.dashboard.revenue}</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.revenue.toFixed(2)} DT</p>
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-gray-500 truncate">{t.admin.dashboard.revenue}</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.revenue.toFixed(2)} DT</p>
             </div>
           </div>
         </Card>
@@ -293,7 +293,7 @@ export default function OrdersPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-[700px]">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -381,11 +381,11 @@ export default function OrdersPage() {
         const addr = parseAddress(selectedOrder.shipingAdress);
         return (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4"
             onClick={() => setSelectedOrder(null)}
           >
             <div
-              className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-2xl max-h-[92vh] sm:max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
               dir="rtl"
             >

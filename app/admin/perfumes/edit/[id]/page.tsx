@@ -266,12 +266,12 @@ export default function EditPerfumePage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="mb-6">
+      <div className="mb-4 sm:mb-6">
         <button
           onClick={() => router.push('/admin/perfumes')}
-          className="text-blue-600 hover:text-blue-800 mb-4 inline-flex items-center"
+          className="text-blue-600 hover:text-blue-800 mb-4 inline-flex items-center gap-1.5 text-sm"
         >
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
           Back to Perfumes

@@ -96,13 +96,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+        className={`fixed inset-y-0 right-0 z-50 w-64 bg-white shadow-lg flex flex-col transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
           sidebarOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* Sidebar Header */}
-        <div className="flex items-center justify-center h-20 px-6 border-b border-gray-200">
-          <div className="w-16 h-16 relative">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 flex-shrink-0">
+          <div className="w-10 h-10 relative">
             <Image
               src="/logo-removebg-preview.png"
               alt="Logo"
@@ -111,24 +111,25 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             />
           </div>
           <button
-            className="lg:hidden p-1 rounded-md hover:bg-gray-100"
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
             onClick={() => setSidebarOpen(false)}
+            aria-label="Close sidebar"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {navigation.map((item) => (
             <div key={item.name}>
               {item.subItems ? (
                 <div>
                   <button
                     onClick={() => toggleExpanded(item.name)}
-                    className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
                       isActive(item.href)
                         ? "bg-blue-50 text-blue-700"
                         : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
@@ -141,7 +142,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       <span>{item.name}</span>
                     </div>
                     <svg
-                      className={`w-4 h-4 transition-transform ${
+                      className={`w-4 h-4 transition-transform flex-shrink-0 ${
                         expandedItems.has(item.name) ? "rotate-180" : ""
                       }`}
                       fill="none"
@@ -152,7 +153,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     </svg>
                   </button>
                   {expandedItems.has(item.name) && (
-                    <div className="ml-6 mt-2 space-y-1">
+                    <div className="mr-6 mt-1 space-y-1">
                       {item.subItems.map((subItem) => (
                         <Link
                           key={subItem.name}
@@ -173,7 +174,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               ) : (
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
                     isActive(item.href)
                       ? "bg-blue-50 text-blue-700"
                       : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
@@ -191,54 +192,51 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-3 border-t border-gray-200 flex-shrink-0">
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
               <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">{t.admin.nav.adminUser}</p>
-              <p className="text-xs text-gray-500">{t.admin.nav.adminRole}</p>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">{t.admin.nav.adminUser}</p>
+              <p className="text-xs text-gray-500 truncate">{t.admin.nav.adminRole}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main content area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Top bar */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <button
-                className="lg:hidden p-2 rounded-md hover:bg-gray-100"
-                onClick={() => setSidebarOpen(true)}
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-            </div>
+        <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 flex-shrink-0">
+          <div className="flex items-center justify-between gap-4">
+            <button
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Open sidebar"
+            >
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
 
-            <div className="flex items-center gap-4">
-              {/* Back to Store */}
-              <Link href="/">
-                <Button variant="outline" size="sm">
-                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                  {t.admin.nav.backToStore}
-                </Button>
-              </Link>
-            </div>
+            {/* Back to Store */}
+            <Link href="/" className="mr-auto lg:mr-0">
+              <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+                <svg className="w-4 h-4 ltr:mr-1.5 rtl:ml-1.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span className="hidden sm:inline">{t.admin.nav.backToStore}</span>
+              </Button>
+            </Link>
           </div>
         </header>
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto bg-gray-50">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {children}
           </div>
         </main>

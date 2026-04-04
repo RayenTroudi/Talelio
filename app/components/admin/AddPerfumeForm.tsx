@@ -104,10 +104,10 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
     errors: any,
     description: string
   ) => (
-    <Card className="p-6">
-      <div className="flex items-center justify-between mb-4">
+    <Card className="p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">{t.admin.addPerfume.notesSectionTitle} {title}</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900">{t.admin.addPerfume.notesSectionTitle} {title}</h3>
           <p className="text-sm text-gray-600">{description}</p>
         </div>
         <Button
@@ -115,6 +115,7 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
           onClick={() => append({ name: "" })}
           variant="outline"
           size="sm"
+          className="self-start sm:self-auto flex-shrink-0"
         >
           {t.admin.addPerfume.addNote}
         </Button>
@@ -129,7 +130,7 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
                 {...register(`${fieldName}Notes.${index}.name`, {
                 required: `${t.admin.addPerfume.notesSectionTitle} ${title} ${t.admin.addPerfume.noteRequired}`
                 })}
-                className="mb-2 text-right"
+                className="mb-2 ltr:text-left rtl:text-right"
               />
               {errors[`${fieldName}Notes`]?.[index]?.name && (
                 <p className="text-red-500 text-sm mb-2">
@@ -172,7 +173,7 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
                 type="text"
                 id="name"
                 {...register("name", { required: t.admin.addPerfume.errors.nameRequired })}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right ${
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ltr:text-left rtl:text-right ${
                   errors.name ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder={t.admin.addPerfume.namePlaceholder}
@@ -188,7 +189,7 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
                 type="text"
                 id="brand"
                 {...register("brand", { required: t.admin.addPerfume.errors.brandRequired })}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right ${
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ltr:text-left rtl:text-right ${
                   errors.brand ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder={t.admin.addPerfume.brandPlaceholder}
@@ -209,7 +210,7 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
                   required: t.admin.addPerfume.errors.priceRequired,
                   min: { value: 0.01, message: t.admin.addPerfume.errors.priceMin }
                 })}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right ${
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ltr:text-left rtl:text-right ${
                   errors.price ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="0.00"
@@ -224,7 +225,7 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
               <select
                 id="category"
                 {...register("category", { required: t.admin.addPerfume.errors.categoryRequired })}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right ${
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ltr:text-left rtl:text-right ${
                   errors.category ? "border-red-500" : "border-gray-300"
                 }`}
               >
@@ -248,7 +249,7 @@ export function AddPerfumeForm({ onSubmit, onCancel, isLoading = false, initialD
               id="description"
               rows={4}
               {...register("description")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ltr:text-left rtl:text-right"
               placeholder={t.admin.addPerfume.descriptionPlaceholder}
             />
           </div>

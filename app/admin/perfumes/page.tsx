@@ -177,22 +177,22 @@ export default function PerfumesPage() {
   }
 
   return (
-    <div className="space-y-6" dir="rtl">
-      <div className="flex items-center justify-between">
+    <div className="space-y-5 sm:space-y-6" dir="rtl">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t.admin.perfumes.title}</h1>
-          <p className="text-gray-600 mt-1">{t.admin.perfumes.subtitle}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t.admin.perfumes.title}</h1>
+          <p className="text-gray-600 mt-0.5 text-sm">{t.admin.perfumes.subtitle}</p>
         </div>
-        <div className="flex gap-3">
-          <Button onClick={() => fetchPerfumes()} variant="outline">
-            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex gap-2 sm:gap-3 flex-shrink-0">
+          <Button onClick={() => fetchPerfumes()} variant="outline" size="sm" className="sm:size-auto">
+            <svg className="w-4 h-4 ltr:mr-1.5 rtl:ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            {t.admin.perfumes.refresh}
+            <span className="hidden sm:inline">{t.admin.perfumes.refresh}</span>
           </Button>
-          <Button asChild>
+          <Button asChild size="sm" className="sm:size-auto">
             <Link href="/admin/perfumes/add">
-              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 ltr:mr-1.5 rtl:ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
               {t.admin.perfumes.addNew}
@@ -242,7 +242,7 @@ export default function PerfumesPage() {
       )}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
         <Card className="p-6">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg">
@@ -287,20 +287,21 @@ export default function PerfumesPage() {
       </div>
 
       {/* Search and View Toggle */}
-      <div className="flex justify-between items-center">
-        <div className="flex-1 max-w-md">
+      <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+        <div className="flex-1 sm:max-w-md">
           <Input
             placeholder={t.admin.perfumes.searchPlaceholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full text-right"
+            className="w-full ltr:text-left rtl:text-right"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-shrink-0">
           <Button
             variant={viewMode === "table" ? "default" : "outline"}
             size="sm"
             onClick={() => setViewMode("table")}
+            className="flex-1 sm:flex-none"
           >
             {t.admin.perfumes.table}
           </Button>
@@ -308,6 +309,7 @@ export default function PerfumesPage() {
             variant={viewMode === "grid" ? "default" : "outline"}
             size="sm"
             onClick={() => setViewMode("grid")}
+            className="flex-1 sm:flex-none"
           >
             {t.admin.perfumes.grid}
           </Button>
@@ -337,7 +339,7 @@ export default function PerfumesPage() {
           {viewMode === "table" ? (
             <Card>
               <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="w-full min-w-[640px]">
                   <thead>
                     <tr className="border-b border-gray-200">
                       <th className="text-right py-4 px-6 font-medium text-gray-900">{t.admin.perfumes.product}</th>

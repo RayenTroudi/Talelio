@@ -134,10 +134,10 @@ export default function PromoRequestsPage() {
   };
 
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-5 sm:space-y-6" dir="rtl">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-1">{t.admin.promoRequests.title}</h1>
+        <h1 className="text-xl sm:text-3xl font-bold text-gray-900 mb-1">{t.admin.promoRequests.title}</h1>
         <p className="text-gray-500 text-sm">{t.admin.promoRequests.subtitle}</p>
       </div>
 
@@ -160,8 +160,8 @@ export default function PromoRequestsPage() {
 
       {/* Table */}
       {loading ? (
-        <div className="rounded-xl border border-stone-200 overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="rounded-xl border border-stone-200 overflow-hidden overflow-x-auto">
+          <table className="w-full min-w-[900px] text-sm">
             <thead className="bg-stone-50 border-b border-stone-200">
               <tr>
                 {[
@@ -196,8 +196,8 @@ export default function PromoRequestsPage() {
           {t.admin.promoRequests.noRequests}
         </div>
       ) : (
-        <div className="rounded-xl border border-stone-200 overflow-hidden shadow-sm">
-          <table className="w-full text-sm">
+        <div className="rounded-xl border border-stone-200 overflow-hidden overflow-x-auto shadow-sm">
+          <table className="w-full min-w-[900px] text-sm">
             <thead className="bg-stone-50 border-b border-stone-200">
               <tr>
                 <th className="px-5 py-3 text-right font-medium text-stone-500">{t.admin.promoRequests.user}</th>
