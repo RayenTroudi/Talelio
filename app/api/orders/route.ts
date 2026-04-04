@@ -4,6 +4,7 @@ import { ID, Query, Permission, Role } from 'node-appwrite';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { calculateReferralReward } from '@/lib/promo-utils';
+import { sendOrderEmails } from '@/lib/email';
 
 const ORDERS_COLLECTION_ID = appwriteConfig.ordersCollectionId || 'orders';
 const PROMO_COLLECTION = () => appwriteConfig.promoRequestsCollectionId || 'promoCodeRequests';
@@ -123,6 +124,21 @@ export async function POST(request: Request) {
     );
 
     console.log('✅ Order created successfully:', order.$id);
+
+    // Send confirmation email to buyer + notification to admin (non-blocking)
+    sendOrderEmails({
+      orderId: order.$id,
+      buyerEmail: session.user.email,
+      buyerName: session.user.name || 'Client',
+      items,
+      shippingAddress,
+      itemsPrice: parseFloat(itemsPrice),
+      shippingPrice: parseFloat(shippingPrice || 0),
+      totalPrice: parseFloat(totalPrice),
+      appliedPromoCode,
+    }).catch((err) => {
+      console.error('❌ sendOrderEmails failed (non-fatal):', err);
+    });
 
     // Create referral earning if a promo code was applied
     if (promoCodeId) {
