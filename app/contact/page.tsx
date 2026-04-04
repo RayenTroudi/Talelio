@@ -35,7 +35,7 @@ export default function ContactPage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white" dir="rtl">
+      <div className="min-h-screen bg-white">
         {/* Hero Section */}
         <div className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white pt-32 pb-28 overflow-hidden">
           {/* Decorative elements */}
@@ -63,7 +63,7 @@ export default function ContactPage() {
           <div className="grid lg:grid-cols-2 gap-20">
             {/* Contact Form */}
             <div className="bg-gradient-to-br from-gold-50/50 via-white to-gold-50/30 rounded-3xl p-10 md:p-12 shadow-xl border border-gold-100/50">
-              <h2 className="text-4xl font-light text-gray-900 mb-10 text-right tracking-tight">
+              <h2 className="text-4xl font-light text-gray-900 mb-10 ltr:text-left rtl:text-right tracking-tight">
                 {t.contact.sendMessage}
               </h2>
 
@@ -74,7 +74,7 @@ export default function ContactPage() {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-7">
-                <div className="text-right">
+                <div className="ltr:text-left rtl:text-right">
                   <label htmlFor="name" className="block text-sm font-light text-gray-700 mb-3 tracking-wide">
                     {t.contact.name}
                   </label>
@@ -85,12 +85,12 @@ export default function ContactPage() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-6 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all text-right placeholder:text-gray-400 placeholder:font-light bg-white shadow-sm"
+                    className="w-full px-6 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all ltr:text-left rtl:text-right placeholder:text-gray-400 placeholder:font-light bg-white shadow-sm"
                     placeholder={t.contact.namePlaceholder}
                   />
                 </div>
 
-                <div className="text-right">
+                <div className="ltr:text-left rtl:text-right">
                   <label htmlFor="email" className="block text-sm font-light text-gray-700 mb-3 tracking-wide">
                     {t.contact.email}
                   </label>
@@ -107,7 +107,7 @@ export default function ContactPage() {
                   />
                 </div>
 
-                <div className="text-right">
+                <div className="ltr:text-left rtl:text-right">
                   <label htmlFor="subject" className="block text-sm font-light text-gray-700 mb-3 tracking-wide">
                     {t.contact.subject}
                   </label>
@@ -118,12 +118,12 @@ export default function ContactPage() {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className="w-full px-6 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all text-right placeholder:text-gray-400 placeholder:font-light bg-white shadow-sm"
+                    className="w-full px-6 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all ltr:text-left rtl:text-right placeholder:text-gray-400 placeholder:font-light bg-white shadow-sm"
                     placeholder={t.contact.subjectPlaceholder}
                   />
                 </div>
 
-                <div className="text-right">
+                <div className="ltr:text-left rtl:text-right">
                   <label htmlFor="message" className="block text-sm font-light text-gray-700 mb-3 tracking-wide">
                     {t.contact.message}
                   </label>
@@ -149,7 +149,7 @@ export default function ContactPage() {
             </div>
 
             {/* Contact Information */}
-            <div className="text-right space-y-12">
+            <div className="ltr:text-left rtl:text-right space-y-12">
               <div>
                 <div className="inline-block mb-6">
                   <div className="h-px w-20 bg-gradient-to-r from-transparent via-gold-400 to-transparent" />

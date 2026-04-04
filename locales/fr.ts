@@ -401,7 +401,7 @@ const fr = {
     loadError: "Erreur de chargement des produits",
     loadErrorDesc: "Veuillez réessayer plus tard.",
     noProducts: "Aucun produit disponible",
-    viewProduct: "Voir →",
+    viewProduct: "Acheter →",
     outOfStock: "Rupture de stock",
   },
   productGrid: {

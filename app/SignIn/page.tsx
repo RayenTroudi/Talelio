@@ -116,7 +116,7 @@ const SignIn = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         disabled={isLoading}
-                        className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
+                        className={`w-full p-4 border border-gray-200 rounded-2xl ltr:text-left rtl:text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
                       />
                     </div>
 
@@ -127,7 +127,7 @@ const SignIn = () => {
                         value={password}
                         onChange={(e) => setPasword(e.target.value)}
                         disabled={isLoading}
-                        className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
+                        className={`w-full p-4 border border-gray-200 rounded-2xl ltr:text-left rtl:text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
                       />
                     </div>
 
@@ -144,7 +144,7 @@ const SignIn = () => {
                     </button>
 
                     {error && (
-                      <div className='bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-2xl text-right font-light'>
+                      <div className='bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-2xl ltr:text-left rtl:text-right font-light'>
                         <span className="block">{error}</span>
                       </div>
                     )}

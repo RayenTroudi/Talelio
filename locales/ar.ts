@@ -401,7 +401,7 @@ const ar = {
     loadError: "خطأ في تحميل المنتجات",
     loadErrorDesc: "يرجى المحاولة مرة أخرى لاحقاً.",
     noProducts: "لا توجد منتجات متاحة",
-    viewProduct: "← عرض",
+    viewProduct: "← شراء",
     outOfStock: "غير متوفر",
   },
   productGrid: {

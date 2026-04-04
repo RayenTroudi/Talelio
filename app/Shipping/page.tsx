@@ -109,11 +109,11 @@ const Shipping = () => {
         <div className="space-y-6">
           {/* Full Name */}
           <div>
-            <label htmlFor="fullName" className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
+            <label htmlFor="fullName" className="block text-sm font-light tracking-wide text-stone-700 mb-2 ltr:text-left rtl:text-right">
               {t.shipping.fullName} <span className="text-red-500">*</span>
             </label>
             <input
-              className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all text-right"
+              className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all ltr:text-left rtl:text-right"
               id="fullName"
               autoFocus
               {...register("fullName", {
@@ -121,13 +121,13 @@ const Shipping = () => {
               })}
             />
             {errors.fullName && (
-              <div className="text-red-500 text-sm mt-1 text-right">{errors.fullName.message as string}</div>
+              <div className="text-red-500 text-sm mt-1 ltr:text-left rtl:text-right">{errors.fullName.message as string}</div>
             )}
           </div>
 
           {/* Phone */}
           <div>
-            <label htmlFor="phone" className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
+            <label htmlFor="phone" className="block text-sm font-light tracking-wide text-stone-700 mb-2 ltr:text-left rtl:text-right">
               {t.shipping.phone} <span className="text-red-500">*</span>
             </label>
             <input
@@ -144,17 +144,17 @@ const Shipping = () => {
               })}
             />
             {errors.phone && (
-              <div className="text-red-500 text-sm mt-1 text-right">{errors.phone.message as string}</div>
+              <div className="text-red-500 text-sm mt-1 ltr:text-left rtl:text-right">{errors.phone.message as string}</div>
             )}
           </div>
 
           {/* Address */}
           <div>
-            <label htmlFor="address" className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
+            <label htmlFor="address" className="block text-sm font-light tracking-wide text-stone-700 mb-2 ltr:text-left rtl:text-right">
               {t.shipping.address} <span className="text-red-500">*</span>
             </label>
             <input
-              className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all text-right"
+              className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all ltr:text-left rtl:text-right"
               id="address"
               {...register("address", {
                 required: t.shipping.errors.address,
@@ -165,30 +165,30 @@ const Shipping = () => {
               })}
             />
             {errors.address && (
-              <div className="text-red-500 text-sm mt-1 text-right">{errors.address.message as string}</div>
+              <div className="text-red-500 text-sm mt-1 ltr:text-left rtl:text-right">{errors.address.message as string}</div>
             )}
           </div>
 
           {/* City & Gouvernorat */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="city" className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
+              <label htmlFor="city" className="block text-sm font-light tracking-wide text-stone-700 mb-2 ltr:text-left rtl:text-right">
                 {t.shipping.city} <span className="text-red-500">*</span>
               </label>
               <input
-                className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all text-right"
+                className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all ltr:text-left rtl:text-right"
                 id="city"
                 {...register("city", {
                   required: t.shipping.errors.city,
                 })}
               />
               {errors.city && (
-                <div className="text-red-500 text-sm mt-1 text-right">{errors.city.message as string}</div>
+                <div className="text-red-500 text-sm mt-1 ltr:text-left rtl:text-right">{errors.city.message as string}</div>
               )}
             </div>
 
             <div>
-              <label htmlFor="gouvernorat" className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
+              <label htmlFor="gouvernorat" className="block text-sm font-light tracking-wide text-stone-700 mb-2 ltr:text-left rtl:text-right">
                 {t.shipping.gouvernorat} <span className="text-red-500">*</span>
               </label>
               <select
@@ -225,14 +225,14 @@ const Shipping = () => {
                 <option value="Kebili">{t.shipping.gouvernorats.Kebili}</option>
               </select>
               {errors.gouvernorat && (
-                <div className="text-red-500 text-sm mt-1 text-right">{errors.gouvernorat.message as string}</div>
+                <div className="text-red-500 text-sm mt-1 ltr:text-left rtl:text-right">{errors.gouvernorat.message as string}</div>
               )}
             </div>
           </div>
 
           {/* Postal Code */}
           <div>
-            <label htmlFor="postalCode" className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
+            <label htmlFor="postalCode" className="block text-sm font-light tracking-wide text-stone-700 mb-2 ltr:text-left rtl:text-right">
               {t.shipping.postalCode}
             </label>
             <input
@@ -245,11 +245,11 @@ const Shipping = () => {
 
           {/* Delivery Notes */}
           <div>
-            <label htmlFor="notes" className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
+            <label htmlFor="notes" className="block text-sm font-light tracking-wide text-stone-700 mb-2 ltr:text-left rtl:text-right">
               {t.shipping.notes}
             </label>
             <textarea
-              className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all resize-none text-right"
+              className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all resize-none ltr:text-left rtl:text-right"
               id="notes"
               rows={3}
               placeholder={t.shipping.notesPlaceholder}
@@ -261,7 +261,7 @@ const Shipping = () => {
           {/* Promo Code Section */}
           {session ? (
             <div className="border-t border-stone-200/50 pt-6">
-              <label className="block text-sm font-light tracking-wide text-stone-700 mb-2 text-right">
+              <label className="block text-sm font-light tracking-wide text-stone-700 mb-2 ltr:text-left rtl:text-right">
                 {t.shipping.promoCode}
               </label>
               {appliedPromoCode ? (
@@ -273,13 +273,13 @@ const Shipping = () => {
                   >
                     {t.shipping.promoRemove}
                   </button>
-                  <div className="text-right">
+                  <div className="ltr:text-left rtl:text-right">
                     <p className="font-medium text-green-800 tracking-widest">{appliedPromoCode}</p>
                       <p className="text-sm text-green-600 font-light">{t.shipping.promoApplied}</p>
                   </div>
                 </div>
               ) : (
-                <div className="flex gap-2" dir="rtl">
+                <div className="flex gap-2">
                   <input
                     type="text"
                     value={promoInput}
@@ -302,7 +302,7 @@ const Shipping = () => {
                 </div>
               )}
               {promoError && (
-                <p className="text-red-500 text-sm mt-1 text-right">{promoError}</p>
+                <p className="text-red-500 text-sm mt-1 ltr:text-left rtl:text-right">{promoError}</p>
               )}
             </div>
           ) : null}

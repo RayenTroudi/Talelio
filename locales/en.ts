@@ -401,7 +401,7 @@ const en = {
     loadError: "Error loading products",
     loadErrorDesc: "Please try again later.",
     noProducts: "No products available",
-    viewProduct: "View →",
+    viewProduct: "Buy →",
     outOfStock: "Out of Stock",
   },
   productGrid: {

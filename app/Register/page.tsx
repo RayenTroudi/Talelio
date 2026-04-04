@@ -146,7 +146,7 @@ const Register = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={isLoading}
-              className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
+              className={`w-full p-4 border border-gray-200 rounded-2xl ltr:text-left rtl:text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
               minLength={2}
             />
           </div>
@@ -158,7 +158,7 @@ const Register = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
-              className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
+              className={`w-full p-4 border border-gray-200 rounded-2xl ltr:text-left rtl:text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
               dir="ltr"
             />
           </div>
@@ -170,7 +170,7 @@ const Register = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
-              className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
+              className={`w-full p-4 border border-gray-200 rounded-2xl ltr:text-left rtl:text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
               minLength={6}
             />
           </div>
@@ -182,7 +182,7 @@ const Register = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={isLoading}
-              className={`w-full p-4 border border-gray-200 rounded-2xl text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
+              className={`w-full p-4 border border-gray-200 rounded-2xl ltr:text-left rtl:text-right font-light placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 focus:outline-none transition-all ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
               minLength={6}
             />
           </div>
@@ -200,7 +200,7 @@ const Register = () => {
           </button>
 
           {error && (
-            <div className='bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-2xl text-right font-light'>
+            <div className='bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-2xl ltr:text-left rtl:text-right font-light'>
               <span className="block">{error}</span>
               {error.includes("يوجد حساب") && (
                 <div className="mt-3">
@@ -213,7 +213,7 @@ const Register = () => {
           )}
 
           {success && (
-            <div className='bg-green-50 border border-green-200 text-green-700 px-5 py-4 rounded-2xl text-right font-light'>
+            <div className='bg-green-50 border border-green-200 text-green-700 px-5 py-4 rounded-2xl ltr:text-left rtl:text-right font-light'>
               <span className="block">{success}</span>
             </div>
           )}
