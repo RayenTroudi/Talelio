@@ -95,7 +95,7 @@ export function ProductGrid({
           const response = await fetch('/api/perfumes');
           if (!response.ok) throw new Error('Failed to fetch products');
           const data = await response.json();
-          setProducts(data.documents || []);
+          setProducts(data.data || data.documents || []);
         } catch (err: any) {
           setError(err.message || 'Failed to load products');
           console.error('Error fetching products:', err);

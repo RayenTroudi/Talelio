@@ -28,7 +28,7 @@ const ProductCardComponent = function ProductCard({
   isOnSale = false,
   isNew = false,
 }: ProductCardProps) {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
   return (
     <Link
@@ -73,7 +73,11 @@ const ProductCardComponent = function ProductCard({
           <span className="inline-flex items-center gap-2 px-5 py-2 bg-white/95 backdrop-blur-sm text-stone-800 text-xs tracking-[0.12em] uppercase font-light shadow-lg rounded-full">
             {t.productCard.viewDetails}
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              {dir === 'rtl' ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              )}
             </svg>
           </span>
         </div>

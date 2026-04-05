@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useTranslation } from "@/app/components/LocaleProvider";
 
 const Hero = () => {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
   return (
     <div className="relative w-full min-h-screen flex items-center overflow-hidden bg-black">
@@ -70,17 +70,16 @@ const Hero = () => {
             >
               <span>{t.hero.cta}</span>
               <svg
-                className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                className={`w-4 h-4 transition-transform duration-300 ${dir === 'rtl' ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
+                {dir === 'rtl' ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                )}
               </svg>
             </Link>
 

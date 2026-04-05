@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useTranslation } from "@/app/components/LocaleProvider";
 
 export default function CategoriesSection() {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
   const categories = [
     {
@@ -105,7 +105,7 @@ export default function CategoriesSection() {
                       {t.categories.shopNow}
                     </span>
                     <svg
-                      className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5"
+                      className={`w-4 h-4 transition-transform duration-300 ${dir === 'rtl' ? 'group-hover:-translate-x-1.5' : 'group-hover:translate-x-1.5'}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -114,7 +114,7 @@ export default function CategoriesSection() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={1.5}
-                        d="M17 8l4 4m0 0l-4 4m4-4H3"
+                        d={dir === 'rtl' ? "M7 16l-4-4m0 0l4-4m-4 4h18" : "M17 8l4 4m0 0l-4 4m4-4H3"}
                       />
                     </svg>
                   </div>

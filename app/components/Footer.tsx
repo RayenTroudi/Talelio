@@ -17,7 +17,7 @@ const FacebookIcon = () => (
 );
 
 export default function Footer() {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
 
   return (
     <footer className="relative bg-[#080808] text-gray-400 overflow-hidden">
@@ -118,6 +118,24 @@ export default function Footer() {
             </ul>
           </div>
 
+          {/* Support phone */}
+          <div className="md:col-span-1">
+            <h4 className="text-white/70 text-xs tracking-[0.25em] uppercase font-light mb-6">
+              {t.footer.support}
+            </h4>
+            <a
+              href="tel:+21693378614"
+              className="group inline-flex items-center gap-3 text-gray-400 hover:text-gold-400 transition-colors duration-300"
+            >
+              <div className="w-7 h-7 rounded-full border border-gold-500/30 flex items-center justify-center group-hover:border-gold-500/60 transition-colors duration-300 flex-shrink-0">
+                <svg className="w-3.5 h-3.5 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+              </div>
+              <span className="text-sm font-light tracking-wide" dir="ltr">93 378 614</span>
+            </a>
+          </div>
+
           {/* Join us */}
           <div className="col-span-2 md:col-span-1">
             <h4 className="text-white/70 text-xs tracking-[0.25em] uppercase font-light mb-6">
@@ -132,12 +150,16 @@ export default function Footer() {
             >
               <span>{t.footer.joinUs}</span>
               <svg
-                className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-0.5"
+                className={`w-3 h-3 transition-transform duration-300 ${dir === 'rtl' ? 'group-hover:-translate-x-0.5' : 'group-hover:translate-x-0.5'}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                {dir === 'rtl' ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                )}
               </svg>
             </Link>
           </div>

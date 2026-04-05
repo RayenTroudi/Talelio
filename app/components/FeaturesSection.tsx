@@ -43,8 +43,8 @@ export default function FeaturesSection() {
     },
     {
       Icon: TruckIcon,
-      title: "Secure Delivery",
-      desc: "Fast and careful shipping with every order handled with the utmost attention",
+      title: t.brand.feature4Title,
+      desc: t.brand.feature4Desc,
     },
     {
       Icon: StarIcon,
