@@ -61,16 +61,18 @@ const Shipping = () => {
 
   useEffect(() => {
     setValue("fullName", shippingAddress?.fullName);
+    setValue("email", shippingAddress?.email || session?.user?.email || "");
     setValue("phone", shippingAddress?.phone);
     setValue("address", shippingAddress?.address);
     setValue("city", shippingAddress?.city);
     setValue("gouvernorat", shippingAddress?.gouvernorat);
     setValue("postalCode", shippingAddress?.postalCode);
     setValue("notes", shippingAddress?.notes);
-  }, [setValue, shippingAddress]);
+  }, [setValue, shippingAddress, session]);
 
   const submitHandler = ({
     fullName,
+    email,
     phone,
     address,
     city,
@@ -79,7 +81,7 @@ const Shipping = () => {
     notes,
   }: void & any) => {
     dispatch(
-      saveShippingAddress({ fullName, phone, address, city, gouvernorat, postalCode, notes })
+      saveShippingAddress({ fullName, email, phone, address, city, gouvernorat, postalCode, notes })
     );
 
     router.push("/PlaceOrder");
@@ -122,6 +124,29 @@ const Shipping = () => {
             />
             {errors.fullName && (
               <div className="text-red-500 text-sm mt-1 ltr:text-left rtl:text-right">{errors.fullName.message as string}</div>
+            )}
+          </div>
+
+          {/* Email */}
+          <div>
+            <label htmlFor="email" className="block text-sm font-light tracking-wide text-stone-700 mb-2 ltr:text-left rtl:text-right">
+              {t.shipping.email} <span className="text-red-500">*</span>
+            </label>
+            <input
+              className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all"
+              id="email"
+              type="email"
+              dir="ltr"
+              {...register("email", {
+                required: t.shipping.errors.email,
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: t.shipping.errors.email,
+                },
+              })}
+            />
+            {errors.email && (
+              <div className="text-red-500 text-sm mt-1 ltr:text-left rtl:text-right">{errors.email.message as string}</div>
             )}
           </div>
 
@@ -192,7 +217,7 @@ const Shipping = () => {
                 {t.shipping.gouvernorat} <span className="text-red-500">*</span>
               </label>
               <select
-                className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all bg-white text-right"
+                className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all bg-white ltr:text-left rtl:text-right"
                 id="gouvernorat"
                 {...register("gouvernorat", {
                   required: t.shipping.errors.gouvernorat,

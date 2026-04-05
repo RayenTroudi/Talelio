@@ -45,13 +45,6 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.email) {
-      return NextResponse.json(
-        { error: 'Unauthorized - Please sign in' },
-        { status: 401 }
-      );
-    }
 
     const body = await request.json();
     const {
@@ -62,7 +55,19 @@ export async function POST(request: Request) {
       totalPrice,
       promoCodeId,
       appliedPromoCode,
+      guestEmail,
     } = body;
+
+    // Resolve buyer identity: authenticated session takes priority, then guest email from form
+    const buyerEmail = session?.user?.email || guestEmail || shippingAddress?.email;
+    const buyerName = session?.user?.name || shippingAddress?.fullName || 'Guest';
+
+    if (!buyerEmail) {
+      return NextResponse.json(
+        { error: 'Please provide an email address to place your order' },
+        { status: 400 }
+      );
+    }
 
     // Validate required fields
     if (!items || !shippingAddress || !totalPrice) {
@@ -90,8 +95,8 @@ export async function POST(request: Request) {
     // Create order document matching YOUR Appwrite collection schema EXACTLY
     // Note: Using your exact field names (including typos to match your collection)
     const orderData = {
-      UserEmail: session.user.email,           // PascalCase as per your collection
-      UserName: session.user.name || 'Guest',  // PascalCase as per your collection
+      UserEmail: buyerEmail,
+      UserName: buyerName,
       shipingAdress: JSON.stringify({
         ...shippingAddress,
         items: items  // Store items WITH shipping address for now
@@ -128,8 +133,8 @@ export async function POST(request: Request) {
     // Send confirmation email to buyer + notification to admin (non-blocking)
     sendOrderEmails({
       orderId: order.$id,
-      buyerEmail: session.user.email,
-      buyerName: session.user.name || 'Client',
+      buyerEmail,
+      buyerName,
       items,
       shippingAddress,
       itemsPrice: parseFloat(itemsPrice),
@@ -143,7 +148,7 @@ export async function POST(request: Request) {
     // Create referral earning if a promo code was applied
     if (promoCodeId) {
       try {
-        const buyerUserId = (session.user as any).id || session.user.email;
+        const buyerUserId = (session?.user as any)?.id || buyerEmail;
         const promoCol = PROMO_COLLECTION();
         const earningsCol = EARNINGS_COLLECTION();
 
@@ -175,7 +180,7 @@ export async function POST(request: Request) {
                 ownerUserId: promoDoc.userId,
                 ownerEmail: promoDoc.userEmail || '',
                 buyerUserId,
-                buyerEmail: session.user.email,
+                buyerEmail: buyerEmail,
                 amount: reward,
                 currency: 'TND',
               },

@@ -16,7 +16,7 @@ import { Toast, useToast } from "@/components/ui/toast";
 import { useTranslation } from "@/app/components/LocaleProvider";
 
 const page = () => {
-  const { t } = useTranslation();
+  const { t, dir } = useTranslation();
   const dispatch = useDispatch();
   const [isClient, setIsClient] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,22 +51,12 @@ const page = () => {
   const handlePlaceOrder = async () => {
     if (isSubmitting) return;
 
-    // Check authentication before submitting order
-    if (status === 'unauthenticated') {
-      router.push('/SignIn?redirect=/PlaceOrder');
-      return;
-    }
-
-    if (status === 'loading') {
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       console.log('🛒 Submitting order:', {
         itemCount: CartItems.length,
         totalPrice,
-        userEmail: session?.user?.email
+        userEmail: session?.user?.email || shippingAddress.email
       });
 
       const response = await fetch('/api/orders', {
@@ -82,6 +72,7 @@ const page = () => {
           totalPrice,
           promoCodeId: promoCodeId || null,
           appliedPromoCode: appliedPromoCode || null,
+          guestEmail: shippingAddress.email || null,
         }),
       });
 
@@ -108,7 +99,11 @@ const page = () => {
         // Wait for toast animation, then clear cart and redirect
         setTimeout(() => {
           dispatch(clearCart());
-          router.push(`/account?orderSuccess=${data.orderId}`);
+          if (status === 'authenticated') {
+            router.push(`/account?orderSuccess=${data.orderId}`);
+          } else {
+            router.push(`/?orderSuccess=${data.orderId}`);
+          }
         }, 1500);
 
       } else {
@@ -119,13 +114,6 @@ const page = () => {
           description: data.error || data.details || t.common.error,
           variant: "error"
         });
-
-        // Handle specific errors
-        if (response.status === 401) {
-          setTimeout(() => {
-            router.push('/SignIn?redirect=/PlaceOrder');
-          }, 2000);
-        }
 
         setIsSubmitting(false); // Re-enable button on error
       }
@@ -226,6 +214,14 @@ const page = () => {
 
                           <div className="bg-stone-50/50 rounded-2xl p-5 space-y-2 text-right">
                             <p className="font-medium text-stone-900 text-lg">{shippingAddress.fullName}</p>
+                            {shippingAddress.email && (
+                              <p className="text-stone-700 flex items-center gap-2 justify-start">
+                                <svg className="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                <span dir="ltr">{shippingAddress.email}</span>
+                              </p>
+                            )}
                             {shippingAddress.phone && (
                               <p className="text-stone-700 flex items-center gap-2 justify-start">
                                 <svg className="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -417,8 +413,15 @@ const page = () => {
                                 ) : (
                                   <>
                                     {t.placeOrder.placeOrderBtn}
-                                    <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                                    <svg
+                                      className={`w-5 h-5 transition-transform ${dir === 'rtl' ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`}
+                                      fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    >
+                                      {dir === 'rtl' ? (
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                                      ) : (
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                      )}
                                     </svg>
                                   </>
                                 )}

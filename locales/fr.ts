@@ -123,6 +123,7 @@ const fr = {
   shipping: {
     title: "Adresse de livraison",
     fullName: "Nom complet",
+    email: "Adresse e-mail",
     phone: "Numéro de téléphone",
     address: "Adresse",
     city: "Ville",
@@ -142,6 +143,7 @@ const fr = {
     continueBtn: "Continuer vers la révision",
     errors: {
       fullName: "Veuillez entrer votre nom complet",
+      email: "Veuillez entrer une adresse e-mail valide",
       phone: "Veuillez entrer votre numéro de téléphone",
       phoneInvalid: "Veuillez entrer un numéro de téléphone valide",
       address: "Veuillez entrer votre adresse",

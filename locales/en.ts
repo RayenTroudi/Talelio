@@ -123,6 +123,7 @@ const en = {
   shipping: {
     title: "Shipping Address",
     fullName: "Full Name",
+    email: "Email Address",
     phone: "Phone Number",
     address: "Street Address",
     city: "City",
@@ -142,6 +143,7 @@ const en = {
     continueBtn: "Continue to Review Order",
     errors: {
       fullName: "Please enter your full name",
+      email: "Please enter a valid email address",
       phone: "Please enter your phone number",
       phoneInvalid: "Please enter a valid phone number",
       address: "Please enter your address",
