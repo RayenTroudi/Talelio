@@ -195,7 +195,7 @@ const fr = {
     free: "Gratuite",
     total: "Total",
     qty: "Qté",
-    placeOrderBtn: "Passer la commande",
+    placeOrderBtn: "Confirmer la commande",
     processing: "Traitement en cours...",
     emptyCart: "Panier vide",
     emptyCartDesc: "Votre panier est actuellement vide.",

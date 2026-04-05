@@ -150,7 +150,52 @@ const page = () => {
         <Navbar />
         {isClient ? (
           <>
-            <div className="min-h-screen bg-gradient-to-br from-stone-50 via-gold-50/20 to-rose-50/10 py-8 sm:py-12">
+            {/* ── Sticky bottom bar — mobile only ── */}
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40">
+              {/* Soft blur backdrop */}
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-md border-t border-gold-200/60 shadow-[0_-8px_32px_rgba(0,0,0,0.08)]" />
+              <div className="relative flex items-center justify-between gap-4 px-5 py-3">
+                {/* Total */}
+                <div>
+                  <p className="text-xs text-stone-500 font-light tracking-wide">{t.placeOrder.total}</p>
+                  <p className="font-serif text-xl text-stone-900 leading-tight">
+                    {totalPrice} <span className="text-sm text-stone-600">{t.placeOrder.currency}</span>
+                  </p>
+                </div>
+                {/* CTA */}
+                <button
+                  onClick={handlePlaceOrder}
+                  disabled={isSubmitting}
+                  className="group relative flex-shrink-0 flex items-center gap-2.5 px-7 py-3.5 rounded-2xl font-light text-sm tracking-widest bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white shadow-lg shadow-gold-400/30 disabled:bg-stone-400 disabled:cursor-not-allowed transition-all duration-300 overflow-hidden"
+                >
+                  <span className="relative z-10 flex items-center gap-2.5">
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        {t.placeOrder.processing}
+                      </>
+                    ) : (
+                      <>
+                        {t.placeOrder.placeOrderBtn}
+                        <svg
+                          className={`w-4 h-4 transition-transform ${dir === 'rtl' ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`}
+                          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        >
+                          {dir === 'rtl' ? (
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                          ) : (
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                          )}
+                        </svg>
+                      </>
+                    )}
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-l from-gold-900/20 to-gold-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </button>
+              </div>
+            </div>
+
+            <div className="min-h-screen bg-gradient-to-br from-stone-50 via-gold-50/20 to-rose-50/10 py-8 sm:py-12 pb-28 lg:pb-12">
               <div className="container mx-auto px-4 max-w-7xl">
                 <Checkout activeStep={2} />
 
@@ -361,48 +406,15 @@ const page = () => {
                       <div className="lg:sticky lg:top-24">
                         <Card className="bg-gradient-to-br from-white via-stone-50/50 to-gold-50/30 backdrop-blur-sm border-stone-200/60 shadow-xl rounded-3xl overflow-hidden">
                           <div className="p-6 sm:p-8">
-                            <h2 className="text-2xl sm:text-3xl font-serif font-light text-stone-900 mb-8 text-center">
+                            <h2 className="text-2xl sm:text-3xl font-serif font-light text-stone-900 mb-6 text-center">
                               {t.placeOrder.orderSummary}
                             </h2>
 
-                            <div className="space-y-5 mb-8">
-                              {/* Subtotal */}
-                              <div className="flex justify-between items-baseline text-stone-700">
-                                <span className="font-light text-sm text-right">{t.placeOrder.subtotal}</span>
-                                <span className="font-serif text-xl">{itemsPrice} <span className="text-base">{t.placeOrder.currency}</span></span>
-                              </div>
-
-                              {/* Shipping */}
-                              <div className="flex justify-between items-baseline text-stone-700">
-                                <span className="font-light text-sm text-right">{t.placeOrder.shipping}</span>
-                                {shippingPrice > 0 ? (
-                                  <span className="font-serif text-xl">{shippingPrice} <span className="text-base">{t.placeOrder.currency}</span></span>
-                                ) : (
-                                  <span className="text-emerald-700 font-medium text-sm bg-emerald-50 px-3 py-1 rounded-full">
-                                    {t.placeOrder.free}
-                                  </span>
-                                )}
-                              </div>
-
-                              <Separator className="bg-stone-300/50" />
-
-                              {/* Total */}
-                              <div className="flex justify-between items-baseline pt-2">
-                                <span className="text-stone-900 font-serif text-lg">{t.placeOrder.total}</span>
-                                <div className="text-right">
-                                  <span className="text-stone-900 font-serif text-3xl sm:text-4xl">{totalPrice}</span>
-                                  <span className="text-stone-600 text-xl mr-2">{t.placeOrder.currency}</span>
-                                </div>
-                              </div>
-                            </div>
-
-                            <Separator className="mb-8 bg-stone-300/50" />
-
-                            {/* Place Order Button */}
+                            {/* ── CTA at top — always visible ── */}
                             <button
                               onClick={handlePlaceOrder}
                               disabled={isSubmitting}
-                              className="group relative w-full py-5 rounded-2xl font-light text-base tracking-widest bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white shadow-xl hover:shadow-2xl disabled:bg-stone-400 disabled:cursor-not-allowed transition-all duration-300 overflow-hidden"
+                              className="group relative w-full py-5 rounded-2xl font-light text-base tracking-widest bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white shadow-xl hover:shadow-2xl disabled:bg-stone-400 disabled:cursor-not-allowed transition-all duration-300 overflow-hidden mb-6"
                             >
                               <span className="relative z-10 flex items-center justify-center gap-3">
                                 {isSubmitting ? (
@@ -429,8 +441,39 @@ const page = () => {
                               <div className="absolute inset-0 bg-gradient-to-l from-gold-900/20 to-gold-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             </button>
 
+                            <Separator className="mb-6 bg-stone-200/70" />
+
+                            {/* Price breakdown */}
+                            <div className="space-y-4 mb-6">
+                              <div className="flex justify-between items-baseline text-stone-700">
+                                <span className="font-light text-sm">{t.placeOrder.subtotal}</span>
+                                <span className="font-serif text-lg">{itemsPrice} <span className="text-sm">{t.placeOrder.currency}</span></span>
+                              </div>
+
+                              <div className="flex justify-between items-baseline text-stone-700">
+                                <span className="font-light text-sm">{t.placeOrder.shipping}</span>
+                                {shippingPrice > 0 ? (
+                                  <span className="font-serif text-lg">{shippingPrice} <span className="text-sm">{t.placeOrder.currency}</span></span>
+                                ) : (
+                                  <span className="text-emerald-700 font-medium text-sm bg-emerald-50 px-3 py-1 rounded-full">
+                                    {t.placeOrder.free}
+                                  </span>
+                                )}
+                              </div>
+
+                              <Separator className="bg-stone-300/50" />
+
+                              <div className="flex justify-between items-baseline pt-1">
+                                <span className="text-stone-900 font-serif text-base">{t.placeOrder.total}</span>
+                                <div>
+                                  <span className="text-stone-900 font-serif text-2xl sm:text-3xl">{totalPrice}</span>
+                                  <span className="text-stone-600 text-lg mx-1">{t.placeOrder.currency}</span>
+                                </div>
+                              </div>
+                            </div>
+
                             {/* Terms */}
-                            <p className="text-xs text-center text-stone-500 font-light leading-relaxed mt-6 px-2">
+                            <p className="text-xs text-center text-stone-500 font-light leading-relaxed px-2">
                               {t.placeOrder.termsText}{" "}
                               <Link href="/terms" className="underline hover:text-stone-900">
                                 {t.placeOrder.terms}
@@ -438,7 +481,7 @@ const page = () => {
                             </p>
 
                             {/* Security badges */}
-                            <div className="mt-6 pt-6 border-t border-stone-200/60">
+                            <div className="mt-5 pt-5 border-t border-stone-200/60">
                               <div className="flex items-center justify-center gap-6 text-stone-400">
                                 <div className="flex flex-col items-center gap-1">
                                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

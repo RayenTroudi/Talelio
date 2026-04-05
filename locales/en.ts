@@ -195,7 +195,7 @@ const en = {
     free: "Free",
     total: "Total",
     qty: "Qty",
-    placeOrderBtn: "Place Order",
+    placeOrderBtn: "Confirm Order",
     processing: "Processing...",
     emptyCart: "Cart is Empty",
     emptyCartDesc: "Your shopping cart is currently empty.",
