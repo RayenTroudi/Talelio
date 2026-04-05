@@ -229,10 +229,9 @@ export default function CartSidebar() {
             <Link
               href="/Cart"
               onClick={handleClose}
-              className="group relative block w-full py-4 text-center rounded-2xl font-light tracking-widest uppercase bg-white text-gray-700 border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 shadow-lg hover:shadow-xl overflow-hidden transition-all duration-300"
+              className="group relative block w-full py-4 text-center rounded-2xl font-light tracking-widest uppercase bg-white text-stone-700 border-2 border-stone-300 hover:border-gold-500 hover:bg-gold-50 hover:text-gold-700 shadow-lg hover:shadow-xl hover:shadow-gold-200/40 overflow-hidden transition-all duration-300"
             >
               <span className="relative z-10">{t.cart.checkout}</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-gold-900/20 to-stone-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
           </div>
         )}
