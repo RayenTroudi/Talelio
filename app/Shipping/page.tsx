@@ -284,53 +284,51 @@ const Shipping = () => {
         </div>
 
           {/* Promo Code Section */}
-          {session ? (
-            <div className="border-t border-stone-200/50 pt-6">
-              <label className="block text-sm font-light tracking-wide text-stone-700 mb-2 ltr:text-left rtl:text-right">
-                {t.shipping.promoCode}
-              </label>
-              {appliedPromoCode ? (
-                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl p-4">
-                  <button
-                    type="button"
-                    onClick={() => dispatch(clearPromoCode())}
-                    className="text-red-500 text-sm hover:text-red-700 transition-colors"
-                  >
-                    {t.shipping.promoRemove}
-                  </button>
-                  <div className="ltr:text-left rtl:text-right">
-                    <p className="font-medium text-green-800 tracking-widest">{appliedPromoCode}</p>
-                      <p className="text-sm text-green-600 font-light">{t.shipping.promoApplied}</p>
-                  </div>
+          <div className="border-t border-stone-200/50 pt-6">
+            <label className="block text-sm font-light tracking-wide text-stone-700 mb-2 ltr:text-left rtl:text-right">
+              {t.shipping.promoCode}
+            </label>
+            {appliedPromoCode ? (
+              <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl p-4">
+                <button
+                  type="button"
+                  onClick={() => dispatch(clearPromoCode())}
+                  className="text-red-500 text-sm hover:text-red-700 transition-colors"
+                >
+                  {t.shipping.promoRemove}
+                </button>
+                <div className="ltr:text-left rtl:text-right">
+                  <p className="font-medium text-green-800 tracking-widest">{appliedPromoCode}</p>
+                    <p className="text-sm text-green-600 font-light">{t.shipping.promoApplied}</p>
                 </div>
-              ) : (
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={promoInput}
-                    onChange={(e) => {
-                      setPromoInput(e.target.value.toUpperCase());
-                      setPromoError("");
-                    }}
-                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleApplyPromo())}
-                    placeholder={t.shipping.promoPlaceholder}
-                    className="flex-1 px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all tracking-widest uppercase"
-                  />
-                  <button
-                    type="button"
-                    disabled={promoLoading || !promoInput.trim()}
-                    onClick={handleApplyPromo}
-                    className="px-5 py-3 rounded-xl bg-gold-500 hover:bg-gold-600 disabled:bg-stone-300 text-white font-light text-sm transition-colors whitespace-nowrap"
-                  >
-                    {promoLoading ? t.shipping.promoApplying : t.shipping.promoApply}
-                  </button>
-                </div>
-              )}
-              {promoError && (
-                <p className="text-red-500 text-sm mt-1 ltr:text-left rtl:text-right">{promoError}</p>
-              )}
-            </div>
-          ) : null}
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={promoInput}
+                  onChange={(e) => {
+                    setPromoInput(e.target.value.toUpperCase());
+                    setPromoError("");
+                  }}
+                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleApplyPromo())}
+                  placeholder={t.shipping.promoPlaceholder}
+                  className="flex-1 px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all tracking-widest uppercase"
+                />
+                <button
+                  type="button"
+                  disabled={promoLoading || !promoInput.trim()}
+                  onClick={handleApplyPromo}
+                  className="px-5 py-3 rounded-xl bg-gold-500 hover:bg-gold-600 disabled:bg-stone-300 text-white font-light text-sm transition-colors whitespace-nowrap"
+                >
+                  {promoLoading ? t.shipping.promoApplying : t.shipping.promoApply}
+                </button>
+              </div>
+            )}
+            {promoError && (
+              <p className="text-red-500 text-sm mt-1 ltr:text-left rtl:text-right">{promoError}</p>
+            )}
+          </div>
 
         <div className="mt-10">
           <button className="w-full py-5 rounded-2xl font-light text-lg tracking-wide bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white shadow-xl shadow-gold-400/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5">

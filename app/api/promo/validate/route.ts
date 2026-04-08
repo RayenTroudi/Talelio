@@ -16,10 +16,9 @@ const COLLECTION = () => appwriteConfig.promoRequestsCollectionId || 'promoCodeR
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'يجب تسجيل الدخول لاستخدام رمز الإحالة' }, { status: 401 });
-    }
-    const currentUserId: string = (session.user as any).id || session.user.email;
+    const currentUserId: string | null = session?.user
+      ? ((session.user as any).id || session.user.email)
+      : null;
 
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code')?.trim().toUpperCase();
@@ -44,8 +43,8 @@ export async function GET(request: Request) {
 
     const promoDoc = result.documents[0];
 
-    // Self-referral prevention
-    if (promoDoc.userId === currentUserId) {
+    // Self-referral prevention (only applies to logged-in users)
+    if (currentUserId && promoDoc.userId === currentUserId) {
       return NextResponse.json({ error: 'لا يمكنك استخدام رمز إحالتك الخاص' }, { status: 409 });
     }
 
