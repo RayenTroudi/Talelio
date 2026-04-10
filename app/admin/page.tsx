@@ -1,12 +1,61 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useTranslation } from "@/app/components/LocaleProvider";
+import { useEffect, useState } from "react";
+
+interface DashboardStats {
+  totalPerfumes: number;
+  totalOrders: number;
+  pendingOrders: number;
+  deliveredOrders: number;
+  revenue: number;
+  pendingPromoRequests: number;
+}
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const [perfumesRes, ordersRes, promoRes] = await Promise.all([
+          fetch('/api/perfumes'),
+          fetch('/api/admin/orders?limit=500'),
+          fetch('/api/admin/promo-requests?status=PENDING'),
+        ]);
+
+        const perfumesData = perfumesRes.ok ? await perfumesRes.json() : { total: 0 };
+        const ordersData = ordersRes.ok ? await ordersRes.json() : { orders: [], total: 0 };
+        const promoData = promoRes.ok ? await promoRes.json() : { requests: [] };
+
+        const orders: any[] = ordersData.orders || [];
+        const today = new Date().toDateString();
+
+        setStats({
+          totalPerfumes: perfumesData.total ?? 0,
+          totalOrders: ordersData.total ?? orders.length,
+          pendingOrders: orders.filter((o) => o.status === 'pending').length,
+          deliveredOrders: orders.filter((o) => o.status === 'delivered').length,
+          revenue: orders
+            .filter((o) => o.status !== 'cancelled')
+            .reduce((sum, o) => sum + (o.totalPrice || 0), 0),
+          pendingPromoRequests: (promoData.requests || []).length,
+        });
+      } catch (e) {
+        console.error('Failed to load dashboard stats', e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchStats();
+  }, []);
+
+  const fmt = (n: number) => n.toLocaleString('fr-TN');
 
   return (
     <div className="space-y-6" dir="rtl">
@@ -16,22 +65,59 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
         <Card className="p-4 sm:p-5 text-center">
-          <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1">0</div>
+          {loading ? (
+            <div className="h-8 w-12 mx-auto mb-1 bg-gray-200 rounded animate-pulse" />
+          ) : (
+            <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1">{fmt(stats?.totalPerfumes ?? 0)}</div>
+          )}
           <div className="text-gray-600 text-xs sm:text-sm">{t.admin.dashboard.totalPerfumes}</div>
         </Card>
+
         <Card className="p-4 sm:p-5 text-center">
-          <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-1">0</div>
+          {loading ? (
+            <div className="h-8 w-12 mx-auto mb-1 bg-gray-200 rounded animate-pulse" />
+          ) : (
+            <div className="text-2xl sm:text-3xl font-bold text-gray-700 mb-1">{fmt(stats?.totalOrders ?? 0)}</div>
+          )}
           <div className="text-gray-600 text-xs sm:text-sm">{t.admin.dashboard.todayOrders}</div>
         </Card>
+
         <Card className="p-4 sm:p-5 text-center">
-          <div className="text-2xl sm:text-3xl font-bold text-purple-600 mb-1">0 TND</div>
-          <div className="text-gray-600 text-xs sm:text-sm">{t.admin.dashboard.revenue}</div>
+          {loading ? (
+            <div className="h-8 w-12 mx-auto mb-1 bg-gray-200 rounded animate-pulse" />
+          ) : (
+            <div className="text-2xl sm:text-3xl font-bold text-yellow-600 mb-1">{fmt(stats?.pendingOrders ?? 0)}</div>
+          )}
+          <div className="text-gray-600 text-xs sm:text-sm">{t.admin.orders.statuses.pending}</div>
         </Card>
+
         <Card className="p-4 sm:p-5 text-center">
-          <div className="text-2xl sm:text-3xl font-bold text-yellow-600 mb-1">0</div>
-          <div className="text-gray-600 text-xs sm:text-sm">{t.admin.dashboard.clients}</div>
+          {loading ? (
+            <div className="h-8 w-12 mx-auto mb-1 bg-gray-200 rounded animate-pulse" />
+          ) : (
+            <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-1">{fmt(stats?.deliveredOrders ?? 0)}</div>
+          )}
+          <div className="text-gray-600 text-xs sm:text-sm">{t.admin.orders.statuses.delivered}</div>
+        </Card>
+
+        <Card className="p-4 sm:p-5 text-center">
+          {loading ? (
+            <div className="h-8 w-16 mx-auto mb-1 bg-gray-200 rounded animate-pulse" />
+          ) : (
+            <div className="text-2xl sm:text-3xl font-bold text-purple-600 mb-1">{fmt(stats?.revenue ?? 0)}</div>
+          )}
+          <div className="text-gray-600 text-xs sm:text-sm">{t.admin.dashboard.revenue} (TND)</div>
+        </Card>
+
+        <Card className="p-4 sm:p-5 text-center">
+          {loading ? (
+            <div className="h-8 w-12 mx-auto mb-1 bg-gray-200 rounded animate-pulse" />
+          ) : (
+            <div className="text-2xl sm:text-3xl font-bold text-orange-500 mb-1">{fmt(stats?.pendingPromoRequests ?? 0)}</div>
+          )}
+          <div className="text-gray-600 text-xs sm:text-sm">{t.admin.dashboard.promoRequests}</div>
         </Card>
       </div>
 
