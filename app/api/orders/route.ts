@@ -3,12 +3,9 @@ import { appwriteConfig, getServerDatabases } from '@/lib/appwrite-config';
 import { ID, Query, Permission, Role } from 'node-appwrite';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { calculateReferralReward } from '@/lib/promo-utils';
 import { sendOrderEmails } from '@/lib/email';
 
 const ORDERS_COLLECTION_ID = appwriteConfig.ordersCollectionId || 'orders';
-const PROMO_COLLECTION = () => appwriteConfig.promoRequestsCollectionId || 'promoCodeRequests';
-const EARNINGS_COLLECTION = () => appwriteConfig.referralEarningsCollectionId || 'referralEarnings';
 
 // GET: Fetch user's orders
 export async function GET(request: Request) {
@@ -61,6 +58,7 @@ export async function POST(request: Request) {
     // Resolve buyer identity: authenticated session takes priority, then guest email from form
     const buyerEmail = session?.user?.email || guestEmail || shippingAddress?.email;
     const buyerName = session?.user?.name || shippingAddress?.fullName || 'Guest';
+    const buyerUserId = (session?.user as any)?.id || buyerEmail || '';
 
     if (!buyerEmail) {
       return NextResponse.json(
@@ -107,6 +105,7 @@ export async function POST(request: Request) {
       status: 'pending',
       paymentmethod: 'cash_on_delivery',
       Ispaid: false,
+      ...(promoCodeId ? { promoCodeId, buyerUserId } : {}),
     };
 
     console.log('📦 Creating order with data:', {
@@ -144,62 +143,6 @@ export async function POST(request: Request) {
     }).catch((err) => {
       console.error('❌ sendOrderEmails failed (non-fatal):', err);
     });
-
-    // Create referral earning if a promo code was applied
-    if (promoCodeId) {
-      try {
-        const buyerUserId = (session?.user as any)?.id || buyerEmail;
-        const promoCol = PROMO_COLLECTION();
-        const earningsCol = EARNINGS_COLLECTION();
-
-        // Fetch promo code document to get owner info
-        const promoDoc = await databases.getDocument(
-          appwriteConfig.databaseId,
-          promoCol,
-          promoCodeId
-        );
-
-        // Self-referral guard (should already be blocked at validate step, but enforce here)
-        if (promoDoc.userId !== buyerUserId) {
-          // Idempotency: skip if a earning for this order already exists
-          const existingEarning = await databases.listDocuments(
-            appwriteConfig.databaseId,
-            earningsCol,
-            [Query.equal('orderId', order.$id), Query.limit(1)]
-          );
-
-          if (existingEarning.total === 0) {
-            const reward = calculateReferralReward(parseFloat(itemsPrice));
-            await databases.createDocument(
-              appwriteConfig.databaseId,
-              earningsCol,
-              ID.unique(),
-              {
-                orderId: order.$id,
-                promoCodeId,
-                ownerUserId: promoDoc.userId,
-                ownerEmail: promoDoc.userEmail || '',
-                buyerUserId,
-                buyerEmail: buyerEmail,
-                amount: reward,
-                currency: 'TND',
-              },
-              [
-                Permission.read(Role.any()),
-                Permission.update(Role.any()),
-                Permission.delete(Role.any()),
-              ]
-            );
-            console.log('💰 Referral earning created for order:', order.$id, 'amount:', reward);
-          }
-        } else {
-          console.warn('⚠️ Self-referral detected at order creation, skipping reward');
-        }
-      } catch (referralError: any) {
-        // Non-fatal: log but do not fail the order
-        console.error('❌ Failed to create referral earning (non-fatal):', referralError.message);
-      }
-    }
 
     return NextResponse.json({
       success: true,

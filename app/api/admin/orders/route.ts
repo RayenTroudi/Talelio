@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
 import { appwriteConfig, getServerDatabases } from '@/lib/appwrite-config';
-import { Query } from 'node-appwrite';
+import { ID, Query, Permission, Role } from 'node-appwrite';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { calculateReferralReward } from '@/lib/promo-utils';
 
 const ORDERS_COLLECTION_ID = appwriteConfig.ordersCollectionId || 'orders';
+const PROMO_COLLECTION = () => appwriteConfig.promoRequestsCollectionId || 'promoCodeRequests';
+const EARNINGS_COLLECTION = () => appwriteConfig.referralEarningsCollectionId || 'referralEarnings';
 
 /**
  * GET: Fetch ALL orders (Admin only)
@@ -134,6 +137,67 @@ export async function PATCH(request: Request) {
     );
 
     console.log(`✅ Order ${orderId} status updated to: ${status}`);
+
+    // When an order is delivered, create referral earning if a promo code was applied
+    if (status === 'delivered') {
+      try {
+        const promoCodeId = updatedOrder.promoCodeId as string | undefined;
+        const itemsPrice = updatedOrder.itemsPrice as number | undefined;
+        if (promoCodeId && itemsPrice) {
+          const promoCol = PROMO_COLLECTION();
+          const earningsCol = EARNINGS_COLLECTION();
+
+          const promoDoc = await databases.getDocument(
+            appwriteConfig.databaseId,
+            promoCol,
+            promoCodeId
+          );
+
+          const buyerUserId = updatedOrder.buyerUserId || updatedOrder.UserEmail || '';
+          const buyerEmail = updatedOrder.UserEmail || '';
+
+          // Self-referral guard
+          if (promoDoc.userId !== buyerUserId) {
+            // Idempotency: skip if earning already exists for this order
+            const existingEarning = await databases.listDocuments(
+              appwriteConfig.databaseId,
+              earningsCol,
+              [Query.equal('orderId', orderId), Query.limit(1)]
+            );
+
+            if (existingEarning.total === 0) {
+              const reward = calculateReferralReward(itemsPrice);
+              await databases.createDocument(
+                appwriteConfig.databaseId,
+                earningsCol,
+                ID.unique(),
+                {
+                  orderId,
+                  promoCodeId,
+                  ownerUserId: promoDoc.userId,
+                  ownerEmail: promoDoc.userEmail || '',
+                  buyerUserId,
+                  buyerEmail,
+                  amount: reward,
+                  currency: 'TND',
+                },
+                [
+                  Permission.read(Role.any()),
+                  Permission.update(Role.any()),
+                  Permission.delete(Role.any()),
+                ]
+              );
+              console.log('💰 Referral earning created on delivery for order:', orderId, 'amount:', reward);
+            }
+          } else {
+            console.warn('⚠️ Self-referral detected at delivery, skipping reward');
+          }
+        }
+      } catch (err: any) {
+        // Non-fatal — log but don't fail the status update
+        console.error('⚠️ Failed to create referral earning on delivery:', err.message);
+      }
+    }
 
     // When an order is cancelled, remove any referral commission earned from it
     if (status === 'cancelled') {
