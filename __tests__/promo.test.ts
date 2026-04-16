@@ -24,23 +24,19 @@ describe('generatePromoCode', () => {
 });
 
 describe('calculateReferralReward', () => {
-  it('always returns exactly 10% of the itemsPrice', () => {
-    expect(calculateReferralReward(100)).toBe(10);
-    expect(calculateReferralReward(200)).toBe(20);
-    expect(calculateReferralReward(53.5)).toBeCloseTo(5.35, 2);
+  it('always returns exactly 4 TND regardless of itemsPrice', () => {
+    expect(calculateReferralReward(100)).toBe(4);
+    expect(calculateReferralReward(200)).toBe(4);
+    expect(calculateReferralReward(53.5)).toBe(4);
   });
 
-  it('rounds to 2 decimal places', () => {
-    const result = calculateReferralReward(13.33);
-    const decimals = result.toString().split('.')[1]?.length ?? 0;
-    expect(decimals).toBeLessThanOrEqual(2);
+  it('returns a flat 4 TND for any order value', () => {
+    expect(calculateReferralReward(13.33)).toBe(4);
   });
 
-  it('excludes shipping — only based on itemsPrice (buyer pays full price)', () => {
-    // 50 TND items + 8 TND shipping = 58 TND total (no discount for buyer)
-    // Reward must be 10% of 50, NOT 10% of 58
-    expect(calculateReferralReward(50)).toBe(5);
-    expect(calculateReferralReward(50)).not.toBe(calculateReferralReward(58));
+  it('flat reward is independent of order size — buyer pays full price', () => {
+    expect(calculateReferralReward(50)).toBe(4);
+    expect(calculateReferralReward(58)).toBe(4);
   });
 });
 
@@ -138,7 +134,7 @@ describe('Checkout promo apply (logic)', () => {
 // --- Reward idempotency ---
 describe('Referral reward idempotency (logic)', () => {
   it('skips creating a second earning when one already exists for the same orderId', () => {
-    const existingEarnings = [{ orderId: 'order-999', amount: 10 }];
+    const existingEarnings = [{ orderId: 'order-999', amount: 4 }];
     const shouldCreate = existingEarnings.length === 0;
     expect(shouldCreate).toBe(false); // earning already exists — skip
   });
@@ -151,28 +147,26 @@ describe('Referral reward idempotency (logic)', () => {
 });
 
 // --- Reward amount calculation ---
-describe('Referral reward amount (10% of itemsPrice, buyer pays full price)', () => {
-  it('calculates reward correctly for various cart values', () => {
+describe('Referral reward amount (flat 4 TND, buyer pays full price)', () => {
+  it('always returns 4 TND regardless of cart value', () => {
     const cases: [number, number][] = [
-      [100, 10],
-      [200, 20],
-      [75, 7.5],
-      [0, 0],
+      [100, 4],
+      [200, 4],
+      [75, 4],
+      [0, 4],
     ];
     cases.forEach(([itemsPrice, expected]) => {
-      expect(calculateReferralReward(itemsPrice)).toBeCloseTo(expected, 2);
+      expect(calculateReferralReward(itemsPrice)).toBe(expected);
     });
   });
 
-  it('reward is based on product subtotal only — buyer pays no discount', () => {
+  it('reward is flat — not affected by shipping or order total', () => {
     const itemsPrice = 100;
     const shippingPrice = 8;
-    // Buyer pays full price: itemsPrice + shippingPrice
-    const totalPaid = itemsPrice + shippingPrice; // 108
+    const totalPaid = itemsPrice + shippingPrice;
 
-    const reward = calculateReferralReward(itemsPrice); // 10% of 100 = 10
-    expect(reward).toBe(10);
-    // Reward is not based on full total paid
-    expect(reward).not.toBe(calculateReferralReward(totalPaid));
+    const reward = calculateReferralReward(itemsPrice);
+    expect(reward).toBe(4);
+    expect(reward).toBe(calculateReferralReward(totalPaid));
   });
 });

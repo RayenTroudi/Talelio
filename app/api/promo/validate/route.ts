@@ -11,7 +11,7 @@ const COLLECTION = () => appwriteConfig.promoRequestsCollectionId || 'promoCodeR
  * Validates an approved referral code.
  * - Confirms code exists and is APPROVED
  * - Enforces self-referral prevention
- * - No discount is applied to the buyer; the code owner earns 10% of the order subtotal.
+ * - No discount is applied to the buyer; the code owner earns a flat 4 TND per order.
  */
 export async function GET(request: Request) {
   try {

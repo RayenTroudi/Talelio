@@ -8,9 +8,9 @@ export function generatePromoCode(): string {
 
 /**
  * Calculate the referral reward for the promo code owner.
- * Always 10% of the order's product subtotal (itemsPrice).
+ * Always a flat 4 TND per order, regardless of order value.
  * The buyer pays full price — this reward is paid separately to the owner.
  */
-export function calculateReferralReward(itemsPrice: number): number {
-  return parseFloat((itemsPrice * 0.1).toFixed(2));
+export function calculateReferralReward(_itemsPrice: number): number {
+  return 4;
 }
