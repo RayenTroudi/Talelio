@@ -36,8 +36,9 @@ export async function GET() {
  * POST /api/promo/request
  * Creates a PENDING promo code request for the authenticated user.
  * Only one active (PENDING or APPROVED) request is allowed per user.
+ * Optionally accepts a referredByPromoCode in the JSON body.
  */
-export async function POST() {
+export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
@@ -45,7 +46,35 @@ export async function POST() {
     }
     const userId: string = (session.user as any).id || session.user.email;
 
+    let referredByPromoCode: string | null = null;
+    let referredByUserId: string | null = null;
+
+    try {
+      const body = await request.json();
+      if (body?.referredByPromoCode) {
+        referredByPromoCode = String(body.referredByPromoCode).trim().toUpperCase();
+      }
+    } catch {
+      // No body or non-JSON — treat as no referral code
+    }
+
     const databases = getServerDatabases();
+
+    if (referredByPromoCode) {
+      const referrerResult = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        COLLECTION(),
+        [Query.equal('promoCode', referredByPromoCode), Query.equal('status', 'APPROVED'), Query.limit(1)]
+      );
+      if (referrerResult.total === 0) {
+        return NextResponse.json({ error: 'رمز الإحالة غير صالح' }, { status: 400 });
+      }
+      const referrerDoc = referrerResult.documents[0];
+      if (referrerDoc.userId === userId) {
+        return NextResponse.json({ error: 'لا يمكنك استخدام رمز إحالتك الخاص' }, { status: 409 });
+      }
+      referredByUserId = referrerDoc.userId as string;
+    }
 
     // Check for an existing non-denied request
     const existing = await databases.listDocuments(
@@ -61,16 +90,20 @@ export async function POST() {
       );
     }
 
+    const docData: Record<string, any> = {
+      userId,
+      userEmail: session.user.email,
+      userName: session.user.name || '',
+      status: 'PENDING',
+    };
+    if (referredByPromoCode) docData.referredByPromoCode = referredByPromoCode;
+    if (referredByUserId)   docData.referredByUserId   = referredByUserId;
+
     const doc = await databases.createDocument(
       appwriteConfig.databaseId,
       COLLECTION(),
       ID.unique(),
-      {
-        userId,
-        userEmail: session.user.email,
-        userName: session.user.name || '',
-        status: 'PENDING',
-      },
+      docData,
       [
         Permission.read(Role.any()),
         Permission.update(Role.any()),

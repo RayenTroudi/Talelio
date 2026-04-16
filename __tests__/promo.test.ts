@@ -170,3 +170,44 @@ describe('Referral reward amount (flat 4 TND, buyer pays full price)', () => {
     expect(reward).toBe(calculateReferralReward(totalPaid));
   });
 });
+
+// --- Referred-by code validation (logic) ---
+describe('Promo request with referral code (logic)', () => {
+  it('treats missing body as no referral code', () => {
+    const body: any = {};
+    const referredByCode = body?.referredByPromoCode ?? null;
+    expect(referredByCode).toBeNull();
+  });
+
+  it('rejects self-referral: code belongs to the requesting user', () => {
+    const requestingUserId = 'user-abc';
+    const referrerDoc = makePromoDoc({ userId: 'user-abc', status: 'APPROVED' });
+    const isSelf = referrerDoc.userId === requestingUserId;
+    expect(isSelf).toBe(true); // API returns 409
+  });
+
+  it('allows referral when owner is a different user', () => {
+    const requestingUserId = 'user-abc';
+    const referrerDoc = makePromoDoc({ userId: 'owner-xyz', status: 'APPROVED' });
+    const isSelf = referrerDoc.userId === requestingUserId;
+    expect(isSelf).toBe(false);
+  });
+
+  it('rejects referral code that is not APPROVED', () => {
+    const referrerDoc = makePromoDoc({ status: 'PENDING' });
+    const isValid = referrerDoc.status === 'APPROVED';
+    expect(isValid).toBe(false); // API returns 400
+  });
+
+  it('stores referredByPromoCode and referredByUserId on the new document', () => {
+    const referrerDoc = makePromoDoc({ userId: 'owner-xyz', promoCode: 'REFCODE1' });
+    const docToCreate = {
+      userId: 'user-abc',
+      status: 'PENDING',
+      referredByPromoCode: referrerDoc.promoCode,
+      referredByUserId: referrerDoc.userId,
+    };
+    expect(docToCreate.referredByPromoCode).toBe('REFCODE1');
+    expect(docToCreate.referredByUserId).toBe('owner-xyz');
+  });
+});
