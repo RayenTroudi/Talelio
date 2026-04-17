@@ -295,11 +295,11 @@ function AccountPageContent() {
                 <div className="text-right space-y-4">
                   <p className="text-stone-600 font-light text-sm">{t.account.referralDesc}</p>
                   <div className="space-y-1">
-                    <label htmlFor="referral-input-code" className="block text-xs font-light text-stone-500 text-right">
+                    <label htmlFor="referral-input-new" className="block text-xs font-light text-stone-500 text-right">
                       {t.account.referredByLabel}
                     </label>
                     <input
-                      id="referral-input-code"
+                      id="referral-input-new"
                       name="referredByPromoCode"
                       type="text"
                       value={referralInputCode}
@@ -344,11 +344,11 @@ function AccountPageContent() {
                     {t.account.deniedStatus}
                   </span>
                   <div className="space-y-1">
-                    <label htmlFor="referral-input-code" className="block text-xs font-light text-stone-500 text-right">
+                    <label htmlFor="referral-input-denied" className="block text-xs font-light text-stone-500 text-right">
                       {t.account.referredByLabel}
                     </label>
                     <input
-                      id="referral-input-code"
+                      id="referral-input-denied"
                       name="referredByPromoCode"
                       type="text"
                       value={referralInputCode}
