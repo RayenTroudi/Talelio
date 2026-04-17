@@ -295,10 +295,12 @@ function AccountPageContent() {
                 <div className="text-right space-y-4">
                   <p className="text-stone-600 font-light text-sm">{t.account.referralDesc}</p>
                   <div className="space-y-1">
-                    <label className="block text-xs font-light text-stone-500 text-right">
+                    <label htmlFor="referral-input-code" className="block text-xs font-light text-stone-500 text-right">
                       {t.account.referredByLabel}
                     </label>
                     <input
+                      id="referral-input-code"
+                      name="referredByPromoCode"
                       type="text"
                       value={referralInputCode}
                       onChange={e => setReferralInputCode(e.target.value.toUpperCase())}
@@ -342,10 +344,12 @@ function AccountPageContent() {
                     {t.account.deniedStatus}
                   </span>
                   <div className="space-y-1">
-                    <label className="block text-xs font-light text-stone-500 text-right">
+                    <label htmlFor="referral-input-code" className="block text-xs font-light text-stone-500 text-right">
                       {t.account.referredByLabel}
                     </label>
                     <input
+                      id="referral-input-code"
+                      name="referredByPromoCode"
                       type="text"
                       value={referralInputCode}
                       onChange={e => setReferralInputCode(e.target.value.toUpperCase())}
