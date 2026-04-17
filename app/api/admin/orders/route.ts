@@ -160,16 +160,17 @@ export async function PATCH(request: Request) {
             console.warn('⚠️ Self-referral detected at delivery, skipping reward');
           } else {
             // Parse item count from the order
-            let thisOrderItems = 0;
+            let thisOrderItems = 1;
             try {
               const addr: any = JSON.parse(updatedOrder.shipingAdress || '{}');
               const items: any[] = addr.items || [];
-              thisOrderItems = items.reduce(
+              const parsed = items.reduce(
                 (sum: number, item: any) => sum + (Number(item.quantity) || 1),
                 0
               );
+              if (parsed > 0) thisOrderItems = parsed;
             } catch {
-              console.warn('⚠️ Could not parse items from shipingAdress, defaulting itemsCount to 0');
+              console.warn('⚠️ Could not parse items from shipingAdress, defaulting itemsCount to 1');
             }
 
             // Idempotency: skip if seller already has an earning for this order
@@ -198,17 +199,18 @@ export async function PATCH(request: Request) {
               ];
 
               if (!referredByUserId) {
-                // Standard seller — full 4 TND
+                // Standard seller — 4 TND per item
+                const sellerAmount = parseFloat((4 * thisOrderItems).toFixed(2));
                 await databases.createDocument(
                   appwriteConfig.databaseId, earningsCol, ID.unique(),
-                  { ...commonFields, ownerUserId: sellerUserId, ownerEmail: promoDoc.userEmail || '', amount: 4, earningType: 'direct' },
+                  { ...commonFields, ownerUserId: sellerUserId, ownerEmail: promoDoc.userEmail || '', amount: sellerAmount, earningType: 'direct' },
                   perms
                 );
-                console.log('💰 Standard earning: 4 TND for', sellerUserId, 'order:', orderId);
+                console.log(`💰 Standard earning: ${sellerAmount} TND (${thisOrderItems} items × 4) for`, sellerUserId, 'order:', orderId);
               } else {
-                // Referred seller — count items already sold in previous delivered orders
-                // Fetch up to 500 past direct earnings to sum itemsCount for threshold check.
-                // The threshold is 5 items, but sellers may have many earning records over time.
+                // Referred seller — count items already sold in previous delivered orders.
+                // Threshold: first 5 items sold → 2 TND/item (split with referrer).
+                // After threshold → 4 TND/item (seller only).
                 const prevEarnings = await databases.listDocuments(
                   appwriteConfig.databaseId,
                   earningsCol,
@@ -219,16 +221,27 @@ export async function PATCH(request: Request) {
                   0
                 );
 
-                if (itemsSoldBefore < 5) {
-                  // Split: 2 TND each
-                  await databases.createDocument(
-                    appwriteConfig.databaseId, earningsCol, ID.unique(),
-                    { ...commonFields, ownerUserId: sellerUserId, ownerEmail: promoDoc.userEmail || '', amount: 2, earningType: 'direct' },
-                    perms
-                  );
-                  console.log('💰 Split earning (seller 2 TND):', sellerUserId, 'order:', orderId, 'itemsSoldBefore:', itemsSoldBefore);
+                // Split the current order across the threshold boundary.
+                // splitItems = items that still fall within the first-5 window.
+                // fullItems  = items that are already past the threshold.
+                const THRESHOLD = 5;
+                const splitItems = Math.max(0, Math.min(thisOrderItems, THRESHOLD - itemsSoldBefore));
+                const fullItems  = thisOrderItems - splitItems;
 
-                  // Referrer earning — separate idempotency check
+                // Seller amount: 2 TND × splitItems + 4 TND × fullItems
+                const sellerAmount = parseFloat((splitItems * 2 + fullItems * 4).toFixed(2));
+                // Referrer amount: 2 TND only for the split portion
+                const referrerAmount = parseFloat((splitItems * 2).toFixed(2));
+
+                await databases.createDocument(
+                  appwriteConfig.databaseId, earningsCol, ID.unique(),
+                  { ...commonFields, ownerUserId: sellerUserId, ownerEmail: promoDoc.userEmail || '', amount: sellerAmount, earningType: 'direct' },
+                  perms
+                );
+                console.log(`💰 Referred seller earning: ${sellerAmount} TND (${splitItems} split items × 2 + ${fullItems} full items × 4) for`, sellerUserId, 'order:', orderId, 'itemsSoldBefore:', itemsSoldBefore);
+
+                // Referrer only earns on split items
+                if (referrerAmount > 0) {
                   const existingReferrerEarning = await databases.listDocuments(
                     appwriteConfig.databaseId,
                     earningsCol,
@@ -237,19 +250,13 @@ export async function PATCH(request: Request) {
                   if (existingReferrerEarning.total === 0) {
                     await databases.createDocument(
                       appwriteConfig.databaseId, earningsCol, ID.unique(),
-                      { ...commonFields, ownerUserId: referredByUserId, ownerEmail: '', amount: 2, earningType: 'meta' },
+                      { ...commonFields, ownerUserId: referredByUserId, ownerEmail: '', amount: referrerAmount, earningType: 'meta' },
                       perms
                     );
-                    console.log('💰 Split earning (referrer 2 TND):', referredByUserId, 'order:', orderId);
+                    console.log(`💰 Referrer earning: ${referrerAmount} TND (${splitItems} items × 2) for`, referredByUserId, 'order:', orderId);
                   }
                 } else {
-                  // Past threshold — full 4 TND to seller
-                  await databases.createDocument(
-                    appwriteConfig.databaseId, earningsCol, ID.unique(),
-                    { ...commonFields, ownerUserId: sellerUserId, ownerEmail: promoDoc.userEmail || '', amount: 4, earningType: 'direct' },
-                    perms
-                  );
-                  console.log('💰 Post-threshold earning (4 TND):', sellerUserId, 'order:', orderId, 'itemsSoldBefore:', itemsSoldBefore);
+                  console.log(`ℹ️ Referrer earns 0 TND for order ${orderId} — referred seller already past threshold`);
                 }
               }
             }
