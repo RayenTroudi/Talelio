@@ -48,6 +48,7 @@ function AccountPageContent() {
   const [promoRequest, setPromoRequest] = useState<any>(null);
   const [promoLoading, setPromoLoading] = useState(false);
   const [promoRequestLoading, setPromoRequestLoading] = useState(true);
+  const [referralInputCode, setReferralInputCode] = useState('');
 
   const fetchPromoRequest = async () => {
     try {
@@ -66,10 +67,19 @@ function AccountPageContent() {
   const handleRequestPromoCode = async () => {
     setPromoLoading(true);
     try {
-      const res = await fetch('/api/promo/request', { method: 'POST' });
+      const body: Record<string, string> = {};
+      if (referralInputCode.trim()) {
+        body.referredByPromoCode = referralInputCode.trim().toUpperCase();
+      }
+      const res = await fetch('/api/promo/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
       const data = await res.json();
       if (res.ok) {
         setPromoRequest(data.request);
+        setReferralInputCode('');
         showToast(t.account.toasts.requestSuccess, {
           description: t.account.toasts.requestSuccessDesc,
           variant: 'success',
@@ -284,6 +294,20 @@ function AccountPageContent() {
               ) : !promoRequest ? (
                 <div className="text-right space-y-4">
                   <p className="text-stone-600 font-light text-sm">{t.account.referralDesc}</p>
+                  <div className="space-y-1">
+                    <label className="block text-xs font-light text-stone-500 text-right">
+                      {t.account.referredByLabel}
+                    </label>
+                    <input
+                      type="text"
+                      value={referralInputCode}
+                      onChange={e => setReferralInputCode(e.target.value.toUpperCase())}
+                      placeholder={t.account.referredByPlaceholder}
+                      maxLength={8}
+                      className="w-full px-4 py-2 rounded-xl border border-gold-200/60 bg-white/70 text-stone-900 font-mono text-sm tracking-widest placeholder:font-sans placeholder:tracking-normal placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-gold-400/50 text-right"
+                      dir="ltr"
+                    />
+                  </div>
                   <button
                     onClick={handleRequestPromoCode}
                     disabled={promoLoading}
@@ -317,6 +341,20 @@ function AccountPageContent() {
                   <span className="inline-block px-3 py-1 rounded-full text-xs font-light bg-red-100 text-red-700">
                     {t.account.deniedStatus}
                   </span>
+                  <div className="space-y-1">
+                    <label className="block text-xs font-light text-stone-500 text-right">
+                      {t.account.referredByLabel}
+                    </label>
+                    <input
+                      type="text"
+                      value={referralInputCode}
+                      onChange={e => setReferralInputCode(e.target.value.toUpperCase())}
+                      placeholder={t.account.referredByPlaceholder}
+                      maxLength={8}
+                      className="w-full px-4 py-2 rounded-xl border border-gold-200/60 bg-white/70 text-stone-900 font-mono text-sm tracking-widest placeholder:font-sans placeholder:tracking-normal placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-gold-400/50 text-right"
+                      dir="ltr"
+                    />
+                  </div>
                   <button
                     onClick={handleRequestPromoCode}
                     disabled={promoLoading}
