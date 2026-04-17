@@ -3,7 +3,6 @@ import { appwriteConfig, getServerDatabases } from '@/lib/appwrite-config';
 import { ID, Query, Permission, Role } from 'node-appwrite';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { calculateReferralReward } from '@/lib/promo-utils';
 
 const ORDERS_COLLECTION_ID = appwriteConfig.ordersCollectionId || 'orders';
 const PROMO_COLLECTION = () => appwriteConfig.promoRequestsCollectionId || 'promoCodeRequests';
@@ -208,10 +207,12 @@ export async function PATCH(request: Request) {
                 console.log('💰 Standard earning: 4 TND for', sellerUserId, 'order:', orderId);
               } else {
                 // Referred seller — count items already sold in previous delivered orders
+                // Fetch up to 500 past direct earnings to sum itemsCount for threshold check.
+                // The threshold is 5 items, but sellers may have many earning records over time.
                 const prevEarnings = await databases.listDocuments(
                   appwriteConfig.databaseId,
                   earningsCol,
-                  [Query.equal('ownerUserId', sellerUserId), Query.equal('earningType', 'direct'), Query.limit(100)]
+                  [Query.equal('ownerUserId', sellerUserId), Query.equal('earningType', 'direct'), Query.limit(500)]
                 );
                 const itemsSoldBefore = prevEarnings.documents.reduce(
                   (sum: number, doc: any) => sum + (Number(doc.itemsCount) || 0),
