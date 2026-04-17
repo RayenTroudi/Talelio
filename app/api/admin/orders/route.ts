@@ -142,9 +142,9 @@ export async function PATCH(request: Request) {
     if (status === 'delivered') {
       try {
         const promoCodeId = updatedOrder.promoCodeId as string | undefined;
-        const itemsPrice = updatedOrder.itemsPrice as number | undefined;
+        const itemsPrice  = updatedOrder.itemsPrice  as number | undefined;
         if (promoCodeId && itemsPrice) {
-          const promoCol = PROMO_COLLECTION();
+          const promoCol    = PROMO_COLLECTION();
           const earningsCol = EARNINGS_COLLECTION();
 
           const promoDoc = await databases.getDocument(
@@ -153,48 +153,108 @@ export async function PATCH(request: Request) {
             promoCodeId
           );
 
-          const buyerUserId = updatedOrder.buyerUserId || updatedOrder.UserEmail || '';
-          const buyerEmail = updatedOrder.UserEmail || '';
+          const buyerUserId  = updatedOrder.buyerUserId || updatedOrder.UserEmail || '';
+          const buyerEmail   = updatedOrder.UserEmail || '';
+          const sellerUserId = promoDoc.userId as string;
 
-          // Self-referral guard
-          if (promoDoc.userId !== buyerUserId) {
-            // Idempotency: skip if earning already exists for this order
-            const existingEarning = await databases.listDocuments(
+          if (sellerUserId === buyerUserId) {
+            console.warn('⚠️ Self-referral detected at delivery, skipping reward');
+          } else {
+            // Parse item count from the order
+            let thisOrderItems = 0;
+            try {
+              const addr: any = JSON.parse(updatedOrder.shipingAdress || '{}');
+              const items: any[] = addr.items || [];
+              thisOrderItems = items.reduce(
+                (sum: number, item: any) => sum + (Number(item.quantity) || 1),
+                0
+              );
+            } catch {
+              console.warn('⚠️ Could not parse items from shipingAdress, defaulting itemsCount to 0');
+            }
+
+            // Idempotency: skip if seller already has an earning for this order
+            const existingSellerEarning = await databases.listDocuments(
               appwriteConfig.databaseId,
               earningsCol,
-              [Query.equal('orderId', orderId), Query.limit(1)]
+              [Query.equal('orderId', orderId), Query.equal('ownerUserId', sellerUserId), Query.limit(1)]
             );
 
-            if (existingEarning.total === 0) {
-              const reward = calculateReferralReward(itemsPrice);
-              await databases.createDocument(
-                appwriteConfig.databaseId,
-                earningsCol,
-                ID.unique(),
-                {
-                  orderId,
-                  promoCodeId,
-                  ownerUserId: promoDoc.userId,
-                  ownerEmail: promoDoc.userEmail || '',
-                  buyerUserId,
-                  buyerEmail,
-                  amount: reward,
-                  currency: 'TND',
-                },
-                [
-                  Permission.read(Role.any()),
-                  Permission.update(Role.any()),
-                  Permission.delete(Role.any()),
-                ]
-              );
-              console.log('💰 Referral earning created on delivery for order:', orderId, 'amount:', reward);
+            if (existingSellerEarning.total > 0) {
+              console.log('ℹ️ Earning already exists for order', orderId, '— skipping');
+            } else {
+              const referredByUserId = promoDoc.referredByUserId as string | undefined;
+              const commonFields = {
+                orderId,
+                promoCodeId,
+                buyerUserId,
+                buyerEmail,
+                currency: 'TND',
+                itemsCount: thisOrderItems,
+              };
+              const perms = [
+                Permission.read(Role.any()),
+                Permission.update(Role.any()),
+                Permission.delete(Role.any()),
+              ];
+
+              if (!referredByUserId) {
+                // Standard seller — full 4 TND
+                await databases.createDocument(
+                  appwriteConfig.databaseId, earningsCol, ID.unique(),
+                  { ...commonFields, ownerUserId: sellerUserId, ownerEmail: promoDoc.userEmail || '', amount: 4, earningType: 'direct' },
+                  perms
+                );
+                console.log('💰 Standard earning: 4 TND for', sellerUserId, 'order:', orderId);
+              } else {
+                // Referred seller — count items already sold in previous delivered orders
+                const prevEarnings = await databases.listDocuments(
+                  appwriteConfig.databaseId,
+                  earningsCol,
+                  [Query.equal('ownerUserId', sellerUserId), Query.equal('earningType', 'direct'), Query.limit(100)]
+                );
+                const itemsSoldBefore = prevEarnings.documents.reduce(
+                  (sum: number, doc: any) => sum + (Number(doc.itemsCount) || 0),
+                  0
+                );
+
+                if (itemsSoldBefore < 5) {
+                  // Split: 2 TND each
+                  await databases.createDocument(
+                    appwriteConfig.databaseId, earningsCol, ID.unique(),
+                    { ...commonFields, ownerUserId: sellerUserId, ownerEmail: promoDoc.userEmail || '', amount: 2, earningType: 'direct' },
+                    perms
+                  );
+                  console.log('💰 Split earning (seller 2 TND):', sellerUserId, 'order:', orderId, 'itemsSoldBefore:', itemsSoldBefore);
+
+                  // Referrer earning — separate idempotency check
+                  const existingReferrerEarning = await databases.listDocuments(
+                    appwriteConfig.databaseId,
+                    earningsCol,
+                    [Query.equal('orderId', orderId), Query.equal('ownerUserId', referredByUserId), Query.limit(1)]
+                  );
+                  if (existingReferrerEarning.total === 0) {
+                    await databases.createDocument(
+                      appwriteConfig.databaseId, earningsCol, ID.unique(),
+                      { ...commonFields, ownerUserId: referredByUserId, ownerEmail: '', amount: 2, earningType: 'meta' },
+                      perms
+                    );
+                    console.log('💰 Split earning (referrer 2 TND):', referredByUserId, 'order:', orderId);
+                  }
+                } else {
+                  // Past threshold — full 4 TND to seller
+                  await databases.createDocument(
+                    appwriteConfig.databaseId, earningsCol, ID.unique(),
+                    { ...commonFields, ownerUserId: sellerUserId, ownerEmail: promoDoc.userEmail || '', amount: 4, earningType: 'direct' },
+                    perms
+                  );
+                  console.log('💰 Post-threshold earning (4 TND):', sellerUserId, 'order:', orderId, 'itemsSoldBefore:', itemsSoldBefore);
+                }
+              }
             }
-          } else {
-            console.warn('⚠️ Self-referral detected at delivery, skipping reward');
           }
         }
       } catch (err: any) {
-        // Non-fatal — log but don't fail the status update
         console.error('⚠️ Failed to create referral earning on delivery:', err.message);
       }
     }

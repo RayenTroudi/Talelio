@@ -211,3 +211,70 @@ describe('Promo request with referral code (logic)', () => {
     expect(docToCreate.referredByUserId).toBe('owner-xyz');
   });
 });
+
+// --- Split earning logic ---
+describe('Split earning logic for referred sellers', () => {
+  const makeSplitEarning = (overrides: Record<string, any> = {}) => ({
+    ownerUserId: 'seller-123',
+    earningType: 'direct',
+    itemsCount: 2,
+    amount: 2,
+    ...overrides,
+  });
+
+  it('seller with 0 items sold before is under the 5-item threshold', () => {
+    const prevEarnings: any[] = [];
+    const itemsSoldBefore = prevEarnings.reduce((sum, d) => sum + (Number(d.itemsCount) || 0), 0);
+    expect(itemsSoldBefore).toBe(0);
+    expect(itemsSoldBefore < 5).toBe(true);
+  });
+
+  it('seller with 3 items sold before is still under threshold', () => {
+    const prevEarnings = [makeSplitEarning({ itemsCount: 3 })];
+    const itemsSoldBefore = prevEarnings.reduce((sum, d) => sum + (Number(d.itemsCount) || 0), 0);
+    expect(itemsSoldBefore).toBe(3);
+    expect(itemsSoldBefore < 5).toBe(true);
+  });
+
+  it('seller with exactly 5 items sold before is at threshold — no more split', () => {
+    const prevEarnings = [makeSplitEarning({ itemsCount: 5 })];
+    const itemsSoldBefore = prevEarnings.reduce((sum, d) => sum + (Number(d.itemsCount) || 0), 0);
+    expect(itemsSoldBefore).toBe(5);
+    expect(itemsSoldBefore < 5).toBe(false);
+  });
+
+  it('seller with 5 orders of 1 item each hits threshold exactly', () => {
+    const prevEarnings = Array.from({ length: 5 }, () => makeSplitEarning({ itemsCount: 1 }));
+    const itemsSoldBefore = prevEarnings.reduce((sum, d) => sum + (Number(d.itemsCount) || 0), 0);
+    expect(itemsSoldBefore).toBe(5);
+    expect(itemsSoldBefore < 5).toBe(false);
+  });
+
+  it('under threshold: seller gets 2 TND, referrer gets 2 TND', () => {
+    const itemsSoldBefore = 2;
+    const sellerAmount  = itemsSoldBefore < 5 ? 2 : 4;
+    const referrerAmount = itemsSoldBefore < 5 ? 2 : 0;
+    expect(sellerAmount).toBe(2);
+    expect(referrerAmount).toBe(2);
+  });
+
+  it('over threshold: seller gets 4 TND, referrer gets 0 TND', () => {
+    const itemsSoldBefore = 5;
+    const sellerAmount  = itemsSoldBefore < 5 ? 2 : 4;
+    const referrerAmount = itemsSoldBefore < 5 ? 2 : 0;
+    expect(sellerAmount).toBe(4);
+    expect(referrerAmount).toBe(0);
+  });
+
+  it('sums item quantities correctly from items array', () => {
+    const items = [{ quantity: 2 }, { quantity: 3 }];
+    const count = items.reduce((sum: number, item: any) => sum + (Number(item.quantity) || 1), 0);
+    expect(count).toBe(5);
+  });
+
+  it('defaults to 1 per item when quantity field is missing', () => {
+    const items = [{}, {}];
+    const count = items.reduce((sum: number, item: any) => sum + (Number(item.quantity) || 1), 0);
+    expect(count).toBe(2);
+  });
+});
