@@ -51,6 +51,24 @@ const CartSlice = createSlice({
             state.showSidebar = true
         },
 
+        buyNowItem:(state:any, action:any) => {
+            const item = action.payload
+            const existItem = state.CartItems.find((x:any) => x.id === item.id && x.size === item.size)
+            
+            if(existItem) {
+                state.CartItems = state.CartItems.map((x:any) => 
+                    x.id === existItem.id && x.size === existItem.size ? item : x
+                )
+            } else {
+                state.CartItems = [...state.CartItems, item]
+            }
+            
+            recalcPrices(state)
+            state.loading = false
+            Cookies.set("cart", JSON.stringify(state))
+            state.showSidebar = false
+        },
+
         toggleCartSidebar:(state:any) => {
             state.showSidebar = !state.showSidebar
         },
@@ -108,5 +126,5 @@ const CartSlice = createSlice({
     }
 })
 
-export const {addToCart, toggleCartSidebar, removeFromCart, hideloading, saveShippingAddress, clearCart, setPromoCode, clearPromoCode} = CartSlice.actions
+export const {addToCart, buyNowItem, toggleCartSidebar, removeFromCart, hideloading, saveShippingAddress, clearCart, setPromoCode, clearPromoCode} = CartSlice.actions
 export default CartSlice.reducer

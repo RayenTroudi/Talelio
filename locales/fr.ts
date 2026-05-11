@@ -389,6 +389,7 @@ const fr = {
     loading: "Chargement...",
     notFound: "Produit introuvable",
     addToCart: "Ajouter au panier",
+    buyNow: "Acheter Maintenant",
     addToCartOutOfStock: "Rupture de stock",
     selectSize: "Choisir la taille",
     topNotes: "Notes de tête",

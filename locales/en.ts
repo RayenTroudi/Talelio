@@ -389,6 +389,7 @@ const en = {
     loading: "Loading...",
     notFound: "Product not found",
     addToCart: "Add to Cart",
+    buyNow: "Buy Now",
     addToCartOutOfStock: "Out of Stock",
     selectSize: "Select Size",
     topNotes: "Top Notes",

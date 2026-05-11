@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { ProductImageUI } from "@/types";
 import { useDispatch } from "react-redux";
-import { addToCart } from "@/app/Redux/slices/CartSlice";
+import { addToCart, buyNowItem } from "@/app/Redux/slices/CartSlice";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/app/components/LocaleProvider";
 
@@ -78,6 +78,21 @@ export function ProductDetail({
         size: `${selectedSize}ml`,
         qty: quantity,
       }));
+    }
+  };
+
+  const handleBuyNow = () => {
+    if (selectedSize && isInStock) {
+      dispatch(buyNowItem({
+        id,
+        Name: name,
+        Brand: brand,
+        Price: finalPrice,
+        Image: images[0]?.src || "",
+        size: `${selectedSize}ml`,
+        qty: quantity,
+      }));
+      router.push("/Shipping");
     }
   };
 
@@ -236,19 +251,34 @@ export function ProductDetail({
               </div>
 
               {/* Add to Cart Button */}
-              <button
-                onClick={handleAddToCart}
-                disabled={!selectedSize || !isInStock}
-                className="
-                  w-full py-5 rounded-2xl font-light text-lg tracking-wide
-                  bg-gradient-to-r from-gold-500 to-gold-600 text-white shadow-xl shadow-gold-500/30
-                  hover:from-gold-600 hover:to-gold-700 hover:shadow-2xl hover:shadow-gold-600/40
-                  disabled:from-stone-200 disabled:to-stone-300 disabled:text-stone-400 disabled:cursor-not-allowed disabled:shadow-none
-                  transition-all duration-300 transform hover:-translate-y-0.5
-                "
-              >
-                {!selectedSize ? t.productDetail.selectSize : t.productDetail.addToCart}
-              </button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button
+                  onClick={handleAddToCart}
+                  disabled={!selectedSize || !isInStock}
+                  className="
+                    w-full py-5 rounded-2xl font-light text-lg tracking-wide
+                    bg-gradient-to-r from-stone-500 to-stone-600 text-white shadow-xl shadow-stone-500/30
+                    hover:from-stone-600 hover:to-stone-700 hover:shadow-2xl hover:shadow-stone-600/40
+                    disabled:from-stone-200 disabled:to-stone-300 disabled:text-stone-400 disabled:cursor-not-allowed disabled:shadow-none
+                    transition-all duration-300 transform hover:-translate-y-0.5
+                  "
+                >
+                  {t.productDetail.addToCart}
+                </button>
+                <button
+                  onClick={handleBuyNow}
+                  disabled={!selectedSize || !isInStock}
+                  className="
+                    w-full py-5 rounded-2xl font-light text-lg tracking-wide
+                    bg-gradient-to-r from-gold-500 to-gold-600 text-white shadow-xl shadow-gold-500/30
+                    hover:from-gold-600 hover:to-gold-700 hover:shadow-2xl hover:shadow-gold-600/40
+                    disabled:from-stone-200 disabled:to-stone-300 disabled:text-stone-400 disabled:cursor-not-allowed disabled:shadow-none
+                    transition-all duration-300 transform hover:-translate-y-0.5
+                  "
+                >
+                  {t.productDetail.buyNow}
+                </button>
+              </div>
 
               {/* Trust Badges */}
               <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-stone-200">

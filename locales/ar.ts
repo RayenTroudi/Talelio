@@ -389,6 +389,7 @@ const ar = {
     loading: "جاري التحميل...",
     notFound: "المنتج غير موجود",
     addToCart: "أضف إلى السلة",
+    buyNow: "اشتر الآن",
     addToCartOutOfStock: "غير متوفر",
     selectSize: "اختر الحجم",
     topNotes: "النوتات العلوية",
