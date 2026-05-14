@@ -61,35 +61,34 @@ export function ProductDetail({
   const dispatch = useDispatch();
   const router = useRouter();
   const { t } = useTranslation();
-  const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
 
   const finalPrice = basePrice;
   const displayPrice = isOnSale && originalPrice ? originalPrice : finalPrice;
 
   const handleAddToCart = () => {
-    if (selectedSize && isInStock) {
+    if (isInStock) {
       dispatch(addToCart({
         id,
         Name: name,
         Brand: brand,
         Price: finalPrice,
         Image: images[0]?.src || "",
-        size: `${selectedSize}ml`,
+        size: "50ml",
         qty: quantity,
       }));
     }
   };
 
   const handleBuyNow = () => {
-    if (selectedSize && isInStock) {
+    if (isInStock) {
       dispatch(buyNowItem({
         id,
         Name: name,
         Brand: brand,
         Price: finalPrice,
         Image: images[0]?.src || "",
-        size: `${selectedSize}ml`,
+        size: "50ml",
         qty: quantity,
       }));
       router.push("/Shipping");
@@ -181,30 +180,6 @@ export function ProductDetail({
                 </div>
               </div>
 
-              {/* Size Selection */}
-              <div className="mb-8">
-                <label className="block text-sm font-light tracking-wide text-stone-700 mb-4 text-right">
-                  {t.productDetail.selectSize}
-                </label>
-                <div className="flex gap-3 flex-row-reverse">
-                  {sizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`
-                        px-6 py-3 rounded-2xl font-light text-sm transition-all duration-300
-                        ${selectedSize === size
-                          ? 'bg-gradient-to-r from-gold-500 to-gold-600 text-white shadow-lg shadow-gold-400/30 scale-105'
-                          : 'bg-white border-2 border-stone-300 text-stone-700 hover:border-gold-400 hover:shadow-md'
-                        }
-                      `}
-                    >
-                      {size}ml
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Quantity Selector */}
               <div className="mb-8">
                 <label className="block text-sm font-light tracking-wide text-stone-700 mb-4 text-right">
@@ -254,7 +229,7 @@ export function ProductDetail({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <button
                   onClick={handleAddToCart}
-                  disabled={!selectedSize || !isInStock}
+                  disabled={!isInStock}
                   className="
                     w-full py-5 rounded-2xl font-light text-lg tracking-wide
                     bg-gradient-to-r from-stone-500 to-stone-600 text-white shadow-xl shadow-stone-500/30
@@ -267,7 +242,7 @@ export function ProductDetail({
                 </button>
                 <button
                   onClick={handleBuyNow}
-                  disabled={!selectedSize || !isInStock}
+                  disabled={!isInStock}
                   className="
                     w-full py-5 rounded-2xl font-light text-lg tracking-wide
                     bg-gradient-to-r from-gold-500 to-gold-600 text-white shadow-xl shadow-gold-500/30

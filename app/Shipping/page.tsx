@@ -303,7 +303,7 @@ const Shipping = () => {
                 </div>
               </div>
             ) : (
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
                   value={promoInput}
@@ -313,13 +313,13 @@ const Shipping = () => {
                   }}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleApplyPromo())}
                   placeholder={t.shipping.promoPlaceholder}
-                  className="flex-1 px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all tracking-widest uppercase"
+                  className="flex-1 w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all tracking-widest uppercase"
                 />
                 <button
                   type="button"
                   disabled={promoLoading || !promoInput.trim()}
                   onClick={handleApplyPromo}
-                  className="px-5 py-3 rounded-xl bg-gold-500 hover:bg-gold-600 disabled:bg-stone-300 text-white font-light text-sm transition-colors whitespace-nowrap"
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gold-500 hover:bg-gold-600 disabled:bg-stone-300 text-white font-light text-sm transition-colors whitespace-nowrap"
                 >
                   {promoLoading ? t.shipping.promoApplying : t.shipping.promoApply}
                 </button>

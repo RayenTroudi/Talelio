@@ -1,60 +1,59 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerStorage, appwriteConfig } from '@/lib/appwrite-config';
 
-/**
- * API Route to proxy Appwrite Storage images
- * This provides a reliable way to serve images through Next.js with server-side auth
- * Benefits: Server-side authentication, caching, error handling, consistent URLs
- * 
- * IMPORTANT: Provide APPWRITE_API_KEY in .env.local for server-side authentication
- * 
- * Note: Using getFileDownload() to retrieve raw file bytes from Appwrite Storage.
- * This works with Appwrite free tier (no image transformations).
- * Images are served in their original uploaded size and format.
- * 
- * GET /api/images/[fileId]
- */
+// In-memory cache: fileId → ArrayBuffer
+// Lives for the lifetime of the Node.js process (survives across requests)
+const imageCache = new Map<string, { buffer: ArrayBuffer; contentType: string }>();
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ fileId: string }> }
 ) {
   try {
     const { fileId } = await params;
-    
+
     if (!fileId || fileId.trim() === '') {
-      return NextResponse.json(
-        { error: 'File ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'File ID is required' }, { status: 400 });
     }
 
-    console.log(`📸 Fetching image for fileId: ${fileId}`);
+    // Serve from in-memory cache if available
+    const cached = imageCache.get(fileId);
+    if (cached) {
+      return new NextResponse(cached.buffer, {
+        status: 200,
+        headers: {
+          'Content-Type': cached.contentType,
+          'Cache-Control': 'public, max-age=31536000, immutable',
+          'X-Cache': 'HIT',
+        },
+      });
+    }
 
-    // Use server-side storage client with authentication
     const serverStorage = getServerStorage();
-
-    // Get the file directly as a buffer using node-appwrite SDK
-    // This avoids the URL parsing issue and works with API key authentication
     const fileBuffer = await serverStorage.getFileDownload(
       appwriteConfig.perfumeImagesBucketId,
       fileId
     );
 
-    console.log(`✅ Successfully fetched image: ${fileId}, size: ${fileBuffer.byteLength} bytes`);
+    // Detect content type from magic bytes
+    const bytes = new Uint8Array(fileBuffer.slice(0, 4));
+    let contentType = 'image/jpeg';
+    if (bytes[0] === 0x89 && bytes[1] === 0x50) contentType = 'image/png';
+    else if (bytes[0] === 0x47 && bytes[1] === 0x49) contentType = 'image/gif';
+    else if (bytes[0] === 0x52 && bytes[1] === 0x49) contentType = 'image/webp';
 
-    // Determine content type (default to jpeg if unknown)
-    // In production, you might want to store this in the database
-    const contentType = 'image/jpeg';
-    
-    // Return the image with proper headers
+    // Store in cache
+    imageCache.set(fileId, { buffer: fileBuffer, contentType });
+
     return new NextResponse(fileBuffer, {
       status: 200,
       headers: {
         'Content-Type': contentType,
         'Cache-Control': 'public, max-age=31536000, immutable',
+        'X-Cache': 'MISS',
       },
     });
-    
+
   } catch (error: any) {
     console.error('Error serving image:', error);
     return NextResponse.json(

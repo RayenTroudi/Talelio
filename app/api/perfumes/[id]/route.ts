@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AppwritePerfumeService } from '@/lib/appwrite-perfume';
 import { databases, storage, appwriteConfig, getServerDatabases, getServerStorage } from '@/lib/appwrite-config';
+import { invalidatePerfumesCache } from '@/app/api/perfumes/route';
 
 // GET - Fetch single perfume
 export async function GET(
@@ -94,6 +95,8 @@ export async function PUT(
       documentData
     );
     
+    invalidatePerfumesCache();
+
     return NextResponse.json({
       success: true,
       data: updatedDocument
@@ -142,7 +145,8 @@ export async function DELETE(
     await perfumeService.deletePerfume(id);
     
     console.log(`✅ Successfully deleted perfume: ${id}`);
-    
+    invalidatePerfumesCache();
+
     return NextResponse.json({
       success: true,
       message: 'Perfume and all associated files deleted successfully',

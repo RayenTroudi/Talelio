@@ -3,33 +3,41 @@ import { AppwritePerfumeService } from '@/lib/appwrite-perfume';
 import { databases, storage, appwriteConfig, getServerDatabases } from '@/lib/appwrite-config';
 import { ID, Permission, Role } from 'node-appwrite';
 
+// In-memory cache for the perfumes list (60-second TTL)
+export let perfumesCache: { data: any; expiresAt: number } | null = null;
+export function invalidatePerfumesCache() { perfumesCache = null; }
+const CACHE_TTL_MS = 60_000;
+
 // GET - Fetch all perfumes
 export async function GET() {
   try {
-    console.log('Fetching perfumes from:', {
-      databaseId: appwriteConfig.databaseId,
-      collectionId: appwriteConfig.perfumesCollectionId
-    });
-    
-    // Use server-side databases for consistency
+    const now = Date.now();
+
+    if (perfumesCache && perfumesCache.expiresAt > now) {
+      return NextResponse.json(perfumesCache.data, {
+        headers: { 'X-Cache': 'HIT' },
+      });
+    }
+
     const serverDatabases = getServerDatabases();
-    
-    // Query directly from Appwrite databases
     const result = await serverDatabases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.perfumesCollectionId
     );
-    
-    console.log('Fetched documents:', result.documents.length);
-    
-    return NextResponse.json({
+
+    const responseBody = {
       success: true,
       data: result.documents,
-      total: result.total
+      total: result.total,
+    };
+
+    perfumesCache = { data: responseBody, expiresAt: now + CACHE_TTL_MS };
+
+    return NextResponse.json(responseBody, {
+      headers: { 'X-Cache': 'MISS' },
     });
   } catch (error: any) {
     console.error('Error fetching perfumes:', error);
-    console.error('Full error details:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'Unknown error', details: error },
       { status: 500 }
@@ -104,6 +112,8 @@ export async function POST(request: NextRequest) {
       ]
     );
     
+    invalidatePerfumesCache();
+
     return NextResponse.json({
       success: true,
       data: newDocument
