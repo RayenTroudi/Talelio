@@ -152,7 +152,7 @@ const fr = {
     promoApplying: "...",
     promoInvalid: "Code parrainage invalide",
     promoError: "Une erreur s'est produite. Veuillez réessayer.",
-    continueBtn: "Continuer vers la révision",
+    continueBtn: "Confirmer",
     errors: {
       fullName: "Veuillez entrer votre nom complet",
       email: "Veuillez entrer une adresse e-mail valide",

@@ -1,10 +1,10 @@
 ﻿"use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { saveShippingAddress, setPromoCode, clearPromoCode } from "../Redux/slices/CartSlice";
+import { saveShippingAddress, setPromoCode, clearPromoCode, clearCart } from "../Redux/slices/CartSlice";
 import { useSession } from "next-auth/react";
 import Checkout from "../components/Checkout";
 import Navbar from "../components/Navbar";
@@ -23,22 +23,27 @@ const Shipping = () => {
   //
   const router = useRouter();
   const dispatch = useDispatch();
-  const { data: session } = useSession();
-  const { shippingAddress, appliedPromoCode } = useSelector(
+  const { data: session, status } = useSession();
+  const { shippingAddress, appliedPromoCode, promoCodeId, CartItems, itemsPrice, shippingPrice, totalPrice } = useSelector(
     (state: any) => state.Cart
   );
 
   const [promoInput, setPromoInput] = useState("");
   const [promoLoading, setPromoLoading] = useState(false);
   const [promoError, setPromoError] = useState("");
+  const promoDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [orderSuccess, setOrderSuccess] = useState(false);
 
-  const handleApplyPromo = async () => {
-    if (!promoInput.trim()) return;
+  const handleApplyPromo = async (val?: string) => {
+    const code = (val ?? promoInput).trim();
+    if (!code) return;
     setPromoLoading(true);
     setPromoError("");
     try {
       const res = await fetch(
-        `/api/promo/validate?code=${encodeURIComponent(promoInput.trim().toUpperCase())}`
+        `/api/promo/validate?code=${encodeURIComponent(code.toUpperCase())}`
       );
       const data = await res.json();
       if (!res.ok) {
@@ -70,7 +75,7 @@ const Shipping = () => {
     setValue("notes", shippingAddress?.notes);
   }, [setValue, shippingAddress, session]);
 
-  const submitHandler = ({
+  const submitHandler = async ({
     fullName,
     email,
     phone,
@@ -80,17 +85,103 @@ const Shipping = () => {
     postalCode,
     notes,
   }: void & any) => {
-    dispatch(
-      saveShippingAddress({ fullName, email, phone, address, city, gouvernorat, postalCode, notes })
-    );
+    if (isSubmitting) return;
 
-    router.push("/PlaceOrder");
+    const shipping = { fullName, email, phone, address, city, gouvernorat, postalCode, notes };
+    dispatch(saveShippingAddress(shipping));
+
+    // Compute prices from cart items directly to avoid stale Redux state
+    const computedItemsPrice = CartItems.reduce(
+      (acc: number, item: any) => acc + (item.Price || item.price || 0) * item.qty,
+      0
+    );
+    const computedShipping = 0;
+    const computedTotal = computedItemsPrice + computedShipping;
+
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: CartItems,
+          shippingAddress: shipping,
+          itemsPrice: computedItemsPrice.toFixed(2),
+          shippingPrice: computedShipping,
+          totalPrice: computedTotal.toFixed(2),
+          promoCodeId: promoCodeId || null,
+          appliedPromoCode: appliedPromoCode || null,
+          guestEmail: email || null,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        dispatch(clearCart());
+        setOrderSuccess(true);
+        setIsSubmitting(false);
+      } else {
+        setSubmitError(data.error || data.details || t.common.error);
+        setIsSubmitting(false);
+      }
+    } catch {
+      setSubmitError(t.placeOrder?.connectionError || t.common.error);
+      setIsSubmitting(false);
+    }
   };
 
 
 
   return (
     <>
+    {/* Order Success Modal */}
+    {orderSuccess && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        {/* Backdrop */}
+        <div className="absolute inset-0 bg-stone-900/40 backdrop-blur-sm" />
+
+        {/* Modal */}
+        <div className="relative bg-white rounded-3xl shadow-2xl max-w-md w-full p-10 flex flex-col items-center text-center overflow-hidden">
+          {/* Background grain/texture */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{backgroundImage:"url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")"}} />
+
+          {/* Gold radial glow */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-gradient-radial from-gold-300/30 to-transparent rounded-full blur-2xl pointer-events-none" />
+
+          {/* Checkmark icon */}
+          <div className="relative mb-6 w-20 h-20 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center shadow-lg shadow-gold-400/40">
+            <svg className="w-9 h-9 text-white" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+
+          {/* Decorative line */}
+          <div className="flex items-center gap-3 mb-5">
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-gold-400/60" />
+            <div className="w-1.5 h-1.5 rounded-full bg-gold-400/60" />
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-gold-400/60" />
+          </div>
+
+          <h2 className="font-serif text-3xl font-light text-stone-900 tracking-wide mb-3">
+            Commande confirmée
+          </h2>
+          <p className="text-stone-500 font-light text-sm leading-relaxed mb-8">
+            Votre commande a été passée avec succès.<br />Nous vous contacterons bientôt pour la livraison.
+          </p>
+
+          <button
+            onClick={() => router.push("/")}
+            className="w-full py-4 rounded-2xl font-light text-sm tracking-widest bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white shadow-lg shadow-gold-400/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    )}
+
     <Navbar/>
     <div className="container mt-10 mb-16">
 
@@ -303,26 +394,27 @@ const Shipping = () => {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col sm:flex-row gap-2">
+              <div className="relative">
                 <input
                   type="text"
                   value={promoInput}
                   onChange={(e) => {
-                    setPromoInput(e.target.value.toUpperCase());
+                    const val = e.target.value.toUpperCase();
+                    setPromoInput(val);
                     setPromoError("");
+                    if (promoDebounceRef.current) clearTimeout(promoDebounceRef.current);
+                    if (val.trim()) {
+                      promoDebounceRef.current = setTimeout(() => handleApplyPromo(val), 800);
+                    }
                   }}
-                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleApplyPromo())}
                   placeholder={t.shipping.promoPlaceholder}
-                  className="flex-1 w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all tracking-widest uppercase"
+                  className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all tracking-widest uppercase"
                 />
-                <button
-                  type="button"
-                  disabled={promoLoading || !promoInput.trim()}
-                  onClick={handleApplyPromo}
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gold-500 hover:bg-gold-600 disabled:bg-stone-300 text-white font-light text-sm transition-colors whitespace-nowrap"
-                >
-                  {promoLoading ? t.shipping.promoApplying : t.shipping.promoApply}
-                </button>
+                {promoLoading && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <div className="w-4 h-4 border-2 border-stone-300 border-t-stone-600 rounded-full animate-spin" />
+                  </div>
+                )}
               </div>
             )}
             {promoError && (
@@ -330,9 +422,25 @@ const Shipping = () => {
             )}
           </div>
 
-        <div className="mt-10">
-          <button className="w-full py-5 rounded-2xl font-light text-lg tracking-wide bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white shadow-xl shadow-gold-400/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5">
-            {t.shipping.continueBtn}
+        {submitError && (
+          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm text-center">
+            {submitError}
+          </div>
+        )}
+
+        <div className="mt-6">
+          <button
+            disabled={isSubmitting}
+            className="w-full py-5 rounded-2xl font-light text-lg tracking-wide bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 disabled:from-stone-300 disabled:to-stone-400 text-white shadow-xl shadow-gold-400/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-3"
+          >
+            {isSubmitting ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                {t.placeOrder?.processing || "..."}
+              </>
+            ) : (
+              t.shipping.continueBtn
+            )}
           </button>
         </div>
       </form>

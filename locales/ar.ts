@@ -152,7 +152,7 @@ const ar = {
     promoApplying: "...",
     promoInvalid: "رمز الإحالة غير صالح",
     promoError: "حدث خطأ. يرجى المحاولة مرة أخرى.",
-    continueBtn: "متابعة لمراجعة الطلب",
+    continueBtn: "تأكيد",
     errors: {
       fullName: "يرجى إدخال اسمك الكامل",
       email: "يرجى إدخال بريد إلكتروني صالح",

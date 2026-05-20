@@ -152,7 +152,7 @@ const en = {
     promoApplying: "...",
     promoInvalid: "Invalid referral code",
     promoError: "An error occurred. Please try again.",
-    continueBtn: "Continue to Review Order",
+    continueBtn: "Confirm",
     errors: {
       fullName: "Please enter your full name",
       email: "Please enter a valid email address",

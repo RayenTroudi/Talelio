@@ -68,7 +68,7 @@ export async function POST(request: Request) {
     }
 
     // Validate required fields
-    if (!items || !shippingAddress || !totalPrice) {
+    if (!items || !shippingAddress || totalPrice === undefined || totalPrice === null) {
       return NextResponse.json(
         { error: 'Missing required order information' },
         { status: 400 }
