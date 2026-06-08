@@ -473,6 +473,7 @@ const en = {
       addProduct: "Add Product",
       orders: "Orders",
       promoRequests: "Promo Requests",
+      statistics: "Statistics",
       backToStore: "Back to Store",
       adminUser: "Admin User",
       adminRole: "Administrator",

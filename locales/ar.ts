@@ -473,6 +473,7 @@ const ar = {
       addProduct: "إضافة منتج",
       orders: "الطلبات",
       promoRequests: "طلبات الترويج",
+      statistics: "الإحصائيات",
       backToStore: "العودة للمتجر",
       adminUser: "مستخدم الإدارة",
       adminRole: "مسؤول",

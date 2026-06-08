@@ -473,6 +473,7 @@ const fr = {
       addProduct: "Ajouter un produit",
       orders: "Commandes",
       promoRequests: "Demandes promo",
+      statistics: "Statistiques",
       backToStore: "Retour à la boutique",
       adminUser: "Utilisateur admin",
       adminRole: "Administrateur",
