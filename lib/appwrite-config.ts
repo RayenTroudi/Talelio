@@ -15,6 +15,7 @@ export const appwriteConfig = {
   usersCollectionId: process.env.NEXT_PUBLIC_APPWRITE_USERS_COLLECTION_ID || '',
   promoRequestsCollectionId: process.env.NEXT_PUBLIC_APPWRITE_PROMO_REQUESTS_COLLECTION_ID || '',
   referralEarningsCollectionId: process.env.NEXT_PUBLIC_APPWRITE_REFERRAL_EARNINGS_COLLECTION_ID || '',
+  paymentHistoryCollectionId: process.env.NEXT_PUBLIC_APPWRITE_PAYMENT_HISTORY_COLLECTION_ID || 'paymentHistory',
   
   // Storage
   perfumeImagesBucketId: process.env.NEXT_PUBLIC_APPWRITE_PERFUME_IMAGES_BUCKET_ID || '',

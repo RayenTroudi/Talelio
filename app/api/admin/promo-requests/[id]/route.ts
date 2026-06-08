@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { appwriteConfig, getServerDatabases } from '@/lib/appwrite-config';
-import { Query } from 'node-appwrite';
+import { Query, ID } from 'node-appwrite';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { generatePromoCode } from '@/lib/promo-utils';
@@ -45,6 +45,51 @@ export async function PATCH(
       if (doc.status !== 'APPROVED') {
         return NextResponse.json({ error: 'يجب أن يكون الطلب موافقاً عليه أولاً' }, { status: 409 });
       }
+
+      if (action === 'markPaid') {
+        // Fetch current earnings for this user
+        const earningsResult = await databases.listDocuments(
+          appwriteConfig.databaseId,
+          appwriteConfig.referralEarningsCollectionId || 'referralEarnings',
+          [Query.equal('ownerUserId', doc.userId), Query.limit(500)]
+        );
+
+        const total = earningsResult.documents.reduce(
+          (sum: number, d: any) => sum + (d.amount || 0),
+          0
+        );
+        const earningIds = earningsResult.documents.map((d: any) => d.$id);
+
+        // Create a payment history snapshot BEFORE deleting earnings
+        if (total > 0) {
+          await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.paymentHistoryCollectionId || 'paymentHistory',
+            ID.unique(),
+            {
+              ownerUserId: doc.userId,
+              ownerEmail: doc.userEmail || '',
+              userName: doc.userName || '',
+              promoCode: doc.promoCode || '',
+              amount: parseFloat(total.toFixed(2)),
+              earningRecordIds: JSON.stringify(earningIds),
+              restoredAt: null,
+            }
+          );
+
+          // Delete all earnings records (reset Total des gains to 0)
+          await Promise.all(
+            earningIds.map((eid: string) =>
+              databases.deleteDocument(
+                appwriteConfig.databaseId,
+                appwriteConfig.referralEarningsCollectionId || 'referralEarnings',
+                eid
+              )
+            )
+          );
+        }
+      }
+
       const updated = await databases.updateDocument(
         appwriteConfig.databaseId,
         COLLECTION(),

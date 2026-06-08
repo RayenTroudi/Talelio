@@ -5,6 +5,7 @@
  * After running, add the printed collection IDs to your .env.local:
  *   NEXT_PUBLIC_APPWRITE_PROMO_REQUESTS_COLLECTION_ID=<id>
  *   NEXT_PUBLIC_APPWRITE_REFERRAL_EARNINGS_COLLECTION_ID=<id>
+ *   NEXT_PUBLIC_APPWRITE_PAYMENT_HISTORY_COLLECTION_ID=<id>
  */
 require('dotenv').config({ path: '.env.local' });
 require('dotenv').config({ path: '.env' }); // fallback to .env
@@ -113,9 +114,54 @@ async function main() {
     console.warn('Index warning:', e.message);
   }
 
+  // --- PaymentHistory ---
+  let paymentHistoryCol;
+  try {
+    paymentHistoryCol = await databases.createCollection(
+      DATABASE_ID,
+      sdk.ID.unique(),
+      'PaymentHistory',
+      [
+        sdk.Permission.read(sdk.Role.any()),
+        sdk.Permission.create(sdk.Role.any()),
+        sdk.Permission.update(sdk.Role.any()),
+        sdk.Permission.delete(sdk.Role.any()),
+      ]
+    );
+    console.log('Created PaymentHistory collection:', paymentHistoryCol.$id);
+  } catch (e) {
+    console.error('Failed to create PaymentHistory:', e.message);
+    process.exit(1);
+  }
+
+  const paymentHistoryAttrs = [
+    () => databases.createStringAttribute(DATABASE_ID, paymentHistoryCol.$id, 'ownerUserId', 255, true),
+    () => databases.createStringAttribute(DATABASE_ID, paymentHistoryCol.$id, 'ownerEmail', 255, false, ''),
+    () => databases.createStringAttribute(DATABASE_ID, paymentHistoryCol.$id, 'userName', 255, false, ''),
+    () => databases.createStringAttribute(DATABASE_ID, paymentHistoryCol.$id, 'promoCode', 50, false, ''),
+    () => databases.createFloatAttribute(DATABASE_ID, paymentHistoryCol.$id, 'amount', true, 0, 999999),
+    () => databases.createStringAttribute(DATABASE_ID, paymentHistoryCol.$id, 'currency', 10, true, 'TND'),
+    () => databases.createStringAttribute(DATABASE_ID, paymentHistoryCol.$id, 'earningRecordIds', 4000, false, ''),
+    () => databases.createStringAttribute(DATABASE_ID, paymentHistoryCol.$id, 'restoredAt', 50, false, null, false),
+  ];
+
+  for (const create of paymentHistoryAttrs) {
+    try { await create(); } catch (e) { console.warn('Attribute warning:', e.message); }
+    await sleep(500);
+  }
+
+  // Index for PaymentHistory
+  await sleep(1000);
+  try {
+    await databases.createIndex(DATABASE_ID, paymentHistoryCol.$id, 'idx_ownerUserId', 'key', ['ownerUserId']);
+  } catch (e) {
+    console.warn('Index warning:', e.message);
+  }
+
   console.log('\n✅ Setup complete. Add these to your .env.local:');
   console.log(`NEXT_PUBLIC_APPWRITE_PROMO_REQUESTS_COLLECTION_ID=${promoCol.$id}`);
   console.log(`NEXT_PUBLIC_APPWRITE_REFERRAL_EARNINGS_COLLECTION_ID=${earningsCol.$id}`);
+  console.log(`NEXT_PUBLIC_APPWRITE_PAYMENT_HISTORY_COLLECTION_ID=${paymentHistoryCol.$id}`);
 }
 
 function sleep(ms) {
