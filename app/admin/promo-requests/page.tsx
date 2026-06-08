@@ -40,6 +40,204 @@ interface PaymentHistoryRecord {
 
 type MainTab = "requests" | "paymentHistory";
 
+function AddMoneyModal({
+  req,
+  currentTotal,
+  onClose,
+  onSuccess,
+  t,
+}: {
+  req: PromoRequest;
+  currentTotal: number;
+  onClose: () => void;
+  onSuccess: (newTotal: number, newRecord: EarningRecord) => void;
+  t: any;
+}) {
+  const [amount, setAmount] = useState("");
+  const [note, setNote] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const parsed = parseFloat(amount) || 0;
+  const newTotal = parseFloat((currentTotal + parsed).toFixed(2));
+  const hasValidAmount = parsed > 0;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!hasValidAmount) { setError("يرجى إدخال مبلغ صحيح أكبر من 0"); return; }
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/manual-earning", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ownerUserId: req.userId,
+          ownerEmail: req.userEmail,
+          promoRequestId: req.$id,
+          amount: parsed,
+          note: note.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        onSuccess(newTotal, data.record);
+      } else {
+        setError(data.error || "حدث خطأ");
+      }
+    } catch {
+      setError("حدث خطأ");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center" dir="rtl">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" onClick={onClose} />
+
+      {/* Sheet / Modal */}
+      <div className="relative w-full sm:max-w-sm bg-white sm:rounded-3xl rounded-t-3xl shadow-2xl overflow-hidden">
+
+        {/* Drag handle on mobile */}
+        <div className="flex justify-center pt-3 pb-1 sm:hidden">
+          <div className="w-10 h-1 rounded-full bg-stone-200" />
+        </div>
+
+        {/* Header band */}
+        <div className="px-5 pt-4 pb-5 sm:pt-6 border-b border-stone-100">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-stone-900 flex items-center justify-center flex-shrink-0">
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-bold text-stone-900 leading-tight">{t.admin.promoRequests.addMoneyTitle}</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="text-xs text-stone-400">{req.userName || req.userEmail}</span>
+                  {req.promoCode && (
+                    <>
+                      <span className="text-stone-200">·</span>
+                      <span className="font-mono text-xs font-semibold tracking-widest text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-100">
+                        {req.promoCode}
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-7 h-7 flex items-center justify-center rounded-lg text-stone-400 hover:bg-stone-100 hover:text-stone-600 transition-colors flex-shrink-0 mt-0.5"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="px-5 py-5 space-y-4">
+
+            {/* Big amount input */}
+            <div>
+              <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wide mb-2">
+                {t.admin.promoRequests.amountLabel}
+              </label>
+              <div className="relative flex items-center">
+                <input
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={amount}
+                  onChange={(e) => { setAmount(e.target.value); setError(""); }}
+                  placeholder="0.00"
+                  dir="ltr"
+                  autoFocus
+                  className="w-full text-2xl font-bold text-stone-900 placeholder:text-stone-200 bg-transparent border-0 border-b-2 border-stone-200 focus:border-stone-900 focus:outline-none pb-2 pt-1 pr-0 pl-14 transition-colors"
+                />
+                <span className="absolute left-0 text-sm font-semibold text-stone-400 pb-2">TND</span>
+              </div>
+            </div>
+
+            {/* Live preview bar */}
+            <div className={`rounded-2xl border px-4 py-3 transition-all duration-200 ${hasValidAmount ? "bg-emerald-50 border-emerald-100" : "bg-stone-50 border-stone-100"}`}>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-stone-400">{t.admin.promoRequests.totalEarnings} actuel</span>
+                <span className="text-xs font-semibold text-stone-500">{currentTotal.toFixed(2)} TND</span>
+              </div>
+              {hasValidAmount && (
+                <div className="flex items-center justify-between mt-2 pt-2 border-t border-emerald-100">
+                  <span className="text-xs font-semibold text-emerald-700">Nouveau total</span>
+                  <span className="text-base font-bold text-emerald-700">{newTotal.toFixed(2)} <span className="text-xs font-normal text-emerald-500">TND</span></span>
+                </div>
+              )}
+            </div>
+
+            {/* Note */}
+            <div>
+              <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wide mb-2">
+                {t.admin.promoRequests.noteLabel}
+              </label>
+              <input
+                type="text"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder={t.admin.promoRequests.notePlaceholder}
+                className="w-full px-3 py-2.5 rounded-xl border border-stone-200 text-stone-900 text-sm placeholder:text-stone-300 bg-stone-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-stone-900/10 focus:border-stone-300 transition-all"
+              />
+            </div>
+
+            {error && (
+              <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-100 px-3 py-2.5 rounded-xl">
+                <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {error}
+              </div>
+            )}
+          </div>
+
+          {/* Footer actions */}
+          <div className="flex gap-2 px-5 pb-5 sm:pb-6">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loading}
+              className="flex-1 py-3 rounded-2xl text-sm font-semibold text-stone-600 bg-stone-100 hover:bg-stone-200 transition-colors disabled:opacity-40"
+            >
+              إلغاء
+            </button>
+            <button
+              type="submit"
+              disabled={loading || !hasValidAmount}
+              className="flex-[2] flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold bg-stone-900 text-white hover:bg-stone-800 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/25 border-t-white rounded-full animate-spin" />
+                  {t.admin.promoRequests.adding}
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  {t.admin.promoRequests.addMoney}
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function RestoreConfirmModal({
   record,
   onConfirm,
@@ -144,6 +342,7 @@ export default function PromoRequestsPage() {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [restoring, setRestoring] = useState<string | null>(null);
   const [confirmRecord, setConfirmRecord] = useState<PaymentHistoryRecord | null>(null);
+  const [addMoneyReq, setAddMoneyReq] = useState<PromoRequest | null>(null);
 
   const { t } = useTranslation();
 
@@ -253,6 +452,17 @@ export default function PromoRequestsPage() {
     }
   };
 
+  const handleAddMoneySuccess = (userId: string, newTotal: number, newRecord: EarningRecord) => {
+    setEarnings((prev) => ({
+      ...prev,
+      [userId]: {
+        total: newTotal,
+        records: [...(prev[userId]?.records || []), newRecord],
+      },
+    }));
+    setAddMoneyReq(null);
+  };
+
   const handleRestore = (record: PaymentHistoryRecord) => {
     setConfirmRecord(record);
   };
@@ -337,6 +547,17 @@ export default function PromoRequestsPage() {
 
   return (
     <div className="space-y-5 sm:space-y-6" dir="rtl">
+
+      {/* ── Add Money Modal ── */}
+      {addMoneyReq && (
+        <AddMoneyModal
+          req={addMoneyReq}
+          currentTotal={earnings[addMoneyReq.userId]?.total ?? 0}
+          onClose={() => setAddMoneyReq(null)}
+          onSuccess={(newTotal, newRecord) => handleAddMoneySuccess(addMoneyReq.userId, newTotal, newRecord)}
+          t={t}
+        />
+      )}
 
       {/* ── Restore Confirm Modal ── */}
       {confirmRecord && (
@@ -524,9 +745,22 @@ export default function PromoRequestsPage() {
                                 {t.admin.promoRequests.paid}
                               </span>
                             ) : ed.total !== null && ed.total > 0 ? (
-                              <span className="text-sm font-bold text-amber-700">{ed.total.toFixed(2)} <span className="text-xs font-normal text-stone-400">TND</span></span>
+                              <button
+                                onClick={() => setAddMoneyReq(req)}
+                                className="inline-flex items-center gap-1 text-sm font-bold text-amber-700 hover:text-amber-800 underline underline-offset-2 decoration-dotted transition-colors"
+                              >
+                                {ed.total.toFixed(2)} <span className="text-xs font-normal text-stone-400">TND</span>
+                                <svg className="w-3 h-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                              </button>
                             ) : (
-                              <span className="text-stone-300 text-xs">—</span>
+                              <button
+                                onClick={() => setAddMoneyReq(req)}
+                                className="inline-flex items-center gap-1 text-xs text-stone-400 hover:text-emerald-600 transition-colors"
+                              >
+                                — <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                              </button>
                             )
                           ) : (
                             <span className="text-stone-300 text-xs">—</span>
@@ -732,12 +966,23 @@ export default function PromoRequestsPage() {
                                     {t.admin.promoRequests.paid}
                                   </span>
                                 ) : ed.total !== null && ed.total > 0 ? (
-                                  <span className="font-bold text-amber-700 text-sm whitespace-nowrap">
+                                  <button
+                                    onClick={() => setAddMoneyReq(req)}
+                                    className="inline-flex items-center gap-1.5 font-bold text-amber-700 text-sm whitespace-nowrap hover:text-amber-800 underline underline-offset-2 decoration-dotted transition-colors"
+                                  >
                                     {ed.total.toFixed(2)}{" "}
                                     <span className="text-xs font-normal text-stone-400">TND</span>
-                                  </span>
+                                    <svg className="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    </svg>
+                                  </button>
                                 ) : (
-                                  <span className="text-stone-300 text-xs">—</span>
+                                  <button
+                                    onClick={() => setAddMoneyReq(req)}
+                                    className="inline-flex items-center gap-1 text-xs text-stone-400 hover:text-emerald-600 transition-colors"
+                                  >
+                                    — <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                                  </button>
                                 )
                               ) : (
                                 <span className="text-stone-300 text-xs">—</span>
