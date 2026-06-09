@@ -33,7 +33,10 @@ export async function GET(request: Request) {
       [Query.equal('ownerUserId', ownerUserId), Query.limit(500)]
     );
 
-    const total = result.documents.reduce((sum: number, doc: any) => sum + (doc.amount || 0), 0);
+    const total = result.documents.reduce((sum: number, doc: any) => {
+      const v = doc.amount || 0;
+      return sum + (String(doc.orderId).startsWith('deduct-') ? -v : v);
+    }, 0);
 
     return NextResponse.json({
       total: parseFloat(total.toFixed(2)),

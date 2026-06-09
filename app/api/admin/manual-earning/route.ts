@@ -19,9 +19,12 @@ export async function POST(request: Request) {
 
     const { ownerUserId, ownerEmail, promoRequestId, amount, note } = await request.json();
 
-    if (!ownerUserId || !amount || amount <= 0) {
-      return NextResponse.json({ error: 'ownerUserId and a positive amount are required' }, { status: 400 });
+    if (!ownerUserId || !amount || amount === 0) {
+      return NextResponse.json({ error: 'ownerUserId and a non-zero amount are required' }, { status: 400 });
     }
+
+    const isDeduction = amount < 0;
+    const absAmount = parseFloat(Math.abs(parseFloat(amount)).toFixed(2));
 
     const databases = getServerDatabases();
 
@@ -30,18 +33,26 @@ export async function POST(request: Request) {
       EARNINGS_COLLECTION(),
       ID.unique(),
       {
-        orderId: `manual-${Date.now()}`,
+        // deduct- prefix signals a deduction; amount is always stored positive (schema constraint)
+        orderId: isDeduction ? `deduct-${Date.now()}` : `manual-${Date.now()}`,
         promoCodeId: promoRequestId || ownerUserId,
         ownerUserId,
         ownerEmail: ownerEmail || '',
         buyerUserId: ownerUserId,
-        buyerEmail: note ? `[Manuel] ${note}` : '[Ajout manuel]',
-        amount: parseFloat(parseFloat(amount).toFixed(2)),
+        buyerEmail: note
+          ? `[${isDeduction ? 'Retrait' : 'Manuel'}] ${note}`
+          : (isDeduction ? '[Retrait manuel]' : '[Ajout manuel]'),
+        amount: absAmount,
         currency: 'TND',
       }
     );
 
-    return NextResponse.json({ success: true, record: doc });
+    return NextResponse.json({
+      success: true,
+      record: doc,
+      // signed amount for the client to update its local total correctly
+      signedAmount: isDeduction ? -absAmount : absAmount,
+    });
   } catch (error: any) {
     console.error('POST /api/admin/manual-earning error:', error);
     return NextResponse.json({ error: error.message || 'Failed to add earning' }, { status: 500 });

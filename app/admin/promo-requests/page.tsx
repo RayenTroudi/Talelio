@@ -53,18 +53,27 @@ function AddMoneyModal({
   onSuccess: (newTotal: number, newRecord: EarningRecord) => void;
   t: any;
 }) {
+  const [mode, setMode] = useState<"add" | "remove">("add");
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const parsed = parseFloat(amount) || 0;
-  const newTotal = parseFloat((currentTotal + parsed).toFixed(2));
+  const signedAmount = mode === "remove" ? -parsed : parsed;
+  const newTotal = parseFloat((currentTotal + signedAmount).toFixed(2));
   const hasValidAmount = parsed > 0;
+  const removalExceedsTotal = mode === "remove" && parsed > currentTotal;
+
+  const canSubmit = hasValidAmount && !removalExceedsTotal;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!hasValidAmount) { setError("يرجى إدخال مبلغ صحيح أكبر من 0"); return; }
+    if (!canSubmit) {
+      if (!hasValidAmount) setError("يرجى إدخال مبلغ صحيح أكبر من 0");
+      else if (removalExceedsTotal) setError("لا يمكن خصم مبلغ أكبر من الرصيد الحالي");
+      return;
+    }
     setError("");
     setLoading(true);
     try {
@@ -75,7 +84,7 @@ function AddMoneyModal({
           ownerUserId: req.userId,
           ownerEmail: req.userEmail,
           promoRequestId: req.$id,
-          amount: parsed,
+          amount: signedAmount,
           note: note.trim(),
         }),
       });
@@ -91,6 +100,8 @@ function AddMoneyModal({
       setLoading(false);
     }
   };
+
+  const isAdd = mode === "add";
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center" dir="rtl">
@@ -109,13 +120,21 @@ function AddMoneyModal({
         <div className="px-5 pt-4 pb-5 sm:pt-6 border-b border-stone-100">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-stone-900 flex items-center justify-center flex-shrink-0">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${isAdd ? "bg-stone-900" : "bg-red-600"}`}>
+                {isAdd ? (
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20 12H4" />
+                  </svg>
+                )}
               </div>
               <div>
-                <p className="text-sm font-bold text-stone-900 leading-tight">{t.admin.promoRequests.addMoneyTitle}</p>
+                <p className="text-sm font-bold text-stone-900 leading-tight">
+                  {isAdd ? t.admin.promoRequests.addMoneyTitle : "خصم من الرصيد"}
+                </p>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span className="text-xs text-stone-400">{req.userName || req.userEmail}</span>
                   {req.promoCode && (
@@ -143,6 +162,34 @@ function AddMoneyModal({
         <form onSubmit={handleSubmit}>
           <div className="px-5 py-5 space-y-4">
 
+            {/* Add / Remove toggle */}
+            <div className="flex gap-1 bg-stone-100 p-1 rounded-xl">
+              <button
+                type="button"
+                onClick={() => { setMode("add"); setAmount(""); setError(""); }}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all ${
+                  isAdd ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                إضافة
+              </button>
+              <button
+                type="button"
+                onClick={() => { setMode("remove"); setAmount(""); setError(""); }}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all ${
+                  !isAdd ? "bg-white text-red-600 shadow-sm" : "text-stone-500 hover:text-stone-700"
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20 12H4" />
+                </svg>
+                خصم
+              </button>
+            </div>
+
             {/* Big amount input */}
             <div>
               <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wide mb-2">
@@ -158,25 +205,52 @@ function AddMoneyModal({
                   placeholder="0.00"
                   dir="ltr"
                   autoFocus
-                  className="w-full text-2xl font-bold text-stone-900 placeholder:text-stone-200 bg-transparent border-0 border-b-2 border-stone-200 focus:border-stone-900 focus:outline-none pb-2 pt-1 pr-0 pl-14 transition-colors"
+                  className={`w-full text-2xl font-bold placeholder:text-stone-200 bg-transparent border-0 border-b-2 focus:outline-none pb-2 pt-1 pr-0 pl-14 transition-colors ${
+                    !isAdd
+                      ? "text-red-600 border-stone-200 focus:border-red-500"
+                      : "text-stone-900 border-stone-200 focus:border-stone-900"
+                  }`}
                 />
-                <span className="absolute left-0 text-sm font-semibold text-stone-400 pb-2">TND</span>
+                <span className={`absolute left-0 text-sm font-semibold pb-2 ${!isAdd ? "text-red-400" : "text-stone-400"}`}>TND</span>
+                {!isAdd && hasValidAmount && (
+                  <span className="absolute right-0 text-2xl font-bold text-red-400 pb-2 select-none">−</span>
+                )}
               </div>
             </div>
 
             {/* Live preview bar */}
-            <div className={`rounded-2xl border px-4 py-3 transition-all duration-200 ${hasValidAmount ? "bg-emerald-50 border-emerald-100" : "bg-stone-50 border-stone-100"}`}>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-stone-400">{t.admin.promoRequests.totalEarnings} actuel</span>
-                <span className="text-xs font-semibold text-stone-500">{currentTotal.toFixed(2)} TND</span>
-              </div>
-              {hasValidAmount && (
-                <div className="flex items-center justify-between mt-2 pt-2 border-t border-emerald-100">
-                  <span className="text-xs font-semibold text-emerald-700">Nouveau total</span>
-                  <span className="text-base font-bold text-emerald-700">{newTotal.toFixed(2)} <span className="text-xs font-normal text-emerald-500">TND</span></span>
+            {(() => {
+              const showPreview = hasValidAmount;
+              const isNegativeResult = newTotal < 0;
+              const previewColor = !showPreview
+                ? "bg-stone-50 border-stone-100"
+                : isAdd
+                ? "bg-emerald-50 border-emerald-100"
+                : removalExceedsTotal
+                ? "bg-red-50 border-red-200"
+                : "bg-orange-50 border-orange-100";
+
+              return (
+                <div className={`rounded-2xl border px-4 py-3 transition-all duration-200 ${previewColor}`}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-stone-400">{t.admin.promoRequests.totalEarnings} actuel</span>
+                    <span className="text-xs font-semibold text-stone-500">{currentTotal.toFixed(2)} TND</span>
+                  </div>
+                  {showPreview && (
+                    <div className={`flex items-center justify-between mt-2 pt-2 border-t ${
+                      isAdd ? "border-emerald-100" : removalExceedsTotal ? "border-red-200" : "border-orange-100"
+                    }`}>
+                      <span className={`text-xs font-semibold ${isAdd ? "text-emerald-700" : removalExceedsTotal ? "text-red-600" : "text-orange-700"}`}>
+                        Nouveau total
+                      </span>
+                      <span className={`text-base font-bold ${isAdd ? "text-emerald-700" : removalExceedsTotal ? "text-red-600" : "text-orange-700"}`}>
+                        {newTotal.toFixed(2)} <span className="text-xs font-normal opacity-70">TND</span>
+                      </span>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              );
+            })()}
 
             {/* Note */}
             <div>
@@ -192,12 +266,12 @@ function AddMoneyModal({
               />
             </div>
 
-            {error && (
+            {(error || removalExceedsTotal) && (
               <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-100 px-3 py-2.5 rounded-xl">
                 <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                {error}
+                {error || "لا يمكن خصم مبلغ أكبر من الرصيد الحالي"}
               </div>
             )}
           </div>
@@ -214,20 +288,28 @@ function AddMoneyModal({
             </button>
             <button
               type="submit"
-              disabled={loading || !hasValidAmount}
-              className="flex-[2] flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold bg-stone-900 text-white hover:bg-stone-800 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              disabled={loading || !canSubmit}
+              className={`flex-[2] flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed text-white ${
+                isAdd ? "bg-stone-900 hover:bg-stone-800" : "bg-red-600 hover:bg-red-700"
+              }`}
             >
               {loading ? (
                 <>
                   <span className="w-4 h-4 border-2 border-white/25 border-t-white rounded-full animate-spin" />
-                  {t.admin.promoRequests.adding}
+                  {isAdd ? t.admin.promoRequests.adding : "جارٍ الخصم…"}
                 </>
               ) : (
                 <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  {t.admin.promoRequests.addMoney}
+                  {isAdd ? (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20 12H4" />
+                    </svg>
+                  )}
+                  {isAdd ? t.admin.promoRequests.addMoney : "خصم من الرصيد"}
                 </>
               )}
             </button>
