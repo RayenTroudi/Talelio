@@ -243,15 +243,15 @@ const Navbar = () => {
             </>
           )}
 
+          <LanguageSwitcher />
+
           {/* Commissions */}
           {isAuthenticated && !isAdmin && !isInAdminArea && (
-            <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
+            <>
+              <div className="w-px h-4 bg-stone-200 mx-1" />
+              <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
+            </>
           )}
-
-          {/* Divider */}
-          <div className="w-px h-4 bg-stone-200 mx-1" />
-
-          <LanguageSwitcher />
 
           {/* Divider */}
           <div className="w-px h-4 bg-stone-200 mx-1" />
@@ -299,9 +299,12 @@ const Navbar = () => {
           </div>
         </button>
 
-        {/* ── Mobile: Language + Cart (right) ── */}
+        {/* ── Mobile: Language + TND + Cart (right) ── */}
         <div className="md:hidden flex items-center gap-0.5 order-3 relative z-10">
           <LanguageSwitcher />
+          {isAuthenticated && !isAdmin && !isInAdminArea && (
+            <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
+          )}
           <Link href="/Cart" className="relative p-2.5" aria-label={t.nav.cart}>
             <CiShoppingCart size="22px" className="text-stone-800" />
             {isClient && cartCount > 0 && (
@@ -397,11 +400,6 @@ const Navbar = () => {
                     {t.nav.myOrders}
                   </Link>
                 </li>
-                {!isAdmin && !isInAdminArea && (
-                  <li className="px-3 py-2">
-                    <CommissionsPanel userId={(user as any)?.id || user?.email || ""} />
-                  </li>
-                )}
                 <div className="h-px bg-stone-100 my-2" />
                 <li>
                   <button

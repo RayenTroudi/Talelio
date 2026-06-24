@@ -111,7 +111,7 @@ export default function CommissionsPanel({ userId }: { userId: string }) {
       {/* Dropdown panel */}
       {open && (
         <div
-          className="absolute left-0 mt-2 w-80 bg-white border border-stone-200 rounded-2xl shadow-xl overflow-hidden z-50"
+          className="absolute right-0 mt-2 w-[min(320px,calc(100vw-2rem))] bg-white border border-stone-200 rounded-2xl shadow-xl overflow-hidden z-50"
           dir="rtl"
         >
           {/* Header */}
