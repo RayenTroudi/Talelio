@@ -44,6 +44,7 @@ interface PromoRequest {
 
 interface ParsedAddress {
   gouvernorat?: string;
+  items?: Array<{ qty?: number; quantity?: number; name?: string }>;
 }
 
 // Gold luxury palette aligned with platform brand
@@ -347,6 +348,24 @@ export default function StatisticsPage() {
   const bestMonth = [...monthData].sort((a, b) => b.Commandes - a.Commandes)[0]?.name || "—";
   const bestMonthOrders = [...monthData].sort((a, b) => b.Commandes - a.Commandes)[0]?.Commandes || 0;
   const govYAxisWidth = Math.min(120, Math.max(80, (gouvernoratData[0]?.name?.length || 8) * 7 + 10));
+
+  const topUsersByItemsThisMonth = useMemo(() => {
+    const now = new Date();
+    const currentYM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    const map: Record<string, { name: string; email: string; items: number; orders: number }> = {};
+    for (const order of orders) {
+      const d = new Date(order.$createdAt);
+      const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      if (ym !== currentYM) continue;
+      const addr = parseAddress(order.shipingAdress);
+      const itemCount = (addr.items || []).reduce((sum, item) => sum + (Number(item.qty ?? item.quantity) || 1), 0);
+      const key = order.UserEmail || order.UserName;
+      if (!map[key]) map[key] = { name: order.UserName || order.UserEmail || key, email: order.UserEmail || "", items: 0, orders: 0 };
+      map[key].items += itemCount;
+      map[key].orders += 1;
+    }
+    return Object.values(map).sort((a, b) => b.items - a.items).slice(0, 10);
+  }, [orders]);
 
   const axisStyle = { fontSize: 11, fill: "#b0a080", fontFamily: "var(--font-inter, sans-serif)" };
 
@@ -656,6 +675,109 @@ export default function StatisticsPage() {
           </ResponsiveContainer>
         )}
       </SectionCard>
+
+      {/* Top users by items sold this month */}
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{
+          background: "white",
+          border: "1px solid #f0e8cc",
+          boxShadow: "0 2px 16px rgba(212,175,55,0.07), 0 1px 4px rgba(0,0,0,0.04)",
+        }}
+      >
+        <div className="px-5 sm:px-6 py-4 flex items-center justify-between" style={{ borderBottom: "1px solid #f7f0dc" }}>
+          <div>
+            <h2 className="font-bold text-base" style={{ color: "#1a1a1a", fontFamily: "var(--font-playfair, serif)" }}>
+              أكثر المشترين هذا الشهر
+            </h2>
+            <p className="text-xs mt-0.5" style={{ color: "#b0a080" }}>
+              ترتيب العملاء حسب عدد القطع المشتراة في{" "}
+              <span style={{ color: GOLD_DARK, fontWeight: 600 }}>
+                {new Date().toLocaleString("ar-TN", { month: "long", year: "numeric" })}
+              </span>
+            </p>
+          </div>
+          <div className="w-1.5 h-8 rounded-full flex-shrink-0" style={{ background: `linear-gradient(180deg, ${GOLD} 0%, ${GOLD_DARK} 100%)` }} />
+        </div>
+
+        {topUsersByItemsThisMonth.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12" style={{ color: "#d4c077" }}>
+            <svg className="w-10 h-10 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <p className="text-sm font-medium" style={{ color: "#b0a080" }}>لا توجد طلبات هذا الشهر بعد</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr style={{ background: "#fdf8ec", borderBottom: "1px solid #f0e8cc" }}>
+                  {["#", "العميل", "البريد الإلكتروني", "القطع المشتراة", "الطلبات"].map((h) => (
+                    <th
+                      key={h}
+                      className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider whitespace-nowrap"
+                      style={{ color: "#a0916a", letterSpacing: "0.07em" }}
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {topUsersByItemsThisMonth.map((user, i) => {
+                  const maxItems = topUsersByItemsThisMonth[0]?.items || 1;
+                  const barPct = ((user.items / maxItems) * 100).toFixed(0);
+                  return (
+                    <tr
+                      key={user.email || user.name}
+                      className="transition-colors"
+                      style={{ borderBottom: "1px solid #faf5e8" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "#fdf8ec")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    >
+                      <td className="px-4 py-3.5 text-xs font-bold w-10" style={{ color: i === 0 ? GOLD_DARK : i === 1 ? "#9ca3af" : i === 2 ? "#b45309" : "#c8b87a" }}>
+                        {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1}
+                      </td>
+                      <td className="px-4 py-3.5 font-semibold whitespace-nowrap" style={{ color: "#1a1a1a" }}>
+                        {user.name}
+                      </td>
+                      <td className="px-4 py-3.5 text-xs" style={{ color: "#78716c" }}>
+                        {user.email || "—"}
+                      </td>
+                      <td className="px-4 py-3.5 min-w-[160px]">
+                        <div className="flex items-center gap-2.5">
+                          <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: GOLD_PALE }}>
+                            <div
+                              className="h-full rounded-full"
+                              style={{
+                                width: `${barPct}%`,
+                                background: i === 0
+                                  ? `linear-gradient(90deg, ${GOLD} 0%, ${GOLD_DARK} 100%)`
+                                  : `linear-gradient(90deg, ${GOLD_LIGHT} 0%, ${GOLD} 100%)`,
+                              }}
+                            />
+                          </div>
+                          <span className="text-xs font-bold flex-shrink-0 w-10 text-left" style={{ color: i === 0 ? GOLD_DARK : "#5a4e35" }}>
+                            {user.items}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <span
+                          className="text-xs font-medium px-2 py-0.5 rounded-md"
+                          style={{ background: GOLD_PALE, color: GOLD_DARK }}
+                        >
+                          {user.orders} طلب
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       {/* Gouvernorat detail table */}
       <div

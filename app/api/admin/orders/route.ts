@@ -165,7 +165,7 @@ export async function PATCH(request: Request) {
               const addr: any = JSON.parse(updatedOrder.shipingAdress || '{}');
               const items: any[] = addr.items || [];
               const parsed = items.reduce(
-                (sum: number, item: any) => sum + (Number(item.quantity) || 1),
+                (sum: number, item: any) => sum + (Number(item.qty ?? item.quantity) || 1),
                 0
               );
               if (parsed > 0) thisOrderItems = parsed;
