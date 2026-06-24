@@ -36,9 +36,15 @@ const Shipping = () => {
   const [submitError, setSubmitError] = useState("");
   const [orderSuccess, setOrderSuccess] = useState(false);
 
-  const handleApplyPromo = async (val?: string) => {
+  // Returns the validated promo data on success, or null on failure.
+  const handleApplyPromo = async (val?: string): Promise<{ code: string; promoCodeId: string } | null> => {
     const code = (val ?? promoInput).trim();
-    if (!code) return;
+    if (!code) return null;
+    // Cancel any pending debounce when called explicitly
+    if (promoDebounceRef.current) {
+      clearTimeout(promoDebounceRef.current);
+      promoDebounceRef.current = null;
+    }
     setPromoLoading(true);
     setPromoError("");
     try {
@@ -48,6 +54,7 @@ const Shipping = () => {
       const data = await res.json();
       if (!res.ok) {
         setPromoError(data.error || t.shipping.promoInvalid);
+        return null;
       } else {
         dispatch(
           setPromoCode({
@@ -56,9 +63,11 @@ const Shipping = () => {
           })
         );
         setPromoInput("");
+        return { code: data.code, promoCodeId: data.promoCodeId };
       }
     } catch {
       setPromoError(t.shipping.promoError);
+      return null;
     } finally {
       setPromoLoading(false);
     }
@@ -87,6 +96,22 @@ const Shipping = () => {
   }: void & any) => {
     if (isSubmitting) return;
 
+    // If user typed a promo code but hasn't applied it yet (e.g. submitted before debounce fired),
+    // apply it synchronously now and capture the result — closure values would be stale otherwise.
+    let resolvedPromoCode = appliedPromoCode;
+    let resolvedPromoCodeId = promoCodeId;
+    if (promoInput.trim() && !appliedPromoCode) {
+      if (promoDebounceRef.current) {
+        clearTimeout(promoDebounceRef.current);
+        promoDebounceRef.current = null;
+      }
+      const promoResult = await handleApplyPromo(promoInput.trim());
+      if (promoResult) {
+        resolvedPromoCode = promoResult.code;
+        resolvedPromoCodeId = promoResult.promoCodeId;
+      }
+    }
+
     const shipping = { fullName, email, phone, address, city, gouvernorat, postalCode, notes };
     dispatch(saveShippingAddress(shipping));
 
@@ -111,8 +136,8 @@ const Shipping = () => {
           itemsPrice: computedItemsPrice.toFixed(2),
           shippingPrice: computedShipping,
           totalPrice: computedTotal.toFixed(2),
-          promoCodeId: promoCodeId || null,
-          appliedPromoCode: appliedPromoCode || null,
+          promoCodeId: resolvedPromoCodeId || null,
+          appliedPromoCode: resolvedPromoCode || null,
           guestEmail: email || null,
         }),
       });
@@ -394,27 +419,43 @@ const Shipping = () => {
                 </div>
               </div>
             ) : (
-              <div className="relative">
-                <input
-                  type="text"
-                  value={promoInput}
-                  onChange={(e) => {
-                    const val = e.target.value.toUpperCase();
-                    setPromoInput(val);
-                    setPromoError("");
-                    if (promoDebounceRef.current) clearTimeout(promoDebounceRef.current);
-                    if (val.trim()) {
-                      promoDebounceRef.current = setTimeout(() => handleApplyPromo(val), 800);
-                    }
-                  }}
-                  placeholder={t.shipping.promoPlaceholder}
-                  className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all tracking-widest uppercase"
-                />
-                {promoLoading && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <div className="w-4 h-4 border-2 border-stone-300 border-t-stone-600 rounded-full animate-spin" />
-                  </div>
-                )}
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    value={promoInput}
+                    onChange={(e) => {
+                      const val = e.target.value.toUpperCase();
+                      setPromoInput(val);
+                      setPromoError("");
+                      if (promoDebounceRef.current) clearTimeout(promoDebounceRef.current);
+                      if (val.trim()) {
+                        promoDebounceRef.current = setTimeout(() => handleApplyPromo(val), 800);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleApplyPromo();
+                      }
+                    }}
+                    placeholder={t.shipping.promoPlaceholder}
+                    className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-200 transition-all tracking-widest uppercase"
+                  />
+                  {promoLoading && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <div className="w-4 h-4 border-2 border-stone-300 border-t-stone-600 rounded-full animate-spin" />
+                    </div>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleApplyPromo()}
+                  disabled={promoLoading || !promoInput.trim()}
+                  className="px-5 py-3 rounded-xl bg-stone-800 hover:bg-stone-900 disabled:bg-stone-300 text-white text-sm font-light tracking-wide transition-colors whitespace-nowrap"
+                >
+                  {promoLoading ? (t.shipping.promoApplying || "...") : (t.shipping.promoApply || "Apply")}
+                </button>
               </div>
             )}
             {promoError && (
