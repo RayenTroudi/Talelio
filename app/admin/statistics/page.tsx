@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   BarChart,
   Bar,
@@ -228,10 +228,21 @@ function SectionCard({ title, subtitle, children }: {
   );
 }
 
+function monthKey(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function monthLabel(key: string) {
+  const [year, month] = key.split("-");
+  return `${MONTH_LABELS[month] || month} ${year}`;
+}
+
 export default function StatisticsPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [promoMap, setPromoMap] = useState<Record<string, { name: string; code: string }>>({});
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"current" | "archive">("current");
+  const [selectedMonth, setSelectedMonth] = useState<string>(() => monthKey(new Date()));
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -266,40 +277,58 @@ export default function StatisticsPage() {
     })();
   }, []);
 
-  const delivered = useMemo(() => orders.filter((o) => o.status === "delivered"), [orders]);
-  const totalRevenue = useMemo(() => orders.reduce((s, o) => s + (o.totalPrice || 0), 0), [orders]);
+  // Default statistics panel resets to the current calendar month
+  const currentMonthKey = useMemo(() => monthKey(new Date()), []);
+  const currentMonthOrders = useMemo(
+    () => orders.filter((o) => monthKey(new Date(o.$createdAt)) === currentMonthKey),
+    [orders, currentMonthKey]
+  );
 
-  const gouvernoratData = useMemo(() => {
-    const map: Record<string, { orders: number; revenue: number }> = {};
-    for (const order of orders) {
+  const scopedOrders = activeTab === "current" ? currentMonthOrders : orders;
+
+  const availableMonths = useMemo(() => {
+    const set = new Set<string>();
+    for (const o of orders) set.add(monthKey(new Date(o.$createdAt)));
+    return Array.from(set).sort((a, b) => b.localeCompare(a));
+  }, [orders]);
+
+  const archiveOrders = useMemo(
+    () => orders.filter((o) => monthKey(new Date(o.$createdAt)) === selectedMonth),
+    [orders, selectedMonth]
+  );
+
+  const buildStats = useCallback((list: Order[]) => {
+    const delivered = list.filter((o) => o.status === "delivered");
+    const totalRevenue = list.reduce((s, o) => s + (o.totalPrice || 0), 0);
+
+    const gouvernoratMap: Record<string, { orders: number; revenue: number }> = {};
+    for (const order of list) {
       const addr = parseAddress(order.shipingAdress);
       const gov = addr.gouvernorat?.trim() || "Inconnu";
-      if (!map[gov]) map[gov] = { orders: 0, revenue: 0 };
-      map[gov].orders += 1;
-      map[gov].revenue += order.totalPrice || 0;
+      if (!gouvernoratMap[gov]) gouvernoratMap[gov] = { orders: 0, revenue: 0 };
+      gouvernoratMap[gov].orders += 1;
+      gouvernoratMap[gov].revenue += order.totalPrice || 0;
     }
-    return Object.entries(map)
+    const gouvernoratData = Object.entries(gouvernoratMap)
       .map(([name, d]) => ({ name, orders: d.orders, revenue: parseFloat(d.revenue.toFixed(2)) }))
       .sort((a, b) => b.orders - a.orders)
       .slice(0, 10);
-  }, [orders]);
 
-  const sellerData = useMemo(() => {
-    const map: Record<string, { orders: number; revenue: number; name: string; code: string }> = {};
-    for (const order of orders) {
+    const sellerMap: Record<string, { orders: number; revenue: number; name: string; code: string }> = {};
+    for (const order of list) {
       if (!order.promoCodeId) continue;
       const id = order.promoCodeId;
       const info = promoMap[id];
-      if (!map[id]) map[id] = {
+      if (!sellerMap[id]) sellerMap[id] = {
         orders: 0,
         revenue: 0,
         name: info?.name || id.slice(0, 10) + "…",
         code: info?.code || id,
       };
-      map[id].orders += 1;
-      map[id].revenue += order.totalPrice || 0;
+      sellerMap[id].orders += 1;
+      sellerMap[id].revenue += order.totalPrice || 0;
     }
-    return Object.entries(map)
+    const sellerData = Object.entries(sellerMap)
       .map(([, d]) => ({
         name: d.name,
         code: d.code,
@@ -308,7 +337,34 @@ export default function StatisticsPage() {
       }))
       .sort((a, b) => b.orders - a.orders)
       .slice(0, 8);
-  }, [orders, promoMap]);
+
+    const dayMap: Record<string, { orders: number; revenue: number }> = {};
+    for (const order of list) {
+      const day = order.$createdAt.slice(0, 10);
+      if (!dayMap[day]) dayMap[day] = { orders: 0, revenue: 0 };
+      dayMap[day].orders += 1;
+      dayMap[day].revenue += order.totalPrice || 0;
+    }
+    const bestDay = Object.entries(dayMap).sort(([, a], [, b]) => b.revenue - a.revenue)[0];
+
+    return {
+      delivered,
+      totalRevenue,
+      gouvernoratData,
+      sellerData,
+      bestSeller: sellerData[0],
+      bestDay: bestDay ? { date: bestDay[0], ...bestDay[1] } : null,
+      bestGouvernorat: gouvernoratData[0],
+    };
+  }, [promoMap]);
+
+  const currentStats = useMemo(() => buildStats(scopedOrders), [scopedOrders, buildStats]);
+  const archiveStats = useMemo(() => buildStats(archiveOrders), [archiveOrders, buildStats]);
+
+  const delivered = currentStats.delivered;
+  const totalRevenue = currentStats.totalRevenue;
+  const gouvernoratData = currentStats.gouvernoratData;
+  const sellerData = currentStats.sellerData;
 
   const monthData = useMemo(() => {
     const map: Record<string, { orders: number; revenue: number }> = {};
@@ -334,7 +390,7 @@ export default function StatisticsPage() {
 
   const statusData = useMemo(() => {
     const map: Record<string, number> = {};
-    for (const o of orders) map[o.status] = (map[o.status] || 0) + 1;
+    for (const o of scopedOrders) map[o.status] = (map[o.status] || 0) + 1;
     const labels: Record<string, string> = {
       pending: "En attente", confirmed: "Confirmé",
       delivered: "Livré", cancelled: "Annulé",
@@ -342,12 +398,9 @@ export default function StatisticsPage() {
     return Object.entries(map)
       .filter(([, v]) => v > 0)
       .map(([k, v]) => ({ name: labels[k] || k, value: v }));
-  }, [orders]);
+  }, [scopedOrders]);
 
   const topGov = gouvernoratData[0]?.name || "—";
-  const bestMonth = [...monthData].sort((a, b) => b.Commandes - a.Commandes)[0]?.name || "—";
-  const bestMonthOrders = [...monthData].sort((a, b) => b.Commandes - a.Commandes)[0]?.Commandes || 0;
-  const govYAxisWidth = Math.min(120, Math.max(80, (gouvernoratData[0]?.name?.length || 8) * 7 + 10));
 
   const topUsersByItemsThisMonth = useMemo(() => {
     const now = new Date();
@@ -404,9 +457,9 @@ export default function StatisticsPage() {
           <p className="text-sm mt-1" style={{ color: "#b0a080" }}>
             بناءً على{" "}
             <span className="font-semibold" style={{ color: GOLD_DARK }}>
-              {orders.length}
+              {scopedOrders.length}
             </span>{" "}
-            طلب إجمالي
+            طلب {activeTab === "current" ? "هذا الشهر" : "إجمالي"}
           </p>
         </div>
         <div
@@ -424,12 +477,36 @@ export default function StatisticsPage() {
         </div>
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-2 p-1 rounded-xl w-fit" style={{ background: GOLD_PALE, border: `1px solid ${GOLD_LIGHT}` }}>
+        {[
+          { key: "current" as const, label: "الشهر الحالي" },
+          { key: "archive" as const, label: "الأرشيف الشهري" },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+            style={
+              activeTab === tab.key
+                ? { background: GOLD_DARK, color: "white" }
+                : { background: "transparent", color: GOLD_DARK }
+            }
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === "current" ? (
+      <>
+
       {/* KPI cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StatCard
           accent
           label="إجمالي الطلبات"
-          value={orders.length}
+          value={scopedOrders.length}
           sub={`${delivered.length} تم التسليم`}
           icon={
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -459,9 +536,9 @@ export default function StatisticsPage() {
           }
         />
         <StatCard
-          label="أفضل شهر"
-          value={bestMonth}
-          sub={`${bestMonthOrders} طلب`}
+          label="أفضل يوم هذا الشهر"
+          value={currentStats.bestDay ? new Date(currentStats.bestDay.date).toLocaleDateString("ar-TN", { day: "numeric", month: "short" }) : "—"}
+          sub={currentStats.bestDay ? `${currentStats.bestDay.revenue.toFixed(0)} TND` : undefined}
           icon={
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -631,7 +708,7 @@ export default function StatisticsPage() {
                           className="text-[10px] font-medium px-1.5 py-0.5 rounded-md"
                           style={{ background: GOLD_PALE, color: GOLD_DARK }}
                         >
-                          {orders.length ? `${((s.value / orders.length) * 100).toFixed(0)}%` : ""}
+                          {scopedOrders.length ? `${((s.value / scopedOrders.length) * 100).toFixed(0)}%` : ""}
                         </span>
                       </div>
                     </div>
@@ -814,7 +891,7 @@ export default function StatisticsPage() {
             </thead>
             <tbody>
               {gouvernoratData.map((row, i) => {
-                const pct = orders.length > 0 ? ((row.orders / orders.length) * 100).toFixed(1) : "0";
+                const pct = scopedOrders.length > 0 ? ((row.orders / scopedOrders.length) * 100).toFixed(1) : "0";
                 return (
                   <tr
                     key={row.name}
@@ -852,6 +929,233 @@ export default function StatisticsPage() {
           </table>
         </div>
       </div>
+
+      </>
+      ) : (
+      <>
+
+      {/* Month selector */}
+      <div className="flex items-center gap-3 flex-wrap">
+        <label className="text-sm font-semibold" style={{ color: "#5a4e35" }}>اختر الشهر</label>
+        <select
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
+          className="px-4 py-2 rounded-xl text-sm font-semibold"
+          style={{
+            background: "white",
+            border: `1px solid ${GOLD_LIGHT}`,
+            color: GOLD_DARK,
+          }}
+        >
+          {availableMonths.length === 0 && <option value={selectedMonth}>{monthLabel(selectedMonth)}</option>}
+          {availableMonths.map((m) => (
+            <option key={m} value={m}>
+              {monthLabel(m)}{m === currentMonthKey ? " (الحالي)" : ""}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Month recap */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <StatCard
+          accent
+          label="إجمالي الطلبات"
+          value={archiveOrders.length}
+          sub={`${archiveStats.delivered.length} تم التسليم`}
+          icon={
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+          }
+        />
+        <StatCard
+          label="رقم الأعمال"
+          value={`${archiveStats.totalRevenue.toFixed(0)} TND`}
+          sub={monthLabel(selectedMonth)}
+          icon={
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          }
+        />
+        <StatCard
+          label="أفضل بائع"
+          value={archiveStats.bestSeller?.name || "—"}
+          sub={archiveStats.bestSeller ? `${archiveStats.bestSeller.orders} طلب` : "لا يوجد كود مستخدم"}
+          icon={
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+            </svg>
+          }
+        />
+        <StatCard
+          label="أفضل ولاية"
+          value={archiveStats.bestGouvernorat?.name || "—"}
+          sub={archiveStats.bestGouvernorat ? `${archiveStats.bestGouvernorat.orders} طلب` : undefined}
+          icon={
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          }
+        />
+      </div>
+
+      {archiveOrders.length === 0 ? (
+        <SectionCard title={`إحصائيات ${monthLabel(selectedMonth)}`}>
+          <EmptyState />
+        </SectionCard>
+      ) : (
+        <>
+          {/* Best day of the month */}
+          {archiveStats.bestDay && (
+            <SectionCard title="أفضل يوم" subtitle={`أعلى إيراد خلال ${monthLabel(selectedMonth)}`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-2xl font-bold" style={{ color: "#1a1a1a", fontFamily: "var(--font-playfair, serif)" }}>
+                    {new Date(archiveStats.bestDay.date).toLocaleDateString("ar-TN", { day: "numeric", month: "long", year: "numeric" })}
+                  </p>
+                  <p className="text-xs mt-1" style={{ color: "#b0a080" }}>{archiveStats.bestDay.orders} طلب</p>
+                </div>
+                <p className="text-2xl font-bold" style={{ color: GOLD_DARK }}>
+                  {archiveStats.bestDay.revenue.toFixed(2)} TND
+                </p>
+              </div>
+            </SectionCard>
+          )}
+
+          {/* Sellers ranking for the selected month */}
+          <SectionCard title="ترتيب البائعين" subtitle={`الأداء خلال ${monthLabel(selectedMonth)}`}>
+            {archiveStats.sellerData.length === 0 ? (
+              <EmptyState />
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr style={{ background: "#fdf8ec", borderBottom: "1px solid #f0e8cc" }}>
+                      {["#", "البائع", "الطلبات", "الإيراد (TND)"].map((h) => (
+                        <th
+                          key={h}
+                          className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider whitespace-nowrap"
+                          style={{ color: "#a0916a", letterSpacing: "0.07em" }}
+                        >
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {archiveStats.sellerData.map((s, i) => (
+                      <tr key={s.code} style={{ borderBottom: "1px solid #faf5e8" }}>
+                        <td className="px-4 py-3.5 text-xs font-bold" style={{ color: i === 0 ? GOLD_DARK : "#c8b87a" }}>
+                          {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1}
+                        </td>
+                        <td className="px-4 py-3.5 font-semibold" style={{ color: "#1a1a1a" }}>{s.name}</td>
+                        <td className="px-4 py-3.5" style={{ color: "#5a4e35" }}>{s.orders}</td>
+                        <td className="px-4 py-3.5 font-bold" style={{ color: GOLD_DARK }}>{s["revenue TND"].toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </SectionCard>
+
+          {/* Gouvernorat breakdown for the selected month */}
+          <SectionCard title="المبيعات حسب الولاية" subtitle={monthLabel(selectedMonth)}>
+            {archiveStats.gouvernoratData.length === 0 ? (
+              <EmptyState />
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr style={{ background: "#fdf8ec", borderBottom: "1px solid #f0e8cc" }}>
+                      {["#", "الولاية", "الطلبات", "الإيراد (TND)"].map((h) => (
+                        <th
+                          key={h}
+                          className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider whitespace-nowrap"
+                          style={{ color: "#a0916a", letterSpacing: "0.07em" }}
+                        >
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {archiveStats.gouvernoratData.map((row, i) => (
+                      <tr key={row.name} style={{ borderBottom: "1px solid #faf5e8" }}>
+                        <td className="px-4 py-3.5 text-xs font-bold" style={{ color: i === 0 ? GOLD_DARK : "#c8b87a" }}>
+                          {i === 0 ? "★" : i + 1}
+                        </td>
+                        <td className="px-4 py-3.5 font-semibold" style={{ color: "#1a1a1a" }}>{row.name}</td>
+                        <td className="px-4 py-3.5" style={{ color: "#5a4e35" }}>{row.orders}</td>
+                        <td className="px-4 py-3.5 font-bold" style={{ color: GOLD_DARK }}>{row.revenue.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </SectionCard>
+        </>
+      )}
+
+      {/* 12-month trend */}
+      <SectionCard title="المبيعات الشهرية" subtitle="الطلبات والإيرادات خلال آخر 12 شهراً">
+        {monthData.length === 0 ? <EmptyState /> : (
+          <ResponsiveContainer width="100%" height={240}>
+            <AreaChart data={monthData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="goldGradArchive" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={GOLD} stopOpacity={0.25} />
+                  <stop offset="95%" stopColor={GOLD} stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="darkGradArchive" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#1a1a1a" stopOpacity={0.12} />
+                  <stop offset="95%" stopColor="#1a1a1a" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f5ecc0" vertical={false} />
+              <XAxis
+                dataKey="name"
+                tick={axisStyle}
+                axisLine={false}
+                tickLine={false}
+                interval={0}
+                height={40}
+                tickMargin={8}
+              />
+              <YAxis
+                yAxisId="revenue"
+                orientation="right"
+                tick={axisStyle}
+                axisLine={false} tickLine={false}
+                width={54}
+                tickFormatter={(v) => `${v}`}
+              />
+              <YAxis
+                yAxisId="orders"
+                orientation="left"
+                tick={{ ...axisStyle, fill: "#c8b87a" }}
+                axisLine={false} tickLine={false}
+                width={28}
+              />
+              <Tooltip content={<GoldTooltip />} />
+              <Legend
+                wrapperStyle={{ fontSize: 11, paddingTop: 12 }}
+                formatter={(v) => <span style={{ color: "#a0916a", fontFamily: "var(--font-inter, sans-serif)" }}>{v}</span>}
+              />
+              <Area yAxisId="revenue" type="monotone" dataKey="Revenu TND" stroke={GOLD} strokeWidth={2.5} fill="url(#goldGradArchive)" dot={false} activeDot={{ r: 5, fill: GOLD, stroke: "white", strokeWidth: 2 }} />
+              <Area yAxisId="orders" type="monotone" dataKey="Commandes" stroke="#1a1a1a" strokeWidth={2} fill="url(#darkGradArchive)" dot={false} activeDot={{ r: 4, fill: "#1a1a1a", stroke: "white", strokeWidth: 2 }} />
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
+      </SectionCard>
+
+      </>
+      )}
 
     </div>
   );
