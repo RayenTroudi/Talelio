@@ -152,6 +152,10 @@ const ar = {
     promoApplying: "...",
     promoInvalid: "رمز الإحالة غير صالح",
     promoError: "حدث خطأ. يرجى المحاولة مرة أخرى.",
+    promoDiscount: "خصم رمز الإحالة",
+    subtotal: "المجموع الفرعي",
+    shippingFee: "رسوم التوصيل",
+    total: "المجموع الكلي",
     continueBtn: "تأكيد",
     errors: {
       fullName: "يرجى إدخال اسمك الكامل",

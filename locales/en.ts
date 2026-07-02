@@ -152,6 +152,10 @@ const en = {
     promoApplying: "...",
     promoInvalid: "Invalid referral code",
     promoError: "An error occurred. Please try again.",
+    promoDiscount: "Referral code discount",
+    subtotal: "Subtotal",
+    shippingFee: "Shipping fee",
+    total: "Total",
     continueBtn: "Confirm",
     errors: {
       fullName: "Please enter your full name",

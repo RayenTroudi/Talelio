@@ -11,6 +11,9 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useTranslation } from "@/app/components/LocaleProvider";
 
+const SHIPPING_PRICE = 9;
+const PROMO_DISCOUNT = 5;
+
 const Shipping = () => {
   const { t } = useTranslation();
   //React Hook Form
@@ -120,8 +123,9 @@ const Shipping = () => {
       (acc: number, item: any) => acc + (item.Price || item.price || 0) * item.qty,
       0
     );
-    const computedShipping = 0;
-    const computedTotal = computedItemsPrice + computedShipping;
+    const computedShipping = SHIPPING_PRICE;
+    const promoDiscount = resolvedPromoCodeId ? PROMO_DISCOUNT : 0;
+    const computedTotal = computedItemsPrice + computedShipping - promoDiscount;
 
     setIsSubmitting(true);
     setSubmitError("");
@@ -461,6 +465,34 @@ const Shipping = () => {
             {promoError && (
               <p className="text-red-500 text-sm mt-1 ltr:text-left rtl:text-right">{promoError}</p>
             )}
+          </div>
+
+          {/* Price Summary */}
+          <div className="border-t border-stone-200/50 pt-6 space-y-2">
+            <div className="flex items-center justify-between text-sm text-stone-600 font-light">
+              <span>{t.shipping.subtotal}</span>
+              <span>{itemsPrice} DT</span>
+            </div>
+            <div className="flex items-center justify-between text-sm text-stone-600 font-light">
+              <span>{t.shipping.shippingFee}</span>
+              <span>{SHIPPING_PRICE.toFixed(2)} DT</span>
+            </div>
+            {appliedPromoCode && (
+              <div className="flex items-center justify-between text-sm text-green-600 font-light">
+                <span>{t.shipping.promoDiscount}</span>
+                <span>-{PROMO_DISCOUNT.toFixed(2)} DT</span>
+              </div>
+            )}
+            <div className="flex items-center justify-between pt-2 border-t border-stone-200/50">
+              <span className="text-stone-900 font-medium tracking-wide">{t.shipping.total}</span>
+              <span className="text-2xl font-serif font-light text-stone-900">
+                {(
+                  Number(itemsPrice || 0) +
+                  SHIPPING_PRICE -
+                  (appliedPromoCode ? PROMO_DISCOUNT : 0)
+                ).toFixed(2)} DT
+              </span>
+            </div>
           </div>
 
         {submitError && (

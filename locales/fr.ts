@@ -152,6 +152,10 @@ const fr = {
     promoApplying: "...",
     promoInvalid: "Code parrainage invalide",
     promoError: "Une erreur s'est produite. Veuillez réessayer.",
+    promoDiscount: "Remise code parrainage",
+    subtotal: "Sous-total",
+    shippingFee: "Frais de livraison",
+    total: "Total",
     continueBtn: "Confirmer",
     errors: {
       fullName: "Veuillez entrer votre nom complet",

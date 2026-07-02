@@ -14,6 +14,9 @@ const initialState =  Cookies.get("cart")
 };
 
 
+const SHIPPING_PRICE = 9
+const PROMO_DISCOUNT = 5
+
 const addDecimals = (num:number) => {
     return(Math.round(num * 100)/ 100).toFixed(2)
 }
@@ -23,9 +26,10 @@ const recalcPrices = (state: any) => {
     state.itemsPrice = addDecimals(
         state.CartItems.reduce((acc:any, item:any) => acc + item.Price * item.qty, 0)
     )
-    state.shippingPrice = 0
+    state.shippingPrice = SHIPPING_PRICE
+    const discount = state.promoCodeId ? PROMO_DISCOUNT : 0
     state.totalPrice = addDecimals(
-        Number(state.itemsPrice) + Number(state.shippingPrice)
+        Number(state.itemsPrice) + Number(state.shippingPrice) - discount
     )
 }
 
@@ -82,31 +86,41 @@ const CartSlice = createSlice({
 
         saveShippingAddress:(state:any, action:any) => {
             state.shippingAddress = action.payload
-            
-            // Shipping is always free
-            state.shippingPrice = 0
-            
-            // Recalculate total with new shipping price
+
+            state.shippingPrice = SHIPPING_PRICE
+
+            // Recalculate total with shipping price and any applied promo discount
             if(state.itemsPrice) {
+                const discount = state.promoCodeId ? PROMO_DISCOUNT : 0
                 state.totalPrice = addDecimals(
-                    Number(state.itemsPrice) + Number(state.shippingPrice)
+                    Number(state.itemsPrice) + Number(state.shippingPrice) - discount
                 )
             }
-            
+
             Cookies.set("cart" , JSON.stringify(state))
         },
 
         setPromoCode:(state:any, action:any) => {
-            // Record which referral code was applied — no discount for buyer
+            // Record which promo code was applied and give the buyer a 5 TND discount
             const { code, promoCodeId } = action.payload
             state.appliedPromoCode = code
             state.promoCodeId = promoCodeId
+            if(state.itemsPrice) {
+                state.totalPrice = addDecimals(
+                    Number(state.itemsPrice) + Number(state.shippingPrice || SHIPPING_PRICE) - PROMO_DISCOUNT
+                )
+            }
             Cookies.set("cart", JSON.stringify(state))
         },
 
         clearPromoCode:(state:any) => {
             state.appliedPromoCode = null
             state.promoCodeId = null
+            if(state.itemsPrice) {
+                state.totalPrice = addDecimals(
+                    Number(state.itemsPrice) + Number(state.shippingPrice || SHIPPING_PRICE)
+                )
+            }
             Cookies.set("cart", JSON.stringify(state))
         },
 
