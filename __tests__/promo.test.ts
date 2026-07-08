@@ -1,4 +1,5 @@
 import { generatePromoCode, calculateReferralReward } from '../lib/promo-utils';
+import { DEFAULT_COMMISSION_RATE } from '../lib/settings';
 
 // ---------------------------------------------------------------------------
 // Utility unit tests (no mocking required)
@@ -24,19 +25,19 @@ describe('generatePromoCode', () => {
 });
 
 describe('calculateReferralReward', () => {
-  it('always returns exactly 4 TND regardless of itemsPrice', () => {
-    expect(calculateReferralReward(100)).toBe(4);
-    expect(calculateReferralReward(200)).toBe(4);
-    expect(calculateReferralReward(53.5)).toBe(4);
+  it('always returns exactly the default commission rate regardless of itemsPrice', () => {
+    expect(calculateReferralReward(100)).toBe(DEFAULT_COMMISSION_RATE);
+    expect(calculateReferralReward(200)).toBe(DEFAULT_COMMISSION_RATE);
+    expect(calculateReferralReward(53.5)).toBe(DEFAULT_COMMISSION_RATE);
   });
 
-  it('returns a flat 4 TND for any order value', () => {
-    expect(calculateReferralReward(13.33)).toBe(4);
+  it('returns a flat rate for any order value', () => {
+    expect(calculateReferralReward(13.33)).toBe(DEFAULT_COMMISSION_RATE);
   });
 
   it('flat reward is independent of order size — buyer pays full price', () => {
-    expect(calculateReferralReward(50)).toBe(4);
-    expect(calculateReferralReward(58)).toBe(4);
+    expect(calculateReferralReward(50)).toBe(DEFAULT_COMMISSION_RATE);
+    expect(calculateReferralReward(58)).toBe(DEFAULT_COMMISSION_RATE);
   });
 });
 
@@ -147,16 +148,11 @@ describe('Referral reward idempotency (logic)', () => {
 });
 
 // --- Reward amount calculation ---
-describe('Referral reward amount (flat 4 TND, buyer pays full price)', () => {
-  it('always returns 4 TND regardless of cart value', () => {
-    const cases: [number, number][] = [
-      [100, 4],
-      [200, 4],
-      [75, 4],
-      [0, 4],
-    ];
-    cases.forEach(([itemsPrice, expected]) => {
-      expect(calculateReferralReward(itemsPrice)).toBe(expected);
+describe('Referral reward amount (flat rate, buyer pays full price)', () => {
+  it('always returns the default commission rate regardless of cart value', () => {
+    const cases: number[] = [100, 200, 75, 0];
+    cases.forEach((itemsPrice) => {
+      expect(calculateReferralReward(itemsPrice)).toBe(DEFAULT_COMMISSION_RATE);
     });
   });
 
@@ -166,7 +162,7 @@ describe('Referral reward amount (flat 4 TND, buyer pays full price)', () => {
     const totalPaid = itemsPrice + shippingPrice;
 
     const reward = calculateReferralReward(itemsPrice);
-    expect(reward).toBe(4);
+    expect(reward).toBe(DEFAULT_COMMISSION_RATE);
     expect(reward).toBe(calculateReferralReward(totalPaid));
   });
 });

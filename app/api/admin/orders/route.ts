@@ -3,6 +3,7 @@ import { appwriteConfig, getServerDatabases } from '@/lib/appwrite-config';
 import { ID, Query, Permission, Role } from 'node-appwrite';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getCommissionRate } from '@/lib/settings';
 
 const ORDERS_COLLECTION_ID = appwriteConfig.ordersCollectionId || 'orders';
 const PROMO_COLLECTION = () => appwriteConfig.promoRequestsCollectionId || 'promoCodeRequests';
@@ -159,6 +160,8 @@ export async function PATCH(request: Request) {
           if (sellerUserId === buyerUserId) {
             console.warn('⚠️ Self-referral detected at delivery, skipping reward');
           } else {
+            const commissionRate = await getCommissionRate();
+
             // Parse item count from the order
             let thisOrderItems = 1;
             try {
@@ -199,18 +202,18 @@ export async function PATCH(request: Request) {
               ];
 
               if (!referredByUserId) {
-                // Standard seller — 4 TND per item
-                const sellerAmount = parseFloat((4 * thisOrderItems).toFixed(2));
+                // Standard seller — commissionRate TND per item
+                const sellerAmount = parseFloat((commissionRate * thisOrderItems).toFixed(2));
                 await databases.createDocument(
                   appwriteConfig.databaseId, earningsCol, ID.unique(),
                   { ...commonFields, ownerUserId: sellerUserId, ownerEmail: promoDoc.userEmail || '', amount: sellerAmount, earningType: 'direct' },
                   perms
                 );
-                console.log(`💰 Standard earning: ${sellerAmount} TND (${thisOrderItems} items × 4) for`, sellerUserId, 'order:', orderId);
+                console.log(`💰 Standard earning: ${sellerAmount} TND (${thisOrderItems} items × ${commissionRate}) for`, sellerUserId, 'order:', orderId);
               } else {
                 // Referred seller — count items already sold in previous delivered orders.
                 // Threshold: first 5 items sold → 2 TND/item (split with referrer).
-                // After threshold → 4 TND/item (seller only).
+                // After threshold → commissionRate TND/item (seller only).
                 const prevEarnings = await databases.listDocuments(
                   appwriteConfig.databaseId,
                   earningsCol,
@@ -228,8 +231,8 @@ export async function PATCH(request: Request) {
                 const splitItems = Math.max(0, Math.min(thisOrderItems, THRESHOLD - itemsSoldBefore));
                 const fullItems  = thisOrderItems - splitItems;
 
-                // Seller amount: 2 TND × splitItems + 4 TND × fullItems
-                const sellerAmount = parseFloat((splitItems * 2 + fullItems * 4).toFixed(2));
+                // Seller amount: 2 TND × splitItems + commissionRate TND × fullItems
+                const sellerAmount = parseFloat((splitItems * 2 + fullItems * commissionRate).toFixed(2));
                 // Referrer amount: 2 TND only for the split portion
                 const referrerAmount = parseFloat((splitItems * 2).toFixed(2));
 
@@ -238,7 +241,7 @@ export async function PATCH(request: Request) {
                   { ...commonFields, ownerUserId: sellerUserId, ownerEmail: promoDoc.userEmail || '', amount: sellerAmount, earningType: 'direct' },
                   perms
                 );
-                console.log(`💰 Referred seller earning: ${sellerAmount} TND (${splitItems} split items × 2 + ${fullItems} full items × 4) for`, sellerUserId, 'order:', orderId, 'itemsSoldBefore:', itemsSoldBefore);
+                console.log(`💰 Referred seller earning: ${sellerAmount} TND (${splitItems} split items × 2 + ${fullItems} full items × ${commissionRate}) for`, sellerUserId, 'order:', orderId, 'itemsSoldBefore:', itemsSoldBefore);
 
                 // Referrer only earns on split items
                 if (referrerAmount > 0) {

@@ -6,11 +6,14 @@ export function generatePromoCode(): string {
   return Array.from({ length: 8 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 }
 
+import { DEFAULT_COMMISSION_RATE } from './settings';
+
 /**
  * Calculate the referral reward for the promo code owner.
- * Always a flat 4 TND per order, regardless of order value.
- * The buyer pays full price — this reward is paid separately to the owner.
+ * Flat rate per order, regardless of order value (admin-configurable —
+ * see lib/settings.ts). The buyer pays full price — this reward is paid
+ * separately to the owner.
  */
 export function calculateReferralReward(_itemsPrice: number): number {
-  return 4;
+  return DEFAULT_COMMISSION_RATE;
 }
